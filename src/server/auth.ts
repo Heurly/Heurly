@@ -4,10 +4,11 @@ import {
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+// import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
 import { env } from "@/env";
 import { db } from "@/server/db";
+import { User, Account } from "next-auth";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -24,10 +25,9 @@ declare module "next-auth" {
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    email_verified?: boolean;
+  }
 }
 
 /**
@@ -44,13 +44,15 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
       },
     }),
-    async signIn({ account, user }: { account: any, user: any }) {
+    async signIn({ account, user }: { account: Account | null, user: User }) {
       if (account && user) {
-        if (account.provider === "google") {
-          return user.email_verified && user.email.endsWith("@edu.esiee.fr")
+
+        if (account.provider === "google" && user.email && user.email_verified) {
+          return user.email.endsWith("@edu.esiee.fr");
         }
-        return true // Do different verification for other providers that don't have `email_verified`
+        return true;
       }
+      return false;
     },
   },
   adapter: PrismaAdapter(db),

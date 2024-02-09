@@ -1,6 +1,3 @@
-import { TView } from "@/types/timetable";
-import { Ref } from "@fullcalendar/core/preact";
-
 import FullCalendar from "@fullcalendar/react";
 import { RefObject } from "react";
 
@@ -11,21 +8,20 @@ export const goToNextPeriod = (calendarRef: RefObject<FullCalendar>): void => {
   const view = calendarApi.view;
 
   switch (view.type) {
-    case TView.dayGridMonth:
+    case "dayGridMonth":
       calendarApi.next();
       break;
-    case TView.timeGridWeek:
-    case TView.dayGridWeek:
+    case "timeGridWeek":
+    case "dayGridWeek":
       calendarApi.incrementDate({ weeks: 1 });
       break;
-    case TView.timeGridDay:
-    case TView.dayGridDay:
+    case "timeGridWeek":
+    case "dayGridWeek":
       calendarApi.incrementDate({ days: 1 });
       break;
-
-    default:
-      break;
+    // No default needed unless you want to handle other cases or potential errors
   }
+
 };
 
 export const goToPreviousPeriod = (
@@ -37,19 +33,20 @@ export const goToPreviousPeriod = (
   const view = calendarApi.view;
 
   switch (view.type) {
-    case TView.dayGridMonth:
+    case "dayGridMonth":
       calendarApi.prev();
       break;
-    case TView.timeGridWeek:
-    case TView.dayGridWeek:
+    case "timeGridWeek":
+    case "dayGridWeek":
       calendarApi.incrementDate({ weeks: -1 });
       break;
-    case TView.timeGridDay:
-    case TView.dayGridDay:
-      calendarApi.incrementDate({ days: 1 });
+    case "timeGridDay":
+    case "dayGridDay":
+      calendarApi.incrementDate({ days: -1 });
       break;
-
     default:
+      // Handle other cases or do nothing
       break;
   }
+
 };

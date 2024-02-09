@@ -12,33 +12,33 @@ import { startOfWeek } from "date-fns";
 
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { DatesSetArg, EventContentArg } from "@fullcalendar/core";
+import { DatesSetArg } from "@fullcalendar/core";
 import { goToNextPeriod, goToPreviousPeriod } from "./fullCalendarHelper";
 import { TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/EventContent";
 import { PLANIF_ENDPOINT } from "@/app/api/ApiHelper";
 // import ICAL from "ical.js";
 
-const today = new Date();
+// const today = new Date();
 
-const createEventDate = (dayOffset: number, hours: number, minutes: number) => {
-  return new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() + dayOffset,
-    hours,
-    minutes,
-  );
-};
+// const createEventDate = (dayOffset: number, hours: number, minutes: number) => {
+//   return new Date(
+//     today.getFullYear(),
+//     today.getMonth(),
+//     today.getDate() + dayOffset,
+//     hours,
+//     minutes,
+//   );
+// };
 
 export default function Timetable() {
   const calendarRef = useRef<FullCalendar>(null);
   const [periodDisplay, setPeriodDisplay] = useState<string>("");
   const [currentView, setCurrentView] = useState<TView>(TView.timeGridWeek);
   const nbPxPhone = 768;
-  const startTime: string = "08:00:00";
-  const endTime: string = "20:00:00";
-  const [events, setEvents] = useState([]);
+  const startTime = "08:00:00";
+  const endTime = "20:00:00";
+  // const [events, setEvents] = useState([]);
 
   const handleDateChange = (date: Date) => {
     const newDate = date.toISOString().slice(0, 10);
@@ -49,25 +49,33 @@ export default function Timetable() {
   /**
    * @param view the current view of the calendar
    */
-  const updatePeriodDisplay = (view: any) => {
+
+  const updatePeriodDisplay = (arg: DatesSetArg) => {
+    const view = arg.view;
     let display = "";
-    if (view.type.includes("Week")) {
+    if (view.type == "timeGridWeek") {
+
       const start = startOfWeek(view.currentStart, { weekStartsOn: 1 });
       display = `${format(start, "dd/MM/yyyy", { locale: fr })}`;
-    } else if (view.type.includes("Day")) {
+
+    } else if (view.type == "timeGridDay") {
+
       display = `${format(view.currentStart, "dd/MM/yyyy", {
         locale: fr,
       })}`;
-    } else if (view.type.includes("Month")) {
+
+    } else if (view.type == "dayGridMonth") {
+
       display = `${format(view.currentStart, "MMMM yyyy", {
         locale: fr,
       })}`;
+
     }
     setPeriodDisplay(display);
   };
 
   const onDateSet = (arg: DatesSetArg) => {
-    updatePeriodDisplay(arg.view);
+    updatePeriodDisplay(arg);
   };
 
   useEffect(() => {
@@ -145,7 +153,7 @@ export default function Timetable() {
                 onClick={() => handleDateChange(new Date())}
                 data-cy="todayBtn"
               >
-                Aujourd'hui
+                Aujourd&apos;hui
               </Button>
             </div>
             <div className="flex gap-x-5 w-full items-center justify-center md:justify-end">

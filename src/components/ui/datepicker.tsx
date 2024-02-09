@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import cn from "classnames";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -24,7 +24,17 @@ export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
 
     useEffect(() => {
         onChange(date);
-    }, [date]);
+    }, [date, onChange]);
+
+    const handleDateSelect = (selectedDate: Date | undefined) => {
+        if (selectedDate) {
+            setDate(selectedDate);
+        } else {
+            // Handle the case where selectedDate is undefined, if necessary
+            // For example, reset to a default value, or do nothing
+            setDate(new Date()); // Reset to current date or another default value
+        }
+    };
 
     return (
         <Popover>
@@ -49,7 +59,7 @@ export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
                 <Calendar
                     mode="single"
                     selected={date}
-                    onSelect={setDate}
+                    onSelect={handleDateSelect}
                     initialFocus
                 />
             </PopoverContent>

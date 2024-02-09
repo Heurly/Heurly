@@ -5,6 +5,6 @@ import type { ReactElement } from "react";
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }): Promise<ReactElement> {
     const session: DefaultSession | null = await getServerAuthSession();
-    // if (!session) redirect("/login");
+    if (!session) redirect("/login");
     return (<>{children}</>);
 }
