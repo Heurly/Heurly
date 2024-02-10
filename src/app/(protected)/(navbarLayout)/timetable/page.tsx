@@ -9,10 +9,10 @@ import { DatePicker } from "@/components/ui/datepicker";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { startOfWeek } from "date-fns";
-
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { DatesSetArg } from "@fullcalendar/core";
+import iCalendarPlugin from '@fullcalendar/icalendar'
 import { goToNextPeriod, goToPreviousPeriod } from "./fullCalendarHelper";
 import { TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/EventContent";
@@ -34,11 +34,10 @@ import { PLANIF_ENDPOINT } from "@/app/api/ApiHelper";
 export default function Timetable() {
   const calendarRef = useRef<FullCalendar>(null);
   const [periodDisplay, setPeriodDisplay] = useState<string>("");
-  const [currentView, setCurrentView] = useState<TView>(TView.timeGridWeek);
   const nbPxPhone = 768;
   const startTime = "08:00:00";
   const endTime = "20:00:00";
-  // const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState([]);
 
   const handleDateChange = (date: Date) => {
     const newDate = date.toISOString().slice(0, 10);
@@ -51,92 +50,63 @@ export default function Timetable() {
    */
 
   const updatePeriodDisplay = (arg: DatesSetArg) => {
-    const view = arg.view;
-    let display = "";
-    if (view.type == "timeGridWeek") {
+    const { view } = arg;
 
-      const start = startOfWeek(view.currentStart, { weekStartsOn: 1 });
-      display = `${format(start, "dd/MM/yyyy", { locale: fr })}`;
-
-    } else if (view.type == "timeGridDay") {
-
-      display = `${format(view.currentStart, "dd/MM/yyyy", {
-        locale: fr,
-      })}`;
-
-    } else if (view.type == "dayGridMonth") {
-
-      display = `${format(view.currentStart, "MMMM yyyy", {
-        locale: fr,
-      })}`;
-
+    let formatStr = "";
+    switch (view.type) {
+      case "timeGridWeek":
+        // For a week view, show the start of the week in "dd/MM/yyyy" format.
+        formatStr = "dd/MM/yyyy";
+        break;
+      case "timeGridDay":
+        // For a day view, show the day in "dd/MM/yyyy" format.
+        formatStr = "dd/MM/yyyy";
+        break;
+      case "dayGridMonth":
+        // For a month view, show the month in "MMMM yyyy" format.
+        formatStr = "MMMM yyyy";
+        break;
+      default:
+        // Optionally handle other cases or leave as is for no action.
+        console.log(`Unhandled view type: ${view.type}`);
+        return; // Early return if the view type is not handled.
     }
-    setPeriodDisplay(display);
-  };
 
-  const onDateSet = (arg: DatesSetArg) => {
-    updatePeriodDisplay(arg);
+    // For "timeGridWeek", calculate the start of the week.
+    // For other types, use view.currentStart directly.
+    const dateToFormat = view.type === "timeGridWeek"
+      ? startOfWeek(view.currentStart, { weekStartsOn: 1 })
+      : view.currentStart;
+
+    const display = format(dateToFormat, formatStr, { locale: fr });
+    console.log("updatePeriodDisplay", display);
+    setPeriodDisplay(display);
   };
 
   useEffect(() => {
     const checkScreenSize = () => {
       const isMobile = window.innerWidth < nbPxPhone;
-      setCurrentView(isMobile ? TView.timeGridDay : TView.timeGridWeek);
+      if (calendarRef.current) {
+        const calendarApi = calendarRef.current.getApi();
+        calendarApi.changeView(isMobile ? TView.timeGridDay : TView.timeGridWeek)
+        console.log("checkScreenSize", calendarApi.view)
+      }
     };
 
-    checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
 
-    // ical fetching --------------
-    // Fetch iCal data (e.g., from a URL or a file)
+    fetch("https://planif.esiee.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=530,3258,3261,3333&projectId=11&calType=ical&nbWeeks=4", {
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+    }).then((res) => console.log(res)).then((data) => console.log(data))
 
-    console.log(
-      PLANIF_ENDPOINT(
-        {
-          lower: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
-          greater: new Date(Date.now()).getTime(),
-        },
-        [3033],
-      ),
-    );
 
-    // fetch(PLANIF_ENDPOINT({
-    //   lower: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
-    //   greater: new Date(Date.now()).getTime(),
-    // }, [3033]))
-    //   .then((response) => response.text())
-    //   .then((data) => {
-    //     const jcalData = ICAL.parse(data);
-    //     const comp = new ICAL.Component(jcalData);
-    //     const vevents = comp.getAllProperties('vevent');
-    //     const parsedEvents: any = [];
-
-    //     vevents.forEach((vevent: any) => {
-    //       const event = {
-    //         title: vevent.getFirstValue('summary'),
-    //         start: vevent.getFirstValue('dtstart').toJSDate(),
-    //         end: vevent.getFirstValue('dtend').toJSDate(),
-    //       };
-    //       parsedEvents.push(event);
-    //     });
-    //     console.log(parsedEvents)
-    //     setEvents(parsedEvents);
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error fetching iCal data:', error);
-    //   });
 
     return () => {
       window.removeEventListener("resize", checkScreenSize);
     };
   }, []);
-
-  useEffect(() => {
-    if (calendarRef.current) {
-      const calendarApi = calendarRef.current.getApi();
-      calendarApi.changeView(currentView);
-    }
-  }, [currentView]);
 
   return (
     <main className="w-full h-full">
@@ -162,7 +132,7 @@ export default function Timetable() {
                 onClick={() => goToPreviousPeriod(calendarRef)}
                 data-cy="previousPeriodBtn"
               >
-                <ArrowLeft className="h-4 w-4 text-black" />
+                <ArrowLeft className=" h-9 w-9 text-black" size={60} />
               </Button>
               <p data-cy="periodDisplay" className="md:order-1 hidden md:block">
                 {periodDisplay}
@@ -173,7 +143,7 @@ export default function Timetable() {
                 onClick={() => goToNextPeriod(calendarRef)}
                 data-cy="nextPeriodBtn"
               >
-                <ArrowRight className="h-4 w-4 text-black" />
+                <ArrowRight className="text-black" size={60} />
               </Button>
             </div>
           </div>
@@ -182,21 +152,10 @@ export default function Timetable() {
         <CardContent className="h-full">
           <FullCalendar
             ref={calendarRef}
-            plugins={[dayGridPlugin, timeGridPlugin]}
-            initialView={currentView}
+            plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
+            initialView={TView.timeGridWeek}
             headerToolbar={false}
-            events={{
-              url: PLANIF_ENDPOINT(
-                {
-                  greater: new Date(Date.now()).getTime(),
-                  lower: new Date(
-                    Date.now() + 1000 * 60 * 60 * 24 * 7,
-                  ).getTime(),
-                },
-                [3033],
-              ),
-              format: "ics",
-            }}
+            events={[]}
             eventContent={EventContent}
             locale={frLocale}
             weekends={true}
@@ -206,7 +165,7 @@ export default function Timetable() {
             height={"auto"}
             // contentHeight="1rem"
             aspectRatio={1.5}
-            datesSet={onDateSet}
+            datesSet={updatePeriodDisplay}
           />
         </CardContent>
       </Card>

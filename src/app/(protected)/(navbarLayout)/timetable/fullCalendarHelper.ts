@@ -6,6 +6,7 @@ export const goToNextPeriod = (calendarRef: RefObject<FullCalendar>): void => {
 
   const calendarApi = calendarRef.current.getApi();
   const view = calendarApi.view;
+  console.log("goToNextPeriod")
 
   switch (view.type) {
     case "dayGridMonth":
@@ -15,14 +16,16 @@ export const goToNextPeriod = (calendarRef: RefObject<FullCalendar>): void => {
     case "dayGridWeek":
       calendarApi.incrementDate({ weeks: 1 });
       break;
-    case "timeGridWeek":
-    case "dayGridWeek":
+    case "timeGridDay":
+    case "dayGridDay":
       calendarApi.incrementDate({ days: 1 });
       break;
-    // No default needed unless you want to handle other cases or potential errors
+    default:
+      // Handle other cases or do nothing
+      break;
   }
-
 };
+
 
 export const goToPreviousPeriod = (
   calendarRef: RefObject<FullCalendar>,
