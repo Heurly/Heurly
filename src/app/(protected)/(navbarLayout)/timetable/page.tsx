@@ -95,11 +95,11 @@ export default function Timetable() {
 
     window.addEventListener("resize", checkScreenSize);
 
-    fetch("https://planif.esiee.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=530,3258,3261,3333&projectId=11&calType=ical&nbWeeks=4", {
-      headers: {
-        "Access-Control-Allow-Origin": "*"
-      }
-    }).then((res) => console.log(res)).then((data) => console.log(data))
+    // fetch("https://planif.esiee.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=530,3258,3261,3333&projectId=11&calType=ical&nbWeeks=4", {
+    //   headers: {
+    //     "Access-Control-Allow-Origin": "*"
+    //   }
+    // }).then((res) => console.log(res)).then((data) => console.log(data))
 
 
 
