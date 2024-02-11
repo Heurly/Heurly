@@ -16,10 +16,11 @@ model Course {
 }
 
 model Unit {
-  id        BigInt  @id @default(autoincrement())
-  full_name String  @default("")
-  name      String? @default("")
-  code      Int     @db.SmallInt
+  id        Int        @id @default(autoincrement())
+  full_name String     @default("")
+  name      String?    @default("")
+  code      Int        @db.SmallInt
+  UserUnit  UserUnit[]
 }
 
 model Account {
@@ -48,14 +49,25 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model UserUnit {
+  id     Int    @id @default(autoincrement())
+  userId String
+  unitId Int
+  user   User   @relation(fields: [userId], references: [id])
+  unit   Unit   @relation(fields: [unitId], references: [id])
+
+  @@unique([userId, unitId])
+}
+
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  UserUnit      UserUnit[]
 }
 
 model VerificationToken {

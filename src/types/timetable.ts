@@ -32,3 +32,20 @@ export type CalendarData = {
     },
   ];
 }
+
+export type TEventInfo = {
+  event: {
+    title: string;
+    extendedProps: {
+      room: string;
+    };
+  };
+  timeText: string;
+}
+
+export type TEventTimetable = {
+  title: string;
+  start: string;
+  end: string;
+  room: string;
+}

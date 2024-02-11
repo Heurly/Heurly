@@ -1,12 +1,4 @@
-type TEventInfo = {
-  event: {
-    title: string;
-    extendedProps: {
-      room: string;
-    };
-  };
-  timeText: string;
-}
+import { TEventInfo } from "@/types/timetable";
 
 export default function EventContent(eventInfo: TEventInfo) {
   return (

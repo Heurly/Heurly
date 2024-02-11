@@ -59,7 +59,9 @@ export default function LoginPage() {
               </span>
             </p>
           </div>
-          <Button className="bg-black text-white" onClick={() => signIn("google", { callbackUrl: "/timetable" })}>
+          <Button
+            className={cn("bg-black", "text-white")}
+            onClick={() => signIn("google", { callbackUrl: "/timetable" })}>
             <GoogleIcon className="w-7" />
             Se connecter
           </Button>

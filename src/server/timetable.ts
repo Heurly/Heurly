@@ -1,25 +1,13 @@
-import { NextResponse } from "next/server";
+"use server";
 import { PLANIF_ENDPOINT } from "@/app/api/ApiHelper";
 import { lines2tree } from "icalts";
 import { distance } from "fastest-levenshtein";
 import { parseISO } from "date-fns";
 import ApiFilter from "@/types/apiFilter";
 import { db } from "@/server/db";
-import { CalendarData, CourseEvent } from "@/types/timetable";
+import { CalendarData, CourseEvent, TEventTimetable } from "@/types/timetable";
 
 const COURSES_EXCEPTIONS = ["BDE"];
-
-
-
-// async function setUserGroups(formData: FormData) {
-//     const post = await db.user.findFirst({
-//         where: {
-//             id: {
-//                 equals: 1,
-//             },
-//         },
-//     });
-// }
 
 function filterCourses(courses: CourseEvent[], dateFilter: ApiFilter<number>) {
     if (dateFilter.equals != undefined) {
@@ -30,10 +18,10 @@ function filterCourses(courses: CourseEvent[], dateFilter: ApiFilter<number>) {
             return (
                 dateFilter.equals != undefined && start.getTime() == dateFilter.equals
             );
-        }) as CourseEvent[];
+        });
     }
 
-    return courses as CourseEvent[];
+    return courses;
 }
 
 function distanceToCourseCode(target: string, entry: string) {
@@ -50,9 +38,9 @@ function distanceToCourseCode(target: string, entry: string) {
 
 async function translateCoursesCodes(courses: CourseEvent[]) {
     // Retrieve necessary courses label batch
-    let conditions = [];
+    const conditions = [];
     for (const course of courses) {
-        const [subject, type]: string[] = course.SUMMARY.split(":");
+        const [subject]: string[] = course.SUMMARY.split(":");
         const keywords = subject?.split("-");
 
         conditions.push({
@@ -64,7 +52,7 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
         });
     }
     const filter = { OR: conditions };
-    let labels = await db.course.findMany({
+    const labels = await db.course.findMany({
         where: filter,
     });
 
@@ -99,7 +87,7 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
     }
 }
 
-export async function getTimetableData(dateFilter: ApiFilter<number>, modules: number[]): Promise<CalendarData | null> {
+export async function getTimetableData(dateFilter: ApiFilter<number>, modules: number[]): Promise<TEventTimetable[] | null> {
 
     if (modules.length <= 0) return null;
 
@@ -115,7 +103,7 @@ export async function getTimetableData(dateFilter: ApiFilter<number>, modules: n
 
         const VCALENDAR = await response.text();
 
-        let res: CalendarData = lines2tree(
+        const res: CalendarData = lines2tree(
             VCALENDAR.split("\r\n"),
         ) as unknown as CalendarData;
 
@@ -123,11 +111,21 @@ export async function getTimetableData(dateFilter: ApiFilter<number>, modules: n
             res.VCALENDAR[0].VEVENT,
             dateFilter,
         );
-        await translateCoursesCodes(res.VCALENDAR[0].VEVENT);
+        await translateCoursesCodes(res.VCALENDAR[0].VEVENT ?? []);
 
-        return res;
+        const resFormatted = res.VCALENDAR[0].VEVENT?.map((event) => {
+            return {
+                title: event.SUMMARY,
+                start: event.DTSTART,
+                end: event.DTEND,
+                room: event.LOCATION
+            }
+        }) ?? [];
+
+        return resFormatted;
+
     } catch (error) {
-        console.log("Error in when retrieve timetable data:\n" + error);
+        console.log("Error in when retrieve timetable data:\n", error);
         return null;
     }
 }

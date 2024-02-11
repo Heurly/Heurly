@@ -10,17 +10,33 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import iCalendarPlugin from '@fullcalendar/icalendar'
 import { goToNextPeriod, goToPreviousPeriod, updatePeriodDisplay } from "@/utils/fullCalendarHelper";
-import { CalendarData, TView } from "@/types/timetable";
+import {  TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/EventContent";
+import { getTimetableData } from "@/server/timetable";
+import { endOfWeek, startOfWeek } from "date-fns";
 
-export default function Timetable({ tabEvents }: { tabEvents: CalendarData | null }) {
+
+
+export default function Timetable({ tabEvents }: { tabEvents: TEventTimetable[] }) {
     const calendarRef = useRef<FullCalendar>(null);
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
     const nbPxPhone = 768;
     const startTime = "08:00:00";
     const endTime = "20:00:00";
+    const [events, setEvents] = useState<TEventTimetable[]>(tabEvents);
 
-    const handleDateChange = (date: Date) => {
+    const reloadData = async (greater: Date, lower: Date) => {
+        const dateFilter = {
+            greater: greater.getTime(),
+            lower: lower.getTime(),
+        };
+        const modules = [530, 3258, 3261, 3333];
+        const data = await getTimetableData(dateFilter, modules);
+        setEvents(data ?? []);
+    }
+
+    const handleDateChange = async (date: Date) => {
+        await reloadData(startOfWeek(date), endOfWeek(date));
         const newDate = date.toISOString().slice(0, 10);
         if (calendarRef.current) calendarRef.current.getApi().gotoDate(newDate);
     };
@@ -88,7 +104,7 @@ export default function Timetable({ tabEvents }: { tabEvents: CalendarData | nul
                     plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
                     initialView={TView.timeGridWeek}
                     headerToolbar={false}
-                    events={tabEvents ?? []}
+                    events={events ?? []}
                     eventContent={EventContent}
                     locale={frLocale}
                     weekends={true}
@@ -98,7 +114,8 @@ export default function Timetable({ tabEvents }: { tabEvents: CalendarData | nul
                     height={"auto"}
                     // contentHeight="1rem"
                     aspectRatio={1.5}
-                    datesSet={(arg) => {
+                    datesSet={async (arg) => {
+                        await reloadData(arg.start, arg.end)
                         setPeriodDisplay(updatePeriodDisplay(arg))
                     }}
                 />
