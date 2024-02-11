@@ -1,7 +1,7 @@
 "use client"
-import Logo from "@/components/icon/Logo";
+import Logo from "@/components/icon/logo";
 import { Button } from "@/components/ui/button";
-import GoogleIcon from "@/components/icon/GoogleIcon";
+import GoogleIcon from "@/components/icon/google-icon";
 import cn from "classnames";
 import Underline from "@/components/underline";
 import { SessionProvider, signIn } from "next-auth/react";

@@ -16,12 +16,11 @@ model Course {
 }
 
 model Unit {
-  id           Int        @id @default(autoincrement())
-  full_name    String     @default("")
-  name         String?    @default("")
-  unitChildren Int?       @default(0)
-  code         Int        @db.SmallInt
-  UserUnit     UserUnit[]
+  id       Int        @id @default(autoincrement())
+  level    Int?       @default(-1)
+  name     String?    @default("")
+  code     Int        @db.SmallInt
+  UserUnit UserUnit[]
 }
 
 model Account {

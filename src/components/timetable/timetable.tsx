@@ -11,7 +11,7 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 import iCalendarPlugin from '@fullcalendar/icalendar'
 import { goToNextPeriod, goToPreviousPeriod, updatePeriodDisplay } from "@/utils/fullCalendarHelper";
 import {  TEventTimetable, TView } from "@/types/timetable";
-import EventContent from "@/components/timetable/EventContent";
+import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
 import { endOfWeek, startOfWeek } from "date-fns";
 

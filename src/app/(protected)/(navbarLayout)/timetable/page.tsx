@@ -13,14 +13,8 @@ import {
   AlertDialogTitle,
 
 } from "@/components/ui/alert-dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { endOfWeek, startOfWeek } from "date-fns";
+import FormUnits from "@/components/form/form-units";
 
 export default async function PageTimetable() {
 
@@ -45,13 +39,15 @@ export default async function PageTimetable() {
   let data: TEventTimetable[] | null = [];
 
 
-  if (isNewUser) {
+  if (!isNewUser) {
     data = await getTimetableData(dateFilter, modules);
   }
 
   return (
-    <AlertDialog open={isNewUser}>
-      <main className="w-full h-full">
+
+    <main className="w-full h-full">
+
+      <AlertDialog open={isNewUser}>
         {
           isNewUser && (
             <>
@@ -60,41 +56,7 @@ export default async function PageTimetable() {
                   <AlertDialogTitle>Bonjour nouvel utilisateur !</AlertDialogTitle>
                   <AlertDialogDescription className="flex flex-col gap-y-5">
                     Nous allons vous demander de choisir vos modules pour afficher votre emploi du temps.
-
-                    <Select>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Theme" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <Select>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Theme" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <Select>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Theme" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-
+                    <FormUnits />
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
@@ -108,7 +70,9 @@ export default async function PageTimetable() {
           )
         }
         <Timetable tabEvents={data ?? []} />
-      </main>
-    </AlertDialog>
+      </AlertDialog>
+    </main>
   );
 }
+
+
