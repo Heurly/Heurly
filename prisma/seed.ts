@@ -36,37 +36,19 @@ async function main() {
     const resUnits = []
 
     for (const unit of rawUnits) {
-        const fullNameSplit = unit.fullname.split(";")
-        const level = fullNameSplit.length
         resUnits.push({
             name: unit.label,
             code: unit.code,
-            level: level
+            fullName: unit.fullname,
         })
-        
     }
 
     await db.unit.createMany({
         data: resUnits
     })
+
     console.log("Units seeded")
 
 }
-
-class Node {
-    name: string;
-    code: number | null;
-    parent: number | null;
-    constructor(name: string, code: number | null = null, parent: number | null = null) {
-        this.name = name;
-        this.code = code;
-        this.parent = parent;
-    }
-}
-
-
-
-
-
 
 main()

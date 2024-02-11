@@ -17,8 +17,8 @@ model Course {
 
 model Unit {
   id       Int        @id @default(autoincrement())
-  level    Int?       @default(-1)
-  name     String?    @default("")
+  name     String     @default("")
+  fullName String     @default("")
   code     Int        @db.SmallInt
   UserUnit UserUnit[]
 }

@@ -1,13 +1,15 @@
 "use server"
+
 import { db } from "@/server/db";
 
-export async function getFieldsByLevel(level: number) {
+export async function getAllUnits(): Promise<{ label: string, code: number }[]> {
+    const res = await db.unit.findMany();
 
-    const fields = await db.unit.findMany({
-        where: {
-            level: level
-        }
-    });
+    const data = res.map((m) => ({
+        label: m.fullName.replaceAll(";", " - "),
+        code: m.code,
+    }));
 
-    return fields;
+    return data
+
 }

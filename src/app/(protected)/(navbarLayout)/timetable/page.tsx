@@ -19,7 +19,8 @@ import FormUnits from "@/components/form/form-units";
 export default async function PageTimetable() {
 
   const session = await getServerAuthSession();
-
+  if(session === null) return null;
+  
   const dateFilter = {
     greater: startOfWeek(new Date()).getTime(),
     lower: endOfWeek(new Date()).getTime(),
@@ -56,7 +57,7 @@ export default async function PageTimetable() {
                   <AlertDialogTitle>Bonjour nouvel utilisateur !</AlertDialogTitle>
                   <AlertDialogDescription className="flex flex-col gap-y-5">
                     Nous allons vous demander de choisir vos modules pour afficher votre emploi du temps.
-                    <FormUnits />
+                    <FormUnits session={session} />
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
