@@ -16,7 +16,7 @@ import {
 
 type PropsDatePicker = {
     onChange: (date: Date) => void;
-    className: string;
+    className?: string;
 };
 
 export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
@@ -24,7 +24,7 @@ export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
 
     useEffect(() => {
         onChange(date);
-    }, [date, onChange]);
+    }, [date]);
 
     const handleDateSelect = (selectedDate: Date | undefined) => {
         if (selectedDate) {
@@ -32,7 +32,7 @@ export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
         } else {
             // Handle the case where selectedDate is undefined, if necessary
             // For example, reset to a default value, or do nothing
-            setDate(new Date()); // Reset to current date or another default value
+            // setDate(new Date()); // Reset to current date or another default value
         }
     };
 

@@ -1,25 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* for scrollbar */
-/* width */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background-color: rgb(34, 34, 34);
-  /* border-radius: 10px; */
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: rgb(64, 64, 64);
-  border-radius: 10px;
-}
-
+ 
 @layer base {
   :root {
     --sky-100: 203.88, 83.6%, 93.7%;
@@ -35,7 +17,7 @@
     --popover-foreground: 0 0% 3.9%;
 
     --primary: var(--sky-200); /* sky-200 */
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 0 0% 0%;
 
     --secondary: var(--sky-100); /* sky-100 */
     --secondary-foreground: 0 0% 9%;
@@ -55,7 +37,7 @@
 
     --radius: 0.5rem;
   }
-
+ 
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -67,7 +49,7 @@
     --popover-foreground: 0 0% 98%;
 
     --primary: var(--sky-100);
-    --primary-foreground: 0 0% 9%;
+    --primary-foreground: 0 0% 0%;
 
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
@@ -86,29 +68,35 @@
     --ring: 0 0% 83.1%;
   }
 }
-
-.topBar {
-  animation: shrink;
-  animation-timeline: scroll();
-  animation-range: 0;
-  padding: 1rem 1.25rem;
-}
-
-@keyframes shrink {
-  to {
-    padding: 0.5rem 1.25rem;
-  }
-}
-
-/* @layer base {
+ 
+@layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
-} */
+}
 
+/* for scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: rgb(34, 34, 34);
+  /* border-radius: 10px; */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(64, 64, 64);
+  border-radius: 10px;
+}
+
+/* timetable */
 .fc-v-event {
   background-color: transparent !important;
   border: none !important;
@@ -124,6 +112,12 @@
 
 .fc .fc-timegrid-slot-label {
   height: 1.7rem !important;
+}
+
+@keyframes shrink {
+  to {
+    padding: 0.5rem 1.25rem;
+  }
 }
 
 /* @import "./mdxContent.css"; */

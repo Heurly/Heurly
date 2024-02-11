@@ -1,7 +1,7 @@
 "use client"
-import Logo from "@/components/icon/Logo";
+import Logo from "@/components/icon/logo";
 import { Button } from "@/components/ui/button";
-import GoogleIcon from "@/components/icon/GoogleIcon";
+import GoogleIcon from "@/components/icon/google-icon";
 import cn from "classnames";
 import Underline from "@/components/underline";
 import { SessionProvider, signIn } from "next-auth/react";
@@ -59,7 +59,9 @@ export default function LoginPage() {
               </span>
             </p>
           </div>
-          <Button className="bg-black text-white" onClick={() => signIn("google", { callbackUrl: "/timetable" })}>
+          <Button
+            className={cn("bg-black", "text-white")}
+            onClick={() => signIn("google", { callbackUrl: "/timetable" })}>
             <GoogleIcon className="w-7" />
             Se connecter
           </Button>

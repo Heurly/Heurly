@@ -1,215 +1,79 @@
-"use client";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import frLocale from "@fullcalendar/core/locales/fr";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import { useEffect, useRef, useState } from "react";
-import { DatePicker } from "@/components/ui/datepicker";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft } from "lucide-react";
-import { startOfWeek } from "date-fns";
+import Timetable from "@/components/timetable/timetable";
+import { getServerAuthSession } from "@/server/auth";
+import { db } from "@/server/db";
+import { getTimetableData } from "@/server/timetable";
+import { TEventTimetable } from "@/types/timetable";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { DatesSetArg } from "@fullcalendar/core";
-import { goToNextPeriod, goToPreviousPeriod } from "./fullCalendarHelper";
-import { TView } from "@/types/timetable";
-import EventContent from "@/components/timetable/EventContent";
-import { PLANIF_ENDPOINT } from "@/app/api/ApiHelper";
-// import ICAL from "ical.js";
+} from "@/components/ui/alert-dialog";
+import { endOfWeek, startOfWeek } from "date-fns";
+import FormUnits from "@/components/form/form-units";
 
-// const today = new Date();
+export default async function PageTimetable() {
 
-// const createEventDate = (dayOffset: number, hours: number, minutes: number) => {
-//   return new Date(
-//     today.getFullYear(),
-//     today.getMonth(),
-//     today.getDate() + dayOffset,
-//     hours,
-//     minutes,
-//   );
-// };
+  const session = await getServerAuthSession();
+  if(session === null) return null;
 
-export default function Timetable() {
-  const calendarRef = useRef<FullCalendar>(null);
-  const [periodDisplay, setPeriodDisplay] = useState<string>("");
-  const [currentView, setCurrentView] = useState<TView>(TView.timeGridWeek);
-  const nbPxPhone = 768;
-  const startTime = "08:00:00";
-  const endTime = "20:00:00";
-  // const [events, setEvents] = useState([]);
-
-  const handleDateChange = (date: Date) => {
-    const newDate = date.toISOString().slice(0, 10);
-    if (calendarRef.current) calendarRef.current.getApi().gotoDate(newDate);
+  const dateFilter = {
+    greater: startOfWeek(new Date()).getTime(),
+    lower: endOfWeek(new Date()).getTime(),
   };
 
-  // depending on the view the period display is different
-  /**
-   * @param view the current view of the calendar
-   */
-
-  const updatePeriodDisplay = (arg: DatesSetArg) => {
-    const view = arg.view;
-    let display = "";
-    if (view.type == "timeGridWeek") {
-
-      const start = startOfWeek(view.currentStart, { weekStartsOn: 1 });
-      display = `${format(start, "dd/MM/yyyy", { locale: fr })}`;
-
-    } else if (view.type == "timeGridDay") {
-
-      display = `${format(view.currentStart, "dd/MM/yyyy", {
-        locale: fr,
-      })}`;
-
-    } else if (view.type == "dayGridMonth") {
-
-      display = `${format(view.currentStart, "MMMM yyyy", {
-        locale: fr,
-      })}`;
-
+  const userUnits = await db.userUnit.findMany({
+    where: {
+      user: {
+        id: session?.user.id
+      }
     }
-    setPeriodDisplay(display);
-  };
+  })
+  const modules = userUnits.map((unit) => unit.unitId)
+  const isNewUser = modules.length === 0;
+  // get modules from user
+  // const modules = [530, 3258, 3261, 3333];
+  let data: TEventTimetable[] | null = [];
 
-  const onDateSet = (arg: DatesSetArg) => {
-    updatePeriodDisplay(arg);
-  };
 
-  useEffect(() => {
-    const checkScreenSize = () => {
-      const isMobile = window.innerWidth < nbPxPhone;
-      setCurrentView(isMobile ? TView.timeGridDay : TView.timeGridWeek);
-    };
-
-    checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
-
-    // ical fetching --------------
-    // Fetch iCal data (e.g., from a URL or a file)
-
-    console.log(
-      PLANIF_ENDPOINT(
-        {
-          lower: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
-          greater: new Date(Date.now()).getTime(),
-        },
-        [3033],
-      ),
-    );
-
-    // fetch(PLANIF_ENDPOINT({
-    //   lower: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
-    //   greater: new Date(Date.now()).getTime(),
-    // }, [3033]))
-    //   .then((response) => response.text())
-    //   .then((data) => {
-    //     const jcalData = ICAL.parse(data);
-    //     const comp = new ICAL.Component(jcalData);
-    //     const vevents = comp.getAllProperties('vevent');
-    //     const parsedEvents: any = [];
-
-    //     vevents.forEach((vevent: any) => {
-    //       const event = {
-    //         title: vevent.getFirstValue('summary'),
-    //         start: vevent.getFirstValue('dtstart').toJSDate(),
-    //         end: vevent.getFirstValue('dtend').toJSDate(),
-    //       };
-    //       parsedEvents.push(event);
-    //     });
-    //     console.log(parsedEvents)
-    //     setEvents(parsedEvents);
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error fetching iCal data:', error);
-    //   });
-
-    return () => {
-      window.removeEventListener("resize", checkScreenSize);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (calendarRef.current) {
-      const calendarApi = calendarRef.current.getApi();
-      calendarApi.changeView(currentView);
-    }
-  }, [currentView]);
+  if (!isNewUser) {
+    data = await getTimetableData(dateFilter, modules);
+  }
 
   return (
-    <main className="w-full h-full">
-      <Card className="h-[100svh] md:h-full md:p-10 md:flex md:flex-col py-2">
-        <CardHeader>
-          <div className="flex md:flex-row flex-col justify-between items-center">
-            <div className="flex flex-col-reverse md:flex-row mb-3 items-center justify-center gap-5">
-              <DatePicker
-                onChange={handleDateChange}
-                className="hidden md:flex"
-              />
-              <Button
-                className="bg-sky-50 text-black hidden md:block"
-                onClick={() => handleDateChange(new Date())}
-                data-cy="todayBtn"
-              >
-                Aujourd&apos;hui
-              </Button>
-            </div>
-            <div className="flex gap-x-5 w-full items-center justify-center md:justify-end">
-              <Button
-                className="bg-sky-50 rounded-full aspect-square p-3 md:order-2"
-                onClick={() => goToPreviousPeriod(calendarRef)}
-                data-cy="previousPeriodBtn"
-              >
-                <ArrowLeft className="h-4 w-4 text-black" />
-              </Button>
-              <p data-cy="periodDisplay" className="md:order-1 hidden md:block">
-                {periodDisplay}
-              </p>
-              <DatePicker onChange={handleDateChange} className="md:hidden" />
-              <Button
-                className="bg-sky-50 rounded-full aspect-square p-3 md:order-3"
-                onClick={() => goToNextPeriod(calendarRef)}
-                data-cy="nextPeriodBtn"
-              >
-                <ArrowRight className="h-4 w-4 text-black" />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
 
-        <CardContent className="h-full">
-          <FullCalendar
-            ref={calendarRef}
-            plugins={[dayGridPlugin, timeGridPlugin]}
-            initialView={currentView}
-            headerToolbar={false}
-            events={{
-              url: PLANIF_ENDPOINT(
-                {
-                  greater: new Date(Date.now()).getTime(),
-                  lower: new Date(
-                    Date.now() + 1000 * 60 * 60 * 24 * 7,
-                  ).getTime(),
-                },
-                [3033],
-              ),
-              format: "ics",
-            }}
-            eventContent={EventContent}
-            locale={frLocale}
-            weekends={true}
-            allDaySlot={false}
-            slotMinTime={startTime}
-            slotMaxTime={endTime}
-            height={"auto"}
-            // contentHeight="1rem"
-            aspectRatio={1.5}
-            datesSet={onDateSet}
-          />
-        </CardContent>
-      </Card>
+    <main className="w-full h-full">
+
+      <AlertDialog open={isNewUser}>
+        {
+          isNewUser && (
+            <>
+              <AlertDialogContent >
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bonjour nouvel utilisateur !</AlertDialogTitle>
+                  <AlertDialogDescription className="flex flex-col gap-y-5">
+                    Nous allons vous demander de choisir vos modules pour afficher votre emploi du temps.
+                    <FormUnits session={session} />
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  {/* <AlertDialogCancel>Cancel</AlertDialogCancel> */}
+                  {/* <AlertDialogAction>Continuer</AlertDialogAction> */}
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </>
+
+          )
+        }
+        <Timetable tabEvents={data ?? []} />
+      </AlertDialog>
     </main>
   );
 }
+
+

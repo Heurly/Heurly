@@ -1,4 +1,4 @@
-import ApiFilter from "@/utils/apiFilter";
+import ApiFilter from "@/types/apiFilter";
 import { format } from "date-fns";
 
 export const PLANIF_ENDPOINT = (
