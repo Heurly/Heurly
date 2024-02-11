@@ -28,6 +28,7 @@ async function main() {
                 name: unit.label,
                 full_name: unit.fullname,
                 code: unit.code,
+                childrenUnit :
             }
         })
     }
