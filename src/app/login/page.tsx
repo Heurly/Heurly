@@ -1,5 +1,5 @@
 "use client"
-import Logo from "@/components/icon/logo";
+import Logo from "@/components/icon/Logo";
 import { Button } from "@/components/ui/button";
 import GoogleIcon from "@/components/icon/google-icon";
 import cn from "classnames";

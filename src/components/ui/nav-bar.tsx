@@ -1,4 +1,4 @@
-import Logo from "@/components/icon/logo";
+import Logo from "@/components/icon/Logo";
 import {
     Tooltip,
     TooltipContent,
