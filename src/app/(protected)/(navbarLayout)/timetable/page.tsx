@@ -20,7 +20,7 @@ export default async function PageTimetable() {
 
   const session = await getServerAuthSession();
   if(session === null) return null;
-  
+
   const dateFilter = {
     greater: startOfWeek(new Date()).getTime(),
     lower: endOfWeek(new Date()).getTime(),
@@ -63,7 +63,7 @@ export default async function PageTimetable() {
 
                 <AlertDialogFooter>
                   {/* <AlertDialogCancel>Cancel</AlertDialogCancel> */}
-                  <AlertDialogAction>Continuer</AlertDialogAction>
+                  {/* <AlertDialogAction>Continuer</AlertDialogAction> */}
                 </AlertDialogFooter>
               </AlertDialogContent>
             </>

@@ -27,7 +27,7 @@ const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
         const userModules = await getProfileUnits(session.user.id)
 
         if (toAdd == undefined || userModules.find((code) => code === toAdd.code)) return;
-        
+        console.log(session.user.id, toAdd.code)
         await addProfileUnit(session.user.id, toAdd.code);
         
         router.refresh();
@@ -82,8 +82,8 @@ const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
     return (
         <div className="flex flex-col">
             <div className="flex flex-wrap mb-4 bg-sky-100 p-4 rounded-xl">
-                {selected != undefined &&
-                    selected.split(" - ").map((s, index) => (
+                {
+                    selected?.split(" - ").map((s, index) => (
                         <div
                             key={id()}
                             className={cn(

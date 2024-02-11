@@ -19,7 +19,7 @@ model Unit {
   id       Int        @id @default(autoincrement())
   name     String     @default("")
   fullName String     @default("")
-  code     Int        @db.SmallInt
+  code     Int        @db.SmallInt @unique
   UserUnit UserUnit[]
 }
 

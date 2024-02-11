@@ -1,6 +1,7 @@
 "use server"
-import { User } from "@prisma/client";
+import { Unit, User, UserUnit } from "@prisma/client";
 import { db } from "./db";
+import { getUnitByCode } from "./units";
 
 async function getProfileUnits(userId: User["id"]) {
     const res = await db.userUnit.findMany({
@@ -12,11 +13,16 @@ async function getProfileUnits(userId: User["id"]) {
     return units;
 }
 
-async function addProfileUnit(userId: User["id"], unitId: number) {
+async function addProfileUnit(userId: UserUnit["userId"], unitCode: Unit["code"]) {
+
+    const unitId = await getUnitByCode(unitCode);
+
+    if (unitId === null) return null;
+
     const res = await db.userUnit.create({
         data: {
             userId: userId,
-            unitId: unitId
+            unitId: unitId.id
         }
     })
     return res;
