@@ -2,16 +2,22 @@
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import id from "@/utils/id";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import type { Session } from "next-auth";
 import cn from "classnames";
 import { getAllUnits } from "@/server/units";
 import { BoxSelect, Tag } from "lucide-react";
 import { ModuleChoice } from "@/types/timetable";
 import { addProfileUnit, getProfileUnits } from "@/server/user";
+import { Metadata } from "next";
+import ID from "@/utils/id";
 
 interface Props {
     session: Session;
+}
+
+export const metadata: Metadata = {
+    title: "Emplois du temps"
 }
 
 const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
@@ -27,10 +33,10 @@ const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
         const userModules = await getProfileUnits(session.user.id)
 
         if (toAdd == undefined || userModules.find((code) => code === toAdd.code)) return;
-        console.log(session.user.id, toAdd.code)
+
         await addProfileUnit(session.user.id, toAdd.code);
-        
-        router.refresh();
+
+        // router.refresh();
 
     }, [selected, modules]);
 
@@ -83,7 +89,7 @@ const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
         <div className="flex flex-col">
             <div className="flex flex-wrap mb-4 bg-sky-100 p-4 rounded-xl">
                 {
-                    selected?.split(" - ").map((s, index) => (
+                    selected?.split(" - ").map((optionSelected, index) => (
                         <div
                             key={id()}
                             className={cn(
@@ -97,31 +103,32 @@ const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
                                 className="pl-2 cursor-pointer"
                                 onClick={() => unselect(index)}
                             >
-                                {s}
+                                {optionSelected}
                             </span>
                         </div>
                     ))}
             </div>
-            <div className="flex flex-wrap w-full">
-                {options.length > 0 &&
-                    options.map((o) => (
-                        <div
-                            key={id()}
-                            className={cn(
-                                "flex p-1.5 w-fit m-1.5",
-                                "bg-sky-100 border border-sky-200 rounded-xl",
-                                "hover:text-sky-400 cursor-pointer",
-                            )}
-                        >
-                            <Tag />
-                            <span className="pl-2 cursor-pointer" onClick={() => select(o)}>
-                                {o}
-                            </span>
+            {/* need to review */}
+            {/* https://css-tricks.com/almanac/properties/g/grid-auto-flow/ */}
+            <div className="flex flex-wrap gap-3">
+                {
+                    options?.map((option) => (
+                        <div className={cn(
+                            "flex gap-x-3", buttonVariants({ variant: "outline" }))}>
+                            {option}
                         </div>
-                    ))}
+                    ))
+                }
             </div>
-            {isAddable && <Button onClick={addModule}>Ajouter le module</Button>}
-        </div>
+            {
+                isAddable && (
+                    <div className="flex flex-col gap-y-5">
+                        <Button onClick={addModule}>Ajouter un autre module</Button>
+                        <Button>J'ai fini !</Button>
+                    </div>
+                )
+            }
+        </div >
     );
 };
 

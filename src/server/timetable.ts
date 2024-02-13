@@ -1,4 +1,5 @@
 "use server";
+import { IcalObject } from "ical2json";
 import { PLANIF_ENDPOINT } from "@/app/api/ApiHelper";
 import { lines2tree } from "icalts";
 import { distance } from "fastest-levenshtein";
@@ -6,6 +7,8 @@ import { parseISO } from "date-fns";
 import ApiFilter from "@/types/apiFilter";
 import { db } from "@/server/db";
 import { CalendarData, CourseEvent, TEventTimetable } from "@/types/timetable";
+import { User } from "@prisma/client";
+import ical2json from "ical2json";
 
 const COURSES_EXCEPTIONS = ["BDE"];
 
@@ -87,9 +90,30 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
     }
 }
 
-export async function getTimetableData(dateFilter: ApiFilter<number>, modules: number[]): Promise<TEventTimetable[] | null> {
+export async function getTimetableData(dateFilter: ApiFilter<number>, modules: number[] | null, userId: User["id"]): Promise<TEventTimetable[] | IcalObject | null> {
 
-    if (modules.length <= 0) return null;
+    if (modules == null && userId == null) return null;
+
+    // if there is no modules, we get the url user UserTimetableURL
+    if (modules == null) {
+        const resURL = await db.userTimetableURL.findFirst({
+            where: {
+                userId: userId
+            }
+        })
+
+        if (resURL == null) return null;
+
+        const icalData = await fetch(resURL.url);
+
+        if (!icalData.ok) return null;
+
+        const rawIcal = await icalData.text();
+
+        const ical = ical2json.convert(rawIcal);
+
+        return ical;
+    }
 
     try {
         const endpoint = PLANIF_ENDPOINT(dateFilter, modules);

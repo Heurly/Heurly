@@ -5,7 +5,6 @@ import { getTimetableData } from "@/server/timetable";
 import { TEventTimetable } from "@/types/timetable";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -15,11 +14,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { endOfWeek, startOfWeek } from "date-fns";
 import FormUnits from "@/components/form/form-units";
+import { IcalObject } from "ical2json";
+import FormUrlTimetable from "@/components/form/form-url-timetable";
+import { SessionProvider } from "next-auth/react";
 
 export default async function PageTimetable() {
 
   const session = await getServerAuthSession();
-  if(session === null) return null;
+  if (session === null) return null;
 
   const dateFilter = {
     greater: startOfWeek(new Date()).getTime(),
@@ -37,11 +39,11 @@ export default async function PageTimetable() {
   const isNewUser = modules.length === 0;
   // get modules from user
   // const modules = [530, 3258, 3261, 3333];
-  let data: TEventTimetable[] | null = [];
+  let data: TEventTimetable[] | IcalObject | null = [];
 
 
   if (!isNewUser) {
-    data = await getTimetableData(dateFilter, modules);
+    data = await getTimetableData(dateFilter, modules, session?.user.id);
   }
 
   return (
@@ -51,26 +53,26 @@ export default async function PageTimetable() {
       <AlertDialog open={isNewUser}>
         {
           isNewUser && (
-            <>
-              <AlertDialogContent >
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Bonjour nouvel utilisateur !</AlertDialogTitle>
-                  <AlertDialogDescription className="flex flex-col gap-y-5">
-                    Nous allons vous demander de choisir vos modules pour afficher votre emploi du temps.
+            <AlertDialogContent >
+              <AlertDialogHeader>
+                <AlertDialogTitle>Bonjour nouvel utilisateur !</AlertDialogTitle>
+                <AlertDialogDescription className="flex flex-col gap-y-5">
+                  Nous allons vous demander de choisir vos modules pour afficher votre emploi du temps.
+                  <div className="flex">
                     <FormUnits session={session} />
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
+                    <FormUrlTimetable />
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
 
-                <AlertDialogFooter>
-                  {/* <AlertDialogCancel>Cancel</AlertDialogCancel> */}
-                  {/* <AlertDialogAction>Continuer</AlertDialogAction> */}
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </>
-
+              <AlertDialogFooter>
+                {/* <AlertDialogCancel>Cancel</AlertDialogCancel> */}
+                {/* <AlertDialogAction>Continuer</AlertDialogAction> */}
+              </AlertDialogFooter>
+            </AlertDialogContent>
           )
         }
-        <Timetable tabEvents={data ?? []} />
+        <Timetable userId={session.user.id} />
       </AlertDialog>
     </main>
   );

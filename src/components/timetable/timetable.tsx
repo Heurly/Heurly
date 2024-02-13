@@ -10,20 +10,20 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import iCalendarPlugin from '@fullcalendar/icalendar'
 import { goToNextPeriod, goToPreviousPeriod, updatePeriodDisplay } from "@/utils/fullCalendarHelper";
-import {  TEventTimetable, TView } from "@/types/timetable";
+import { TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
 import { endOfWeek, startOfWeek } from "date-fns";
+import { IcalObject } from "ical2json";
+import type { User } from "@prisma/client";
 
-
-
-export default function Timetable({ tabEvents }: { tabEvents: TEventTimetable[] }) {
+export default function Timetable({ userId }: { userId: User["id"] }) {
     const calendarRef = useRef<FullCalendar>(null);
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
     const nbPxPhone = 768;
     const startTime = "08:00:00";
     const endTime = "20:00:00";
-    const [events, setEvents] = useState<TEventTimetable[]>(tabEvents);
+    const [events, setEvents] = useState<TEventTimetable[] | IcalObject>([]);
 
     const reloadData = async (greater: Date, lower: Date) => {
         const dateFilter = {
@@ -31,7 +31,7 @@ export default function Timetable({ tabEvents }: { tabEvents: TEventTimetable[] 
             lower: lower.getTime(),
         };
         const modules = [530, 3258, 3261, 3333];
-        const data = await getTimetableData(dateFilter, modules);
+        const data = await getTimetableData(dateFilter, modules, userId);
         setEvents(data ?? []);
     }
 
