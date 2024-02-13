@@ -86,13 +86,13 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background-color: rgb(34, 34, 34);
+  background-color: transparent;
   /* border-radius: 10px; */
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgb(64, 64, 64);
+  background: hsl(var(--primary));
   border-radius: 10px;
 }
 

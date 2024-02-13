@@ -17,6 +17,7 @@ import FormUnits from "@/components/form/form-units";
 import { IcalObject } from "ical2json";
 import FormUrlTimetable from "@/components/form/form-url-timetable";
 import { SessionProvider } from "next-auth/react";
+import { Separator } from "@/components/ui/separator";
 
 export default async function PageTimetable() {
 
@@ -55,13 +56,12 @@ export default async function PageTimetable() {
           isNewUser && (
             <AlertDialogContent >
               <AlertDialogHeader>
-                <AlertDialogTitle>Bonjour nouvel utilisateur !</AlertDialogTitle>
+                <AlertDialogTitle>Bonjour Heurlyte !</AlertDialogTitle>
                 <AlertDialogDescription className="flex flex-col gap-y-5">
                   Nous allons vous demander de choisir vos modules pour afficher votre emploi du temps.
-                  <div className="flex">
-                    <FormUnits session={session} />
-                    <FormUrlTimetable />
-                  </div>
+                  <FormUnits session={session} />
+                  <Separator />
+                  <FormUrlTimetable />
                 </AlertDialogDescription>
               </AlertDialogHeader>
 

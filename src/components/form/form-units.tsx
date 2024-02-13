@@ -110,10 +110,10 @@ const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
             </div>
             {/* need to review */}
             {/* https://css-tricks.com/almanac/properties/g/grid-auto-flow/ */}
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 max-h-52 overflow-auto">
                 {
                     options?.map((option) => (
-                        <div className={cn(
+                        <div key={ID()} className={cn(
                             "flex gap-x-3", buttonVariants({ variant: "outline" }))}>
                             {option}
                         </div>
@@ -124,7 +124,7 @@ const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
                 isAddable && (
                     <div className="flex flex-col gap-y-5">
                         <Button onClick={addModule}>Ajouter un autre module</Button>
-                        <Button>J'ai fini !</Button>
+                        <Button>J&apos;ai fini !</Button>
                     </div>
                 )
             }

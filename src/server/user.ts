@@ -48,8 +48,13 @@ async function addProfileUnitByUrl(userId: User["id"], url: string): Promise<boo
         if (!resIcal.ok) throw new Error("Failed to fetch ical");
 
         const rawIcal = await resIcal.text();
-        const ical = convert(rawIcal);
+        convert(rawIcal);
         // Assuming `convert` throws for invalid ical, or you need another way to validate it
+
+        // verify if the url is not already in the database
+        const urlExists = await db.userTimetableURL.findFirst({ where: { url: url, userId: userId } });
+
+        if (urlExists !== null) throw new Error("URL already exists in the database");
 
         // Insert the URL into the database
         await db.userTimetableURL.create({ data: { userId: userId, url: url } });

@@ -7,8 +7,8 @@ import { parseISO } from "date-fns";
 import ApiFilter from "@/types/apiFilter";
 import { db } from "@/server/db";
 import { CalendarData, CourseEvent, TEventTimetable } from "@/types/timetable";
-import { User } from "@prisma/client";
-import ical2json from "ical2json";
+import type { User } from "@prisma/client";
+import { convert } from "ical2json";
 
 const COURSES_EXCEPTIONS = ["BDE"];
 
@@ -110,7 +110,7 @@ export async function getTimetableData(dateFilter: ApiFilter<number>, modules: n
 
         const rawIcal = await icalData.text();
 
-        const ical = ical2json.convert(rawIcal);
+        const ical = convert(rawIcal);
 
         return ical;
     }
