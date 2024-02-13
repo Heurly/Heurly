@@ -72,7 +72,7 @@ export default async function PageTimetable() {
             </AlertDialogContent>
           )
         }
-        <Timetable userId={session.user.id} />
+        <Timetable />
       </AlertDialog>
     </main>
   );

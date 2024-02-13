@@ -16,16 +16,23 @@ import { getTimetableData } from "@/server/timetable";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { IcalObject } from "ical2json";
 import type { User } from "@prisma/client";
+import { useSession } from "next-auth/react";
 
-export default function Timetable({ userId }: { userId: User["id"] }) {
+export default function Timetable() {
     const calendarRef = useRef<FullCalendar>(null);
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
     const nbPxPhone = 768;
     const startTime = "08:00:00";
     const endTime = "20:00:00";
     const [events, setEvents] = useState<TEventTimetable[] | IcalObject>([]);
+    const session = useSession();
+
+
+
+    const userId: User["id"] | undefined = session.data?.user.id;
 
     const reloadData = async (greater: Date, lower: Date) => {
+        if (!userId) return;
         const dateFilter = {
             greater: greater.getTime(),
             lower: lower.getTime(),
@@ -76,6 +83,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                         </Button>
                     </div>
                     <div className="flex gap-x-5 w-full items-center justify-center md:justify-end">
+                        {!session.data && <p>Votre emplois du temps ne peut plus être mis à jour</p>}
                         <Button
                             className="bg-sky-50 rounded-full aspect-square p-3 md:order-2"
                             onClick={() => goToPreviousPeriod(calendarRef)}
