@@ -32,11 +32,10 @@ model SchoolHostname {
 }
 
 model Unit {
-  id       Int        @id @default(autoincrement())
-  name     String     @default("")
-  fullName String     @default("")
-  code     Int        @unique @db.SmallInt
-  UserUnit UserUnit[]
+  id       Int    @id @default(autoincrement())
+  name     String @default("")
+  fullName String @default("")
+  code     Int    @unique @db.SmallInt
 }
 
 model Account {
@@ -72,16 +71,6 @@ model UserTimetableURL {
   user   User   @relation(fields: [userId], references: [id])
 }
 
-model UserUnit {
-  id     Int    @id @default(autoincrement())
-  userId String
-  unitId Int
-  user   User   @relation(fields: [userId], references: [id])
-  unit   Unit   @relation(fields: [unitId], references: [id])
-
-  @@unique([userId, unitId])
-}
-
 model User {
   id               String             @id @default(cuid())
   name             String?
@@ -90,7 +79,6 @@ model User {
   image            String?
   accounts         Account[]
   sessions         Session[]
-  UserUnit         UserUnit[]
   UserTimetableURL UserTimetableURL[]
 }
 

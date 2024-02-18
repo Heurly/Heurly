@@ -1,76 +1,55 @@
-"use server"
-import type { Unit, User, UserUnit } from "@prisma/client";
+"use server";
+import type { User } from "@prisma/client";
 import { db } from "./db";
-import { getUnitByCode } from "./units";
 import * as z from "zod";
-import { convert } from 'ical2json';
+import { convert } from "ical2json";
 
+async function addProfileUnitByUrl(
+  userId: User["id"],
+  url: string,
+): Promise<boolean> {
+  try {
+    const urlSchema = z.string().url();
+    // This will throw if the URL is invalid, so let's wrap it in a try-catch
+    urlSchema.parse(url);
 
-async function getProfileUnits(userId: User["id"]) {
-    const res = await db.userUnit.findMany({
-        where: {
-            userId: userId
-        }
-    })
-    const units = res.map((u) => u.unitId);
-    return units;
+    // Further processing...
+    const urlHostName = new URL(url).hostname;
+    const res = await db.schoolHostname.findFirst({
+      where: { hostname: urlHostName },
+    });
+
+    if (res === null) throw new Error("Hostname not found in db");
+
+    // Fetching and processing the ical
+    const resIcal = await fetch(url);
+    if (!resIcal.ok) throw new Error("Failed to fetch ical");
+
+    const rawIcal = await resIcal.text();
+    convert(rawIcal);
+    // Assuming `convert` throws for invalid ical, or you need another way to validate it
+
+    // verify if the url is not already in the database
+    const urlExists = await db.userTimetableURL.findFirst({
+      where: { url: url, userId: userId },
+    });
+
+    if (urlExists !== null)
+      throw new Error("URL already exists in the database");
+
+    // Insert the URL into the database
+    await db.userTimetableURL.create({ data: { userId: userId, url: url } });
+
+    // If everything passed, we consider it a success
+    return true;
+  } catch (e) {
+    console.error(e);
+    // If there's any error, we consider the operation failed
+    return false;
+  }
 }
 
-async function addProfileUnit(userId: UserUnit["userId"], unitCode: Unit["code"]) {
-
-    const unitId = await getUnitByCode(unitCode);
-
-    if (unitId === null) return null;
-
-    const res = await db.userUnit.create({
-        data: {
-            userId: userId,
-            unitId: unitId.id
-        }
-    })
-    return res;
-}
-
-async function addProfileUnitByUrl(userId: User["id"], url: string): Promise<boolean> {
-    try {
-        const urlSchema = z.string().url();
-        // This will throw if the URL is invalid, so let's wrap it in a try-catch
-        urlSchema.parse(url);
-
-        // Further processing...
-        const urlHostName = new URL(url).hostname;
-        const res = await db.schoolHostname.findFirst({ where: { hostname: urlHostName } });
-
-        if (res === null) throw new Error("Hostname not found in db");
-
-        // Fetching and processing the ical
-        const resIcal = await fetch(url);
-        if (!resIcal.ok) throw new Error("Failed to fetch ical");
-
-        const rawIcal = await resIcal.text();
-        convert(rawIcal);
-        // Assuming `convert` throws for invalid ical, or you need another way to validate it
-
-        // verify if the url is not already in the database
-        const urlExists = await db.userTimetableURL.findFirst({ where: { url: url, userId: userId } });
-
-        if (urlExists !== null) throw new Error("URL already exists in the database");
-
-        // Insert the URL into the database
-        await db.userTimetableURL.create({ data: { userId: userId, url: url } });
-
-        // If everything passed, we consider it a success
-        return true;
-    } catch (e) {
-        console.error(e);
-        // If there's any error, we consider the operation failed
-        return false;
-    }
-}
-
-
-
-// 
+//
 // return ical;
 
-export { getProfileUnits, addProfileUnit, addProfileUnitByUrl }
+export { addProfileUnitByUrl };
