@@ -17,11 +17,28 @@ import {
 import { TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
-import { endOfWeek, startOfWeek } from "date-fns";
+import { addWeeks, startOfWeek } from "date-fns";
 import { IcalObject } from "ical2json";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useDebouncedCallback } from "use-debounce";
+import { DatesSetArg } from "@fullcalendar/core/index.js";
+
+interface VEvent {
+  DTSTART: string;
+  DTEND: string;
+  SUMMARY: string;
+  LOCATION: string;
+  DESCRIPTION: string;
+}
+
+interface VCalendar {
+  VEVENT?: VEvent[];
+}
+
+interface CustomIcalObject {
+  VCALENDAR?: VCalendar[];
+}
 
 export default function Timetable({ userId }: { userId: User["id"] }) {
   const calendarRef = useRef<FullCalendar>(null);
@@ -32,23 +49,37 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
   const [events, setEvents] = useState<TEventTimetable[] | IcalObject>([]);
   const session = useSession();
 
-  const reloadData = useDebouncedCallback(
-    async (greater: Date, lower: Date) => {
-      if (!userId) return;
-      const dateFilter = {
-        greater: greater.getTime(),
-        lower: lower.getTime(),
-      };
-      const modules = [530, 3258, 3261, 3333];
-      const data = await getTimetableData(dateFilter, modules, userId);
-      setEvents(data ?? []);
-      console.log("reloadData");
-    },
-    1000,
-  );
+  const reloadData = async (
+    greater: DatesSetArg["start"],
+    lower: DatesSetArg["end"],
+  ) => {
+    if (!userId) return;
+    const dateFilter = {
+      greater: greater.getTime(),
+      lower: lower.getTime(),
+    };
+
+    const data = await getTimetableData(dateFilter, userId);
+    if (data === null) return;
+    const ical = data as CustomIcalObject;
+
+    if (ical.VCALENDAR === undefined) return;
+
+    const events =
+      ical?.VCALENDAR[0]?.VEVENT?.map((event) => {
+        return {
+          title: event.SUMMARY,
+          start: event.DTSTART,
+          end: event.DTEND,
+          room: event.LOCATION,
+          description: event.DESCRIPTION,
+        };
+      }) ?? [];
+    setEvents(events ?? []);
+  };
 
   const handleDateChange = async (date: Date) => {
-    await reloadData(startOfWeek(date), endOfWeek(date));
+    await reloadData(startOfWeek(date), addWeeks(date, 2));
     const newDate = date.toISOString().slice(0, 10);
     if (calendarRef.current) calendarRef.current.getApi().gotoDate(newDate);
   };
@@ -130,10 +161,10 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
           height={"auto"}
           // contentHeight="1rem"
           aspectRatio={1.5}
-          datesSet={async (arg) => {
+          datesSet={useDebouncedCallback(async (arg: DatesSetArg) => {
             await reloadData(arg.start, arg.end);
             setPeriodDisplay(updatePeriodDisplay(arg));
-          }}
+          }, 1000)}
         />
       </CardContent>
     </Card>

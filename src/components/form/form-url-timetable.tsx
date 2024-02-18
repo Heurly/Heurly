@@ -1,5 +1,5 @@
 "use client";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useSession } from "next-auth/react";
@@ -37,7 +37,7 @@ export default function FormUrlTimetable({ className }: PropsFormUrlTimetable) {
   const onSubmit = async (data: UrlFormValues) => {
     if (session.data) {
       try {
-        const res = await addProfileUnitByUrl(session.data.user.id, data.url);
+        await addProfileUnitByUrl(session.data.user.id, data.url);
         router.refresh();
       } catch (error) {
         console.error("Erreur lors de l'ajout de l'URL du profil :", error);

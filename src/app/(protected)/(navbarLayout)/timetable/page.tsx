@@ -8,7 +8,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { endOfWeek, startOfWeek } from "date-fns";
 import FormUrlTimetable from "@/components/form/form-url-timetable";
 import { redirect } from "next/navigation";
 
@@ -19,11 +18,6 @@ export default async function PageTimetable() {
   if (session === null) redirect("/login");
 
   const userId = session.user.id;
-
-  const dateFilter = {
-    greater: startOfWeek(new Date()).getTime(),
-    lower: endOfWeek(new Date()).getTime(),
-  };
 
   // we verify if the user have an url in the db
   // we count the number of url in the db for the user with prisma query
@@ -44,8 +38,8 @@ export default async function PageTimetable() {
             <AlertDialogHeader>
               <AlertDialogTitle>Bonjour le nouveau late !</AlertDialogTitle>
               <p>
-                Plus qu'une étape pour être un vrai late, tu dois renseigner ton
-                URL de calendrier et c'est parti !
+                Plus qu&apos;une étape pour être un vrai late, tu dois renseigner ton
+                URL de calendrier et c&apos;est parti !
               </p>
             </AlertDialogHeader>
             <FormUrlTimetable />
