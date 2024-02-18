@@ -46,13 +46,13 @@ export default function FormUrlTimetable({ className }: PropsFormUrlTimetable) {
                     name="url"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Votre URL de calendrier</FormLabel>
+                            <FormLabel>Entrez l'URL de votre emplois du temps</FormLabel>
                             <Input {...field} />
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Envoyer l&apos;URL</Button>
+                <Button type="submit" disabled={!form.formState.isValid}>Envoyer l&apos;URL</Button>
             </form>
         </Form>
     );
