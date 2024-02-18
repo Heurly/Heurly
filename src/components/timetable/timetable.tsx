@@ -8,8 +8,12 @@ import { useEffect, useRef, useState } from "react";
 import { DatePicker } from "@/components/ui/datepicker";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft } from "lucide-react";
-import iCalendarPlugin from '@fullcalendar/icalendar'
-import { goToNextPeriod, goToPreviousPeriod, updatePeriodDisplay } from "@/utils/fullCalendarHelper";
+import iCalendarPlugin from "@fullcalendar/icalendar";
+import {
+  goToNextPeriod,
+  goToPreviousPeriod,
+  updatePeriodDisplay,
+} from "@/utils/fullCalendarHelper";
 import { TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
@@ -17,118 +21,121 @@ import { endOfWeek, startOfWeek } from "date-fns";
 import { IcalObject } from "ical2json";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import { useDebouncedCallback } from "use-debounce";
 
-export default function Timetable() {
-    const calendarRef = useRef<FullCalendar>(null);
-    const [periodDisplay, setPeriodDisplay] = useState<string>("");
-    const nbPxPhone = 768;
-    const startTime = "08:00:00";
-    const endTime = "20:00:00";
-    const [events, setEvents] = useState<TEventTimetable[] | IcalObject>([]);
-    const session = useSession();
+export default function Timetable({ userId }: { userId: User["id"] }) {
+  const calendarRef = useRef<FullCalendar>(null);
+  const [periodDisplay, setPeriodDisplay] = useState<string>("");
+  const nbPxPhone = 768;
+  const startTime = "08:00:00";
+  const endTime = "20:00:00";
+  const [events, setEvents] = useState<TEventTimetable[] | IcalObject>([]);
+  const session = useSession();
 
+  const reloadData = useDebouncedCallback(
+    async (greater: Date, lower: Date) => {
+      if (!userId) return;
+      const dateFilter = {
+        greater: greater.getTime(),
+        lower: lower.getTime(),
+      };
+      const modules = [530, 3258, 3261, 3333];
+      const data = await getTimetableData(dateFilter, modules, userId);
+      setEvents(data ?? []);
+      console.log("reloadData");
+    },
+    1000,
+  );
 
+  const handleDateChange = async (date: Date) => {
+    await reloadData(startOfWeek(date), endOfWeek(date));
+    const newDate = date.toISOString().slice(0, 10);
+    if (calendarRef.current) calendarRef.current.getApi().gotoDate(newDate);
+  };
 
-    const userId: User["id"] | undefined = session.data?.user.id;
-
-    const reloadData = async (greater: Date, lower: Date) => {
-        if (!userId) return;
-        const dateFilter = {
-            greater: greater.getTime(),
-            lower: lower.getTime(),
-        };
-        const modules = [530, 3258, 3261, 3333];
-        const data = await getTimetableData(dateFilter, modules, userId);
-        setEvents(data ?? []);
-    }
-
-    const handleDateChange = async (date: Date) => {
-        await reloadData(startOfWeek(date), endOfWeek(date));
-        const newDate = date.toISOString().slice(0, 10);
-        if (calendarRef.current) calendarRef.current.getApi().gotoDate(newDate);
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const isMobile = window.innerWidth < nbPxPhone;
+      if (calendarRef.current) {
+        const calendarApi = calendarRef.current.getApi();
+        calendarApi.changeView(
+          isMobile ? TView.timeGridDay : TView.timeGridWeek,
+        );
+      }
     };
 
-    useEffect(() => {
-        const checkScreenSize = () => {
-            const isMobile = window.innerWidth < nbPxPhone;
-            if (calendarRef.current) {
-                const calendarApi = calendarRef.current.getApi();
-                calendarApi.changeView(isMobile ? TView.timeGridDay : TView.timeGridWeek)
-            }
-        };
+    window.addEventListener("resize", checkScreenSize);
 
-        window.addEventListener("resize", checkScreenSize);
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+    };
+  }, []);
 
-        return () => {
-            window.removeEventListener("resize", checkScreenSize);
-        };
-    }, []);
+  return (
+    <Card className="h-[100svh] py-2 md:flex md:h-full md:flex-col md:p-10">
+      <CardHeader>
+        <div className="flex flex-col items-center justify-between md:flex-row">
+          <div className="mb-3 flex flex-col-reverse items-center justify-center gap-5 md:flex-row">
+            <DatePicker
+              onChange={handleDateChange}
+              className="hidden md:flex"
+            />
+            <Button
+              className="hidden bg-sky-50 text-black md:block"
+              onClick={() => handleDateChange(new Date())}
+              data-cy="todayBtn"
+            >
+              Aujourd&apos;hui
+            </Button>
+          </div>
+          <div className="flex w-full items-center justify-center gap-x-5 md:justify-end">
+            {!session.data && (
+              <p>Votre emplois du temps ne peut plus être mis à jour</p>
+            )}
+            <Button
+              className="aspect-square rounded-full bg-sky-50 p-3 md:order-2"
+              onClick={() => goToPreviousPeriod(calendarRef)}
+              data-cy="previousPeriodBtn"
+            >
+              <ArrowLeft className=" h-9 w-9 text-black" size={60} />
+            </Button>
+            <p data-cy="periodDisplay" className="hidden md:order-1 md:block">
+              {periodDisplay}
+            </p>
+            <DatePicker onChange={handleDateChange} className="md:hidden" />
+            <Button
+              className="aspect-square rounded-full bg-sky-50 p-3 md:order-3"
+              onClick={() => goToNextPeriod(calendarRef)}
+              data-cy="nextPeriodBtn"
+            >
+              <ArrowRight className="text-black" size={60} />
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
 
-    return (
-
-        <Card className="h-[100svh] md:h-full md:p-10 md:flex md:flex-col py-2">
-            <CardHeader>
-                <div className="flex md:flex-row flex-col justify-between items-center">
-                    <div className="flex flex-col-reverse md:flex-row mb-3 items-center justify-center gap-5">
-                        <DatePicker
-                            onChange={handleDateChange}
-                            className="hidden md:flex"
-                        />
-                        <Button
-                            className="bg-sky-50 text-black hidden md:block"
-                            onClick={() => handleDateChange(new Date())}
-                            data-cy="todayBtn"
-                        >
-                            Aujourd&apos;hui
-                        </Button>
-                    </div>
-                    <div className="flex gap-x-5 w-full items-center justify-center md:justify-end">
-                        {!session.data && <p>Votre emplois du temps ne peut plus être mis à jour</p>}
-                        <Button
-                            className="bg-sky-50 rounded-full aspect-square p-3 md:order-2"
-                            onClick={() => goToPreviousPeriod(calendarRef)}
-                            data-cy="previousPeriodBtn"
-                        >
-                            <ArrowLeft className=" h-9 w-9 text-black" size={60} />
-                        </Button>
-                        <p data-cy="periodDisplay" className="md:order-1 hidden md:block">
-                            {periodDisplay}
-                        </p>
-                        <DatePicker onChange={handleDateChange} className="md:hidden" />
-                        <Button
-                            className="bg-sky-50 rounded-full aspect-square p-3 md:order-3"
-                            onClick={() => goToNextPeriod(calendarRef)}
-                            data-cy="nextPeriodBtn"
-                        >
-                            <ArrowRight className="text-black" size={60} />
-                        </Button>
-                    </div>
-                </div>
-            </CardHeader>
-
-            <CardContent className="h-full">
-                <FullCalendar
-                    ref={calendarRef}
-                    plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
-                    initialView={TView.timeGridWeek}
-                    headerToolbar={false}
-                    events={events ?? []}
-                    eventContent={EventContent}
-                    locale={frLocale}
-                    weekends={true}
-                    allDaySlot={false}
-                    slotMinTime={startTime}
-                    slotMaxTime={endTime}
-                    height={"auto"}
-                    // contentHeight="1rem"
-                    aspectRatio={1.5}
-                    datesSet={async (arg) => {
-                        await reloadData(arg.start, arg.end)
-                        setPeriodDisplay(updatePeriodDisplay(arg))
-                    }}
-                />
-            </CardContent>
-        </Card>
-
-    );
+      <CardContent className="h-full">
+        <FullCalendar
+          ref={calendarRef}
+          plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
+          initialView={TView.timeGridWeek}
+          headerToolbar={false}
+          events={events ?? []}
+          eventContent={EventContent}
+          locale={frLocale}
+          weekends={true}
+          allDaySlot={false}
+          slotMinTime={startTime}
+          slotMaxTime={endTime}
+          height={"auto"}
+          // contentHeight="1rem"
+          aspectRatio={1.5}
+          datesSet={async (arg) => {
+            await reloadData(arg.start, arg.end);
+            setPeriodDisplay(updatePeriodDisplay(arg));
+          }}
+        />
+      </CardContent>
+    </Card>
+  );
 }

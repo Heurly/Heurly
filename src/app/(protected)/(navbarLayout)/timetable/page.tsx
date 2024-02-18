@@ -10,10 +10,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { endOfWeek, startOfWeek } from "date-fns";
 import FormUrlTimetable from "@/components/form/form-url-timetable";
+import { redirect } from "next/navigation";
 
 export default async function PageTimetable() {
   const session = await getServerAuthSession();
-  if (session === null) return null;
+
+  // if the user is not authenticated, we redirect him to the login page
+  if (session === null) redirect("/login");
+
+  const userId = session.user.id;
 
   const dateFilter = {
     greater: startOfWeek(new Date()).getTime(),
@@ -24,7 +29,7 @@ export default async function PageTimetable() {
   // we count the number of url in the db for the user with prisma query
   const userUrlCount = await db.userTimetableURL.count({
     where: {
-      userId: session?.user.id,
+      userId: userId,
     },
   });
 
@@ -37,19 +42,17 @@ export default async function PageTimetable() {
         {isNewUser && (
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Bonjour Heurlyte !</AlertDialogTitle>
-              <div className="flex flex-col gap-y-5">
-                <p>
-                  Nous allons vous demander de choisir vos modules pour afficher
-                  votre emploi du temps.
-                </p>
-                <FormUrlTimetable />
-              </div>
+              <AlertDialogTitle>Bonjour le nouveau late !</AlertDialogTitle>
+              <p>
+                Plus qu'une étape pour être un vrai late, tu dois renseigner ton
+                URL de calendrier et c'est parti !
+              </p>
             </AlertDialogHeader>
+            <FormUrlTimetable />
             <AlertDialogFooter></AlertDialogFooter>
           </AlertDialogContent>
         )}
-        <Timetable />
+        <Timetable userId={userId} />
       </main>
     </AlertDialog>
   );
