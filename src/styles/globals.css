@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
     --sky-100: 203.88, 83.6%, 93.7%;
@@ -25,7 +25,7 @@
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
 
-    --accent: 0 0% 96.1%;
+    --accent: var(--sky-100);
     --accent-foreground: 0 0% 9%;
 
     --destructive: 0 84.2% 60.2%;
@@ -37,7 +37,7 @@
 
     --radius: 0.5rem;
   }
- 
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -57,7 +57,7 @@
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
 
-    --accent: 0 0% 14.9%;
+    --accent: var(--sky-100);
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -68,7 +68,7 @@
     --ring: 0 0% 83.1%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
@@ -86,13 +86,13 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background-color: rgb(34, 34, 34);
+  background-color: transparent;
   /* border-radius: 10px; */
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgb(64, 64, 64);
+  background: hsl(var(--primary));
   border-radius: 10px;
 }
 

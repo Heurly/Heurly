@@ -13,14 +13,29 @@ model Course {
   nom_cours   String  @default("")
   professeur  String? @default("")
   description String? @default("")
+  School      School? @relation(fields: [schoolId], references: [id])
+  schoolId    Int?
+}
+
+model School {
+  id        Int              @id @default(autoincrement())
+  name      String           @default("")
+  Course    Course[]
+  SchoolUrl SchoolHostname[]
+}
+
+model SchoolHostname {
+  id       Int    @id @default(autoincrement())
+  hostname String @default("")
+  schoolId Int
+  School   School @relation(fields: [schoolId], references: [id])
 }
 
 model Unit {
-  id       Int        @id @default(autoincrement())
-  name     String     @default("")
-  fullName String     @default("")
-  code     Int        @db.SmallInt @unique
-  UserUnit UserUnit[]
+  id       Int    @id @default(autoincrement())
+  name     String @default("")
+  fullName String @default("")
+  code     Int    @unique @db.SmallInt
 }
 
 model Account {
@@ -49,25 +64,22 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model UserUnit {
+model UserTimetableURL {
   id     Int    @id @default(autoincrement())
   userId String
-  unitId Int
+  url    String
   user   User   @relation(fields: [userId], references: [id])
-  unit   Unit   @relation(fields: [unitId], references: [id])
-
-  @@unique([userId, unitId])
 }
 
 model User {
-  id            String     @id @default(cuid())
-  name          String?
-  email         String?    @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  UserUnit      UserUnit[]
+  id               String             @id @default(cuid())
+  name             String?
+  email            String?            @unique
+  emailVerified    DateTime?
+  image            String?
+  accounts         Account[]
+  sessions         Session[]
+  UserTimetableURL UserTimetableURL[]
 }
 
 model VerificationToken {

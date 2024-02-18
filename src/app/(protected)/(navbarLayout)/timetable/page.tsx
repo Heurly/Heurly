@@ -1,79 +1,53 @@
 import Timetable from "@/components/timetable/timetable";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import { getTimetableData } from "@/server/timetable";
-import { TEventTimetable } from "@/types/timetable";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-
 } from "@/components/ui/alert-dialog";
-import { endOfWeek, startOfWeek } from "date-fns";
-import FormUnits from "@/components/form/form-units";
+import FormUrlTimetable from "@/components/form/form-url-timetable";
+import { redirect } from "next/navigation";
 
 export default async function PageTimetable() {
-
   const session = await getServerAuthSession();
-  if(session === null) return null;
 
-  const dateFilter = {
-    greater: startOfWeek(new Date()).getTime(),
-    lower: endOfWeek(new Date()).getTime(),
-  };
+  // if the user is not authenticated, we redirect him to the login page
+  if (session === null) redirect("/login");
 
-  const userUnits = await db.userUnit.findMany({
+  const userId = session.user.id;
+
+  // we verify if the user have an url in the db
+  // we count the number of url in the db for the user with prisma query
+  const userUrlCount = await db.userTimetableURL.count({
     where: {
-      user: {
-        id: session?.user.id
-      }
-    }
-  })
-  const modules = userUnits.map((unit) => unit.unitId)
-  const isNewUser = modules.length === 0;
-  // get modules from user
-  // const modules = [530, 3258, 3261, 3333];
-  let data: TEventTimetable[] | null = [];
+      userId: userId,
+    },
+  });
 
-
-  if (!isNewUser) {
-    data = await getTimetableData(dateFilter, modules);
-  }
+  // if the user has no url, we consider it as a new user
+  const isNewUser = userUrlCount <= 0;
 
   return (
-
-    <main className="w-full h-full">
-
-      <AlertDialog open={isNewUser}>
-        {
-          isNewUser && (
-            <>
-              <AlertDialogContent >
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Bonjour nouvel utilisateur !</AlertDialogTitle>
-                  <AlertDialogDescription className="flex flex-col gap-y-5">
-                    Nous allons vous demander de choisir vos modules pour afficher votre emploi du temps.
-                    <FormUnits session={session} />
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-
-                <AlertDialogFooter>
-                  {/* <AlertDialogCancel>Cancel</AlertDialogCancel> */}
-                  {/* <AlertDialogAction>Continuer</AlertDialogAction> */}
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </>
-
-          )
-        }
-        <Timetable tabEvents={data ?? []} />
-      </AlertDialog>
-    </main>
+    <AlertDialog open={isNewUser}>
+      <main className="h-full w-full">
+        {isNewUser && (
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Bonjour le nouveau late !</AlertDialogTitle>
+              <p>
+                Plus qu&apos;une étape pour être un vrai late, tu dois renseigner ton
+                URL de calendrier et c&apos;est parti !
+              </p>
+            </AlertDialogHeader>
+            <FormUrlTimetable />
+            <AlertDialogFooter></AlertDialogFooter>
+          </AlertDialogContent>
+        )}
+        <Timetable userId={userId} />
+      </main>
+    </AlertDialog>
   );
 }
-
-

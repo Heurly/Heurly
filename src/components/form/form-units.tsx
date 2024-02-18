@@ -1,128 +1,133 @@
-"use client";
-import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import id from "@/utils/id";
-import { Button } from "@/components/ui/button";
-import type { Session } from "next-auth";
-import cn from "classnames";
-import { getAllUnits } from "@/server/units";
-import { BoxSelect, Tag } from "lucide-react";
-import { ModuleChoice } from "@/types/timetable";
-import { addProfileUnit, getProfileUnits } from "@/server/user";
+// "use client";
+// import React, { useCallback, useEffect, useState } from "react";
+// import id from "@/utils/id";
+// import { Button, buttonVariants } from "@/components/ui/button";
+// import type { Session } from "next-auth";
+// import cn from "classnames";
+// import { getAllUnits } from "@/server/units";
+// import { BoxSelect } from "lucide-react";
+// import { ModuleChoice } from "@/types/timetable";
+// import { addProfileUnit, getProfileUnits } from "@/server/user";
+// import { Metadata } from "next";
+// import ID from "@/utils/id";
 
-interface Props {
-    session: Session;
-}
+// interface Props {
+//   session: Session;
+// }
 
-const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
-    const router = useRouter();
-    const [modules, setModules] = useState<ModuleChoice[]>();
-    const [selected, setSelected] = useState<string | undefined>(undefined);
-    const [options, setOptions] = useState<string[]>([]);
-    const [isAddable, setIsAddable] = useState<boolean>(false);
+// export const metadata: Metadata = {
+//   title: "Emplois du temps",
+// };
 
-    const addModule = useCallback(async () => {
-        if (modules == undefined) return;
-        const toAdd = modules.find((m) => m.label === selected);
-        const userModules = await getProfileUnits(session.user.id)
+// const FormUnits: React.FunctionComponent<Props> = ({ session }) => {
+//   const [modules, setModules] = useState<ModuleChoice[]>();
+//   const [selected, setSelected] = useState<string | undefined>(undefined);
+//   const [options, setOptions] = useState<string[]>([]);
+//   const [isAddable, setIsAddable] = useState<boolean>(false);
 
-        if (toAdd == undefined || userModules.find((code) => code === toAdd.code)) return;
-        console.log(session.user.id, toAdd.code)
-        await addProfileUnit(session.user.id, toAdd.code);
-        
-        router.refresh();
+//   const addModule = useCallback(async () => {
+//     if (modules == undefined) return;
+//     const toAdd = modules.find((m) => m.label === selected);
+//     const userModules = await getProfileUnits(session.user.id);
 
-    }, [selected, modules]);
+//     if (toAdd == undefined || userModules.find((code) => code === toAdd.code))
+//       return;
 
-    const select = (selection: string) => {
-        if (selected == undefined) setSelected(selection);
+//     await addProfileUnit(session.user.id, toAdd.code);
 
-        setSelected(selected?.concat(` - ${selection}`));
-    };
+//     // router.refresh();
+//   }, [selected, modules]);
 
-    const unselect = (level: number) => {
-        if (selected == undefined || level == 0) return;
+//   // const select = (selection: string) => {
+//   //     if (selected == undefined) setSelected(selection);
 
-        setSelected(selected.split(" - ").slice(0, level).join(" - "));
-    };
+//   //     setSelected(selected?.concat(` - ${selection}`));
+//   // };
 
-    useEffect(() => {
-        (async () => {
-            const allUnits = await getAllUnits();
-            setModules(allUnits);
-            setSelected(allUnits[0]?.label.split(" - ")[0]);
-        })().catch(e => console.error(e))
-    }, []);
+//   const unselect = (level: number) => {
+//     if (selected == undefined || level == 0) return;
 
-    useEffect(() => {
-        if (modules == undefined || selected == undefined) return;
-        const opts: string[] = [];
-        const selection = selected.split(" - ");
+//     setSelected(selected.split(" - ").slice(0, level).join(" - "));
+//   };
 
-        modules.forEach((m) => {
-            if (m.label.includes(selected)) {
-                const current = m.label.split(" - ");
-                if (current.length <= selection.length) return;
+//   useEffect(() => {
+//     (async () => {
+//       const allUnits = await getAllUnits();
+//       setModules(allUnits);
+//       setSelected(allUnits[0]?.label.split(" - ")[0]);
+//     })().catch((e) => console.error(e));
+//   }, []);
 
-                const opt = current.at(selection.length);
-                if (opt == undefined) return;
+//   useEffect(() => {
+//     if (modules == undefined || selected == undefined) return;
+//     const opts: string[] = [];
+//     const selection = selected.split(" - ");
 
-                const existing = opts.find((o) => o === opt);
+//     modules.forEach((m) => {
+//       if (m.label.includes(selected)) {
+//         const current = m.label.split(" - ");
+//         if (current.length <= selection.length) return;
 
-                if (existing == undefined) {
-                    opts.push(opt);
-                }
-            }
-        });
+//         const opt = current.at(selection.length);
+//         if (opt == undefined) return;
 
-        setOptions(opts);
-        setIsAddable(modules.find((m) => m.label === selected) != undefined);
-    }, [selected, modules]);
+//         const existing = opts.find((o) => o === opt);
 
-    return (
-        <div className="flex flex-col">
-            <div className="flex flex-wrap mb-4 bg-sky-100 p-4 rounded-xl">
-                {
-                    selected?.split(" - ").map((s, index) => (
-                        <div
-                            key={id()}
-                            className={cn(
-                                "flex p-1.5 w-fit mb-1 mr-1.5",
-                                "bg-sky-200 border border-sky-200 rounded-xl",
-                                "hover:text-red-400 cursor-pointer",
-                            )}
-                        >
-                            <BoxSelect />
-                            <span
-                                className="pl-2 cursor-pointer"
-                                onClick={() => unselect(index)}
-                            >
-                                {s}
-                            </span>
-                        </div>
-                    ))}
-            </div>
-            <div className="flex flex-wrap w-full">
-                {options.length > 0 &&
-                    options.map((o) => (
-                        <div
-                            key={id()}
-                            className={cn(
-                                "flex p-1.5 w-fit m-1.5",
-                                "bg-sky-100 border border-sky-200 rounded-xl",
-                                "hover:text-sky-400 cursor-pointer",
-                            )}
-                        >
-                            <Tag />
-                            <span className="pl-2 cursor-pointer" onClick={() => select(o)}>
-                                {o}
-                            </span>
-                        </div>
-                    ))}
-            </div>
-            {isAddable && <Button onClick={addModule}>Ajouter le module</Button>}
-        </div>
-    );
-};
+//         if (existing == undefined) {
+//           opts.push(opt);
+//         }
+//       }
+//     });
 
-export default FormUnits;
+//     setOptions(opts);
+//     setIsAddable(modules.find((m) => m.label === selected) != undefined);
+//   }, [selected, modules]);
+
+//   return (
+//     <div className="flex flex-col">
+//       <div className="mb-4 flex flex-wrap rounded-xl bg-sky-100 p-4">
+//         {selected?.split(" - ").map((optionSelected, index) => (
+//           <div
+//             key={id()}
+//             className={cn(
+//               "mb-1 mr-1.5 flex w-fit p-1.5",
+//               "rounded-xl border border-sky-200 bg-sky-200",
+//               "cursor-pointer hover:text-red-400",
+//             )}
+//           >
+//             <BoxSelect />
+//             <span
+//               className="cursor-pointer pl-2"
+//               onClick={() => unselect(index)}
+//             >
+//               {optionSelected}
+//             </span>
+//           </div>
+//         ))}
+//       </div>
+//       {/* need to review */}
+//       {/* https://css-tricks.com/almanac/properties/g/grid-auto-flow/ */}
+//       <div className="flex max-h-52 flex-wrap gap-3 overflow-auto">
+//         {options?.map((option) => (
+//           <div
+//             key={ID()}
+//             className={cn(
+//               "flex gap-x-3",
+//               buttonVariants({ variant: "outline" }),
+//             )}
+//           >
+//             {option}
+//           </div>
+//         ))}
+//       </div>
+//       {isAddable && (
+//         <div className="flex flex-col gap-y-5">
+//           <Button onClick={addModule}>Ajouter un autre module</Button>
+//           <Button>J&apos;ai fini !</Button>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default FormUnits;
