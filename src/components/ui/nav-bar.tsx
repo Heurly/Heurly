@@ -48,7 +48,7 @@ export default function NavBar() {
         },
     ];
     return (
-        <nav className="flex flex-col justify-between items-center md:h-full md:w-[unset] w-11/12 fixed bottom-0 mb-4 left-1/2 md:left-[unset] -translate-x-1/2 z-50 md:translate-x-0 md:relative md:top-[unset] px-3 md:py-10 py-4 bg-sky-200 rounded-3xl">
+        <nav className="flex flex-col justify-between items-center md:h-full md:w-[unset] w-11/12 fixed bottom-0 mb-4 left-1/2 md:left-[unset] -translate-x-1/2 z-40 md:translate-x-0 md:relative md:top-[unset] px-3 md:py-10 py-4 bg-sky-200 rounded-3xl">
             <Link href="/" data-cy="logo" className="hidden md:block">
                 <Logo className=" w-16" />
             </Link>
