@@ -34,7 +34,6 @@ export const env = createEnv({
     GOOGLE_SECRET: z.string(),
     BUCKET_APP_KEY: z.string(),
     BUCKET_KEY_ID: z.string(),
-    BUCKET_MASTER_KEY: z.string(),
     BUCKET_NAME: z.string()
   },
 
@@ -61,8 +60,7 @@ export const env = createEnv({
     GOOGLE_ID: process.env.GOOGLE_ID,
     GOOGLE_SECRET: process.env.GOOGLE_SECRET,
     BUCKET_APP_KEY:  process.env.BUCKET_APP_KEY,
-    BUCKET_KEY_ID:  process.env.BUCKET_ID,
-    BUCKET_MASTER_KEY:  process.env.BUCKET_MASTER_KEY,
+    BUCKET_KEY_ID:  process.env.BUCKET_KEY_ID,
     BUCKET_NAME:  process.env.BUCKET_NAME
   },
   /**

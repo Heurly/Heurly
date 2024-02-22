@@ -1,42 +1,64 @@
-"use server"
+"use server";
 
-import B2 from 'backblaze-b2';
+import B2 from "backblaze-b2";
+import { env } from "@/env";
 
+const b2 = new B2({
+  applicationKeyId: env.BUCKET_KEY_ID,
+  applicationKey: env.BUCKET_APP_KEY,
+});
 
-async function sendData() {
-    console.log(process.env.BUCKET_APP_KEY, process.env.BUCKET_KEY_ID)
-    const b2 = new B2({
-        applicationKeyId: process.env.BUCKET_KEY_ID ?? "",
-        applicationKey: process.env.BUCKET_APP_KEY ?? ""
-    });
-
-    try {
-        // Authorize with Backblaze B2
-        await b2.authorize();
-        console.log('Authorized with Backblaze B2');
-
-        // Get upload URL and authorization token
-        // const res = await b2.getUploadUrl({
-        //     bucketId: process.env.BUCKET_ID ?? ""
-        // });
-        // console.log(res)
-        // console.log('Upload URL:', uploadUrl);
-        // console.log('Authorization Token:', authorizationToken);
-
-        // // Upload file using the obtained URL and token
-        // const response = await b2.uploadFile({
-        //     uploadUrl: uploadUrl,
-        //     uploadAuthToken: authorizationToken,
-        //     fileName: 'test.txt',
-        //     data: Buffer.from('Hello, World!'),
-        //     onUploadProgress: (event) => {
-        //         console.log('Progress:', event);
-        //     }
-        // });
-        // console.log('File uploaded successfully:', response.data);
-    } catch (error) {
-        console.error('Error:', error);
-    }
+async function getBucketId() {
+  // Authorize with Backblaze B2
+  await b2.authorize();
+  try {
+    const {
+      data: {
+        buckets: [{ bucketId }],
+      },
+    } = await b2.getBucket({ bucketName: env.BUCKET_NAME });
+    return bucketId;
+  } catch (e) {
+    throw "Error: Could not get bucket.";
+  }
 }
 
-export { sendData }
+async function uploadFile(file: File) {
+  const bucketId = await getBucketId();
+  const {
+    data: { uploadUrl, authorizationToken },
+  } = await b2.getUploadUrl({ bucketId });
+
+  const fileBuffer = Buffer.from(await file.arrayBuffer()); // Convert File to Buffer
+
+  const response = await b2.uploadFile({
+    uploadUrl,
+    uploadAuthToken: authorizationToken,
+    fileName: "heurly_"+ file.name,
+    data: fileBuffer, // Use the converted Buffer
+  });
+
+  return response;
+}
+
+async function sendData(file: File) {
+    console.log("key id", env.BUCKET_KEY_ID)
+    console.log("app key", env.BUCKET_APP_KEY)
+  try {
+    // Get upload URL and authorization token
+    const bucketId = await getBucketId();
+
+    const {
+      data: { uploadUrl, authorizationToken },
+    } = await b2.getUploadUrl({ bucketId });
+
+    const res = await uploadFile(file);
+
+    console.log("File uploaded successfully:", res.data);
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+export { sendData };

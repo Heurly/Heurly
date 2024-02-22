@@ -7,7 +7,7 @@ export async function FormUploadDocs() {
   async function handleSubmit(e: FormData) {
     "use server"
     
-    await sendData()
+    await sendData(e.get("file") as File)
   }
 
   return (
