@@ -5,38 +5,36 @@ import { Archive, FileStack, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function ChoosePlugInPage() {
-  const plugIns = [
-    {
-      name: "Documents",
-      icon: <Archive />,
-      href: "/docs",
-    },
-    {
-      name: "Flashcards",
-      icon: <Zap />,
-      href: "/flashcards",
-    },
-  ];
+    const plugIns = [
+        {
+            name: "Documents",
+            icon: <Archive />,
+            href: "/docs",
+        },
+        {
+            name: "Flashcards",
+            icon: <Zap />,
+            href: "/flashcards",
+        },
+    ];
 
-  return (
-    <Card className="flex h-full w-full flex-col items-center justify-center gap-5 p-10">
+    return (
+        <Card className="flex h-full w-full flex-col items-center justify-center gap-5 p-10">
+            <Input placeholder="Rechercher un plug-in" />
 
-
-      <Input placeholder="Rechercher un plug-in" />
-
-      <div className="flex flex-wrap gap-5">
-        {plugIns?.map(({ name, icon, href }) => (
-          <Link href={`/revision${href}`} key={ID()}>
-            <Card className="flex h-36 w-36 cursor-pointer flex-col items-center justify-center">
-              <div>{icon}</div>
-              <div>
-                <p>{name}</p>
-              </div>
-            </Card>
-          </Link>
-        ))}
-        {!plugIns && <p>Aucun plug-in trouvé</p>}
-      </div>
-    </Card>
-  );
+            <div className="flex flex-wrap gap-5">
+                {plugIns?.map(({ name, icon, href }) => (
+                    <Link href={`/revision${href}`} key={ID()}>
+                        <Card className="flex h-36 w-36 cursor-pointer flex-col items-center justify-center">
+                            <div>{icon}</div>
+                            <div>
+                                <p>{name}</p>
+                            </div>
+                        </Card>
+                    </Link>
+                ))}
+                {!plugIns && <p>Aucun plug-in trouvé</p>}
+            </div>
+        </Card>
+    );
 }

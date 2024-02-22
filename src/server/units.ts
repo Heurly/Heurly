@@ -1,9 +1,9 @@
-"use server"
+"use server";
 
 import { db } from "@/server/db";
 import type { Unit } from "@prisma/client";
 
-async function getAllUnits(): Promise<{ label: string, code: number }[]> {
+async function getAllUnits(): Promise<{ label: string; code: number }[]> {
     const res = await db.unit.findMany();
 
     const data = res.map((m) => ({
@@ -11,16 +11,15 @@ async function getAllUnits(): Promise<{ label: string, code: number }[]> {
         code: m.code,
     }));
 
-    return data
-
+    return data;
 }
 
 async function getUnitById(unitId: Unit["id"]) {
     const res = await db.unit.findUnique({
         where: {
-            id: unitId
-        }
-    })
+            id: unitId,
+        },
+    });
 
     return res;
 }
@@ -28,11 +27,11 @@ async function getUnitById(unitId: Unit["id"]) {
 async function getUnitByCode(unitCode: Unit["code"]) {
     const res = await db.unit.findUnique({
         where: {
-            code: unitCode
-        }
-    })
+            code: unitCode,
+        },
+    });
 
     return res;
 }
 
-export { getAllUnits, getUnitById, getUnitByCode }
+export { getAllUnits, getUnitById, getUnitByCode };

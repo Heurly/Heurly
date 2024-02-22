@@ -4,13 +4,15 @@ import cn from "classnames";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <html lang="fr">
-      <body className={cn(inter.className, "bg-sky-100")}>{children}</body>
-    </html>
-  );
+    return (
+        <html lang="fr">
+            <body className={cn(inter.className, "bg-sky-100")}>
+                {children}
+            </body>
+        </html>
+    );
 }
