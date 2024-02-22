@@ -25,7 +25,7 @@ async function getBucketId() {
 }
 
 async function uploadFile(file: File) {
-    // zod verification for file size and	 type
+    // zod verification for file size and type
 
     const fileSchema = z.object({
         size: z.number().max(5000000),

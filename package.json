@@ -13,7 +13,13 @@
         "lint": "next lint",
         "start": "next start",
         "format": "prettier --check --ignore-path .gitignore .",
-        "format:fix": "prettier --write --ignore-path .gitignore ."
+        "format:fix": "prettier --write --ignore-path .gitignore .",
+        "prepare": "husky"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run format:fix && git add ."
+        }
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.10",
@@ -39,6 +45,7 @@
         "clsx": "^2.1.0",
         "date-fns": "^3.3.1",
         "fastest-levenshtein": "^1.0.16",
+        "husky": "^9.0.11",
         "ical2json": "^3.2.0",
         "icalts": "^0.0.2",
         "lucide-react": "^0.323.0",
