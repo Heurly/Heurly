@@ -1,4 +1,4 @@
-import { sendData } from "@/server/b2";
+import { uploadFile } from "@/server/b2";
 import { buttonVariants } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ export async function FormUploadDocs() {
     async function handleSubmit(e: FormData) {
         "use server";
 
-        await sendData(e.get("file") as File);
+        await uploadFile(e.get("file") as File);
     }
 
     return (
