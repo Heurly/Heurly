@@ -6,6 +6,8 @@
     :root {
         --sky-100: 203.88, 83.6%, 93.7%;
         --sky-200: 206.4, 86.1%, 85.3%;
+        --error-color: 0 84.2% 60.2%;
+
         --fc-page-bg-color: none;
         --background: 0 0% 100%;
         --foreground: 0 0% 3.9%;

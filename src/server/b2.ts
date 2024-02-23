@@ -3,6 +3,7 @@
 import B2 from "backblaze-b2";
 import { env } from "@/env";
 import * as z from "zod";
+import { fileFormDocsSchema } from "@/types/fileUpload";
 
 const b2 = new B2({
     applicationKeyId: env.BUCKET_KEY_ID,
@@ -26,14 +27,8 @@ async function getBucketId() {
 
 async function uploadFile(file: File) {
     // zod verification for file size and type
-
-    const fileSchema = z.object({
-        size: z.number().max(5000000),
-        type: z.string().regex(/application\/pdf/),
-    });
-
     try {
-        fileSchema.parse({
+        fileFormDocsSchema.parse({
             size: file.size,
             type: file.type,
         });
