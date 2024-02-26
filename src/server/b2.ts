@@ -1,9 +1,9 @@
 "use server";
-
+import "server-only";
 import B2 from "backblaze-b2";
 import { env } from "@/env";
 import * as z from "zod";
-import { fileFormDocsSchema } from "@/types/fileUpload";
+import { fileFormDocsSchema, trustFile } from "@/types/fileUpload";
 
 const b2 = new B2({
     applicationKeyId: env.BUCKET_KEY_ID,
@@ -27,14 +27,11 @@ async function getBucketId() {
 
 async function uploadFile(file: File) {
     // zod verification for file size and type
-    try {
-        fileFormDocsSchema.parse({
-            size: file.size,
-            type: file.type,
-        });
-    } catch (e) {
+
+    const res = trustFile.safeParse(file);
+    if (!res.success) {
         return {
-            error: "File is too big.",
+            error: res.error.errors[0]?.message,
         };
     }
 
@@ -55,14 +52,13 @@ async function uploadFile(file: File) {
         };
     }
 
-    const fileBuffer = Buffer.from(await file.arrayBuffer()); // Convert File to Buffer
-
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
     try {
         const response = await b2.uploadFile({
             uploadUrl,
             uploadAuthToken: authorizationToken,
             fileName: "heurly_" + file.name,
-            data: fileBuffer, // Use the converted Buffer
+            data: fileBuffer, // Use the converted binary string
         });
     } catch (e) {
         return {

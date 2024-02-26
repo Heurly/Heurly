@@ -10,31 +10,52 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { uploadFile } from "@/server/b2";
+import { fileFormDocsSchema } from "@/types/fileUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const formSchema = z.object({
-    file: z.instanceof(FileList),
-});
-
-export default function Home() {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+export default function FormUploadDocs() {
+    const form = useForm<z.infer<typeof fileFormDocsSchema>>({
+        resolver: zodResolver(fileFormDocsSchema),
     });
+
+    const [wasUploaded, setWasUploaded] = useState(false);
 
     const fileRef = form.register("file");
 
-    const onSubmit = (data: z.infer<typeof formSchema>) => {
-        // verification for file size and type with zod
-        try {
-            formSchema.parse(data);
-        } catch (e) {
+    const onSubmit = async (data: z.infer<typeof fileFormDocsSchema>) => {
+        console.log(data);
+        // Verification for file size and type with zod
+        const res = fileFormDocsSchema.safeParse(data);
+
+        const files = data.file as FileList;
+
+        if (!res.success) {
             form.setError("file", {
-                message: "File is too big or not a pdf.",
+                message: res.error.errors[0]?.message,
             });
             return;
         }
+
+        // Read the file as a Blob
+        // transform the FilesList into an array
+        const tabFiles = Array.from(files);
+
+        for (const file of tabFiles) {
+            console.log(file);
+            const resUpload = await uploadFile(file);
+            if (resUpload?.error) {
+                form.setError("file", {
+                    message: resUpload.error,
+                });
+                return;
+            }
+        }
+
+        setWasUploaded(true);
     };
 
     return (
@@ -51,13 +72,12 @@ export default function Home() {
                             <FormItem>
                                 <FormLabel>File</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="file"
-                                        placeholder="shadcn"
-                                        {...fileRef}
-                                    />
+                                    <Input type="file" {...fileRef} />
                                 </FormControl>
                                 <FormMessage />
+                                {wasUploaded && (
+                                    <FormMessage>File was uploaded</FormMessage>
+                                )}
                             </FormItem>
                         );
                     }}
