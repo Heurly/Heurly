@@ -2,13 +2,8 @@
 import "server-only";
 import B2 from "backblaze-b2";
 import { env } from "@/env";
-import * as z from "zod";
-import {
-    formUploadDocsSchema,
-    trustFile,
-    trustFileList,
-} from "@/types/fileUpload";
-import { P } from "node_modules/@fullcalendar/core/internal-common";
+import { trustFile, trustFileList } from "@/types/schema/fileUpload";
+import slugify from "slugify";
 
 const b2 = new B2({
     applicationKeyId: env.BUCKET_KEY_ID,
@@ -30,63 +25,7 @@ async function getBucketId() {
     }
 }
 
-async function handleFormUploadDocs(data: FormData) {
-    const fileEntry = data.get("file") as unknown as FileList;
-    if (!fileEntry) {
-        // Handle the case where no file was found in the FormData
-        return {
-            error: "No file found",
-        };
-    }
-
-    if (fileEntry instanceof File) {
-        const file = fileEntry;
-
-        const resCheckTrustFile = trustFile.safeParse(file);
-
-        if (!resCheckTrustFile.success) {
-            return {
-                error: resCheckTrustFile.error.errors[0]?.message,
-            };
-        }
-
-        const res = await uploadFile(file);
-        if (res?.error) {
-            return {
-                error: res.error,
-            };
-        }
-        return {
-            success: true,
-        };
-    }
-
-    const resCheckFileList = trustFileList.safeParse(fileEntry as FileList);
-
-    if (!resCheckFileList.success) {
-        return {
-            error: resCheckFileList.error.errors[0]?.message,
-        };
-    }
-
-    // Handle multiple file uploads
-    for (const file of fileEntry) {
-        const res = await uploadFile(file);
-        if (res?.error) {
-            return {
-                error: res.error,
-            };
-        }
-    }
-
-    // Assuming uploadFile is a function that uploads a file and returns a response object
-    // If all uploads are successful, return a success response
-    return {
-        success: true,
-    };
-}
-
-async function uploadFile(file: File) {
+export async function uploadFile(file: File) {
     // zod verification for file size and type
 
     const res = trustFile.safeParse(file);
@@ -118,15 +57,27 @@ async function uploadFile(file: File) {
         const response = await b2.uploadFile({
             uploadUrl: uploadUrlFromB2,
             uploadAuthToken: authorizationTokenFromB2,
-            fileName: "heurly_" + file.name,
-            data: fileBuffer, // Use the converted binary string
+            fileName: "heurly_" + slugify(file.name, "_"),
+            data: fileBuffer,
         });
+        if (response.status !== 200) {
+            return {
+                error: "Error when uploading file.",
+            };
+        }
+        console.log(response);
     } catch (e) {
-        console.log(e);
         return {
             error: "Error when uploading file.",
         };
     }
 }
 
-export { uploadFile, handleFormUploadDocs };
+export async function getBucketFile(fileId: string) {
+    await b2.authorize();
+
+    b2.downloadFileById({
+        fileId: "fileId",
+        responseType: "arraybuffer",
+    });
+}

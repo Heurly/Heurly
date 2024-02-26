@@ -10,14 +10,16 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { handleFormUploadDocs } from "@/server/b2";
-import { formUploadDocsSchema } from "@/types/fileUpload";
+import { handleFormUploadDocs } from "@/server/docs";
+import { formUploadDocsSchema } from "@/types/schema/fileUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export default function FormUploadDocs() {
+    const session = useSession();
     const form = useForm<z.infer<typeof formUploadDocsSchema>>({
         resolver: zodResolver(formUploadDocsSchema),
     });
@@ -47,6 +49,9 @@ export default function FormUploadDocs() {
                 sendForm.append("file", files[i] as File);
             }
         }
+
+        sendForm.append("userId", session.data?.user?.id as string);
+
         const resUpload = await handleFormUploadDocs(sendForm);
 
         if (resUpload?.error) {
@@ -55,36 +60,45 @@ export default function FormUploadDocs() {
             });
             return;
         }
-
-        setWasUploaded(true);
+        if (resUpload?.success) setWasUploaded(true);
     };
 
     return (
-        <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="w-full p-10"
-            >
-                <FormField
-                    control={form.control}
-                    name="file"
-                    render={({ field }) => {
-                        return (
-                            <FormItem>
-                                <FormLabel>File</FormLabel>
-                                <FormControl>
-                                    <Input type="file" {...fileRef} />
-                                </FormControl>
-                                <FormMessage />
-                                {wasUploaded && (
-                                    <FormMessage>File was uploaded</FormMessage>
-                                )}
-                            </FormItem>
-                        );
-                    }}
-                />
-                <Button type="submit">Submit</Button>
-            </form>
-        </Form>
+        <>
+            {!session.data?.user?.id ? (
+                <p>
+                    Vous devez être connecté pour pouvoir uploader un document
+                </p>
+            ) : (
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="w-full p-10"
+                    >
+                        <FormField
+                            control={form.control}
+                            name="file"
+                            render={({ field }) => {
+                                return (
+                                    <FormItem>
+                                        <FormLabel>File</FormLabel>
+                                        <FormControl>
+                                            <Input type="file" {...fileRef} />
+                                        </FormControl>
+                                        <FormMessage />
+                                        {wasUploaded && (
+                                            <FormMessage>
+                                                File was uploaded
+                                            </FormMessage>
+                                        )}
+                                    </FormItem>
+                                );
+                            }}
+                        />
+                        <Button type="submit">Submit</Button>
+                    </form>
+                </Form>
+            )}
+        </>
     );
 }
