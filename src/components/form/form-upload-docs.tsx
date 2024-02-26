@@ -10,26 +10,25 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { uploadFile } from "@/server/b2";
-import { fileFormDocsSchema } from "@/types/fileUpload";
+import { handleFormUploadDocs } from "@/server/b2";
+import { formUploadDocsSchema } from "@/types/fileUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export default function FormUploadDocs() {
-    const form = useForm<z.infer<typeof fileFormDocsSchema>>({
-        resolver: zodResolver(fileFormDocsSchema),
+    const form = useForm<z.infer<typeof formUploadDocsSchema>>({
+        resolver: zodResolver(formUploadDocsSchema),
     });
 
     const [wasUploaded, setWasUploaded] = useState(false);
 
     const fileRef = form.register("file");
 
-    const onSubmit = async (data: z.infer<typeof fileFormDocsSchema>) => {
-        console.log(data);
+    const onSubmit = async (data: z.infer<typeof formUploadDocsSchema>) => {
         // Verification for file size and type with zod
-        const res = fileFormDocsSchema.safeParse(data);
+        const res = formUploadDocsSchema.safeParse(data);
 
         const files = data.file as FileList;
 
@@ -39,20 +38,22 @@ export default function FormUploadDocs() {
             });
             return;
         }
+        const sendForm = new FormData();
+        if (!files) return;
 
-        // Read the file as a Blob
-        // transform the FilesList into an array
-        const tabFiles = Array.from(files);
-
-        for (const file of tabFiles) {
-            console.log(file);
-            const resUpload = await uploadFile(file);
-            if (resUpload?.error) {
-                form.setError("file", {
-                    message: resUpload.error,
-                });
-                return;
+        for (let i = 0; i < files.length; i++) {
+            // Correctly check if the file at the current index is not undefined
+            if (files[i]) {
+                sendForm.append("file", files[i] as File);
             }
+        }
+        const resUpload = await handleFormUploadDocs(sendForm);
+
+        if (resUpload?.error) {
+            form.setError("file", {
+                message: resUpload.error,
+            });
+            return;
         }
 
         setWasUploaded(true);
