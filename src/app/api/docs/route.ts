@@ -1,40 +1,87 @@
-"use server";
 import { trustFile, trustFileList } from "@/types/schema/fileUpload";
-import { uploadFile } from "./b2";
-import { db } from "./db";
+import { uploadFile } from "@/server/b2";
+import { db } from "@/server/db";
 import type { User } from "next-auth";
 import * as z from "zod";
 import slugify from "slugify";
-import { b2 } from "node_modules/@fullcalendar/core/internal-common";
-
+// import tf from "@tensorflow/tfjs-node";
 import * as toxicity from "@tensorflow-models/toxicity";
+import fs from "fs";
+import { getDocument } from "pdfjs-dist";
+import { TextItem } from "pdfjs-dist/types/src/display/api";
+// Dynamically set the worker source
+const pdfjs = await import("pdfjs-dist");
+pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
 
-// import pdfjsLib from 'pdfjs-dist';
+export async function POST(request: Request) {
+    // handle the form data
+    const res = await handleFormUploadDocs(await request.formData());
+    return Response.json(res);
+}
 
 function isDocsTypeSafe(file: File) {
     return trustFile.safeParse(file).success;
 }
 
+async function extractTextFromPDF(pdfData: Uint8Array): Promise<string> {
+    const loadingTask = getDocument({ data: pdfData });
+    const pdf = await loadingTask.promise;
+
+    let textContent = "";
+
+    // Iterate through each page
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+
+        const pageTextContent = await page.getTextContent();
+
+        pageTextContent.items.forEach((item) => {
+            if ("str" in item) {
+                textContent += item.str + " ";
+            }
+        });
+    }
+    console.log("TEXT CONTENT:", textContent);
+    return textContent;
+}
+
 async function isDocsToxic(file: File) {
-    // get the pdf content
-    const fileContent = await file.text();
-    console.log(fileContent);
+    const fileContentArrayBuffer = await file.arrayBuffer();
+    // Convert ArrayBuffer to Uint8Array
+    const fileContent = new Uint8Array(fileContentArrayBuffer);
+
+    let textContent = "";
+
+    // Extract the PDF content
+    try {
+        textContent = await extractTextFromPDF(fileContent);
+    } catch (e) {
+        throw new Error("Error extracting text from PDF", e as Error);
+    }
+
     const threshold = 0.9;
 
-    const topics =
-        "identity_attack, insult, obscene, severe_toxicity, sexual_explicit, threat, toxicity, got identity attack, insult, obscene, severe toxicity, sexual explicit, threat, toxicity".split(
-            ", ",
-        );
-    const model = await toxicity.load(threshold, topics);
-    const predictions = await model.classify(fileContent);
-    const resToxicity = predictions.every(
+    const toxicityLabels = [
+        "identity_attack",
+        "insult",
+        "obscene",
+        "severe_toxicity",
+        "sexual_explicit",
+        "threat",
+        "toxicity",
+    ];
+    const model = await toxicity.load(threshold, toxicityLabels);
+    const predictions = await model.classify(textContent);
+    const isTextNotToxic = predictions.every(
         (prediction) => prediction.results[0]?.match === false,
     );
-    return resToxicity;
+    console.log(JSON.stringify(predictions));
+    return !isTextNotToxic;
 }
 
 export async function handleFormUploadDocs(data: FormData) {
     const fileEntry = data.get("file") as unknown as FileList;
+
     const userId = data.get("userId") as User["id"];
     if (!fileEntry) {
         // Handle the case where no file was found in the FormData
@@ -54,7 +101,9 @@ export async function handleFormUploadDocs(data: FormData) {
         }
 
         // check if the file is toxic
-        if (await isDocsToxic(file)) {
+        const isToxic = await isDocsToxic(file);
+
+        if (isToxic) {
             return {
                 error: "This file is toxic",
             };
@@ -170,5 +219,3 @@ export async function postFile(file: File, userId: User["id"]) {
         success: true,
     };
 }
-
-export async function getDocs() {}

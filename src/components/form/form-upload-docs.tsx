@@ -10,7 +10,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { handleFormUploadDocs } from "@/server/docs";
+// import {  handleFormUploadDocs } from "@/server/docs";
 import { formUploadDocsSchema } from "@/types/schema/fileUpload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
@@ -52,7 +52,10 @@ export default function FormUploadDocs() {
 
         sendForm.append("userId", session.data?.user?.id as string);
 
-        const resUpload = await handleFormUploadDocs(sendForm);
+        const resUpload = await fetch("/api/docs", {
+            method: "POST",
+            body: sendForm,
+        }).then((res) => res.json());
 
         if (resUpload?.error) {
             form.setError("file", {
