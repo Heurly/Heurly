@@ -6,7 +6,13 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Link from "next/link";
-import { Calendar, CalendarCheck, FileStack, LogOut, Settings } from "lucide-react";
+import {
+    Calendar,
+    CalendarCheck,
+    FileStack,
+    LogOut,
+    Settings,
+} from "lucide-react";
 
 type PropsNavBarItems = {
     name: React.ReactNode;
@@ -48,17 +54,26 @@ export default function NavBar() {
         },
     ];
     return (
-        <nav className="flex flex-col justify-between items-center md:h-full md:w-[unset] w-11/12 fixed bottom-0 mb-4 left-1/2 md:left-[unset] -translate-x-1/2 z-50 md:translate-x-0 md:relative md:top-[unset] px-3 md:py-10 py-4 bg-sky-200 rounded-3xl">
+        <nav className="fixed bottom-0 left-1/2 z-40 mb-4 flex w-11/12 -translate-x-1/2 flex-col items-center justify-between rounded-3xl bg-sky-200 px-3 py-4 md:relative md:left-[unset] md:top-[unset] md:h-full md:w-[unset] md:translate-x-0 md:py-10">
             <Link href="/" data-cy="logo" className="hidden md:block">
                 <Logo className=" w-16" />
             </Link>
-            <div className="flex md:flex-col gap-10 justify-between w-full md:w-[unset] px-5">
+            <div className="flex w-full justify-between gap-10 px-5 md:w-[unset] md:flex-col">
                 {navbarElement.map(({ href, name, icon }, index) => (
-                    <NavBarItems key={index} name={name} icon={icon} href={href} />
+                    <NavBarItems
+                        key={index}
+                        name={name}
+                        icon={icon}
+                        href={href}
+                    />
                 ))}
             </div>
-            <div className="md:flex flex-col gap-5 justify-between hidden">
-                <NavBarItems href="/logout" name="Déconnexion" icon={<LogOut />} />
+            <div className="hidden flex-col justify-between gap-5 md:flex">
+                <NavBarItems
+                    href="/logout"
+                    name="Déconnexion"
+                    icon={<LogOut />}
+                />
                 <NavBarItems
                     href="/settings"
                     name="Paramètres"

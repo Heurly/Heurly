@@ -24,6 +24,7 @@ export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
 
     useEffect(() => {
         onChange(date);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [date]);
 
     const handleDateSelect = (selectedDate: Date | undefined) => {
@@ -42,7 +43,7 @@ export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
                 <Button
                     variant={"outline"}
                     className={cn(
-                        "w-[280px] justify-start text-left font-normal bg-sky-50 border-0",
+                        "w-[280px] justify-start border-0 bg-sky-50 text-left font-normal",
                         !date && "text-muted-foreground",
                         className,
                     )}
