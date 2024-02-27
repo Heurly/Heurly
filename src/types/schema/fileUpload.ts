@@ -9,17 +9,17 @@ export const trustFile = z
         message: "Expected a file",
     })
     .refine(
-        (file) => file.size < MAX_FILE_SIZE,
+        (file) => (file as File).size < MAX_FILE_SIZE,
         `File size should be less than 5mb.`,
     )
     .refine(
-        (file) => ACCEPTED_DOCS_TYPES.includes(file.type),
+        (file) => ACCEPTED_DOCS_TYPES.includes((file as File).type),
         "Only these types are allowed .pdf",
     )
     .refine(
         (file) =>
-            file.size < MAX_FILE_SIZE &&
-            ACCEPTED_DOCS_TYPES.includes(file.type),
+            (file as File).size < MAX_FILE_SIZE &&
+            ACCEPTED_DOCS_TYPES.includes((file as File).type),
         "File size should be less than 5mb and only these types are allowed .pdf",
     );
 

@@ -50,20 +50,33 @@ export default function FormUploadDocs() {
             }
         }
 
-        sendForm.append("userId", session.data?.user?.id as string);
+        // if(!session.data) return;
+
+        const userId = session.data!.user.id;
+
+        sendForm.append("userId", userId);
+
+        type error = { error: string };
+        type success = { success: boolean };
+        type returnUpload = error | success;
 
         const resUpload = await fetch("/api/docs", {
             method: "POST",
             body: sendForm,
-        }).then((res) => res.json());
+        });
 
-        if (resUpload && resUpload.error) {
+        const dataUpload = (await resUpload.json()) as returnUpload;
+
+        if (!dataUpload) return;
+
+        if ("error" in dataUpload && dataUpload.error) {
             form.setError("file", {
-                message: resUpload.error,
+                message: dataUpload.error,
             });
             return;
         }
-        if (resUpload && resUpload.success) setWasUploaded(true);
+
+        if ("success" in dataUpload && dataUpload.success) setWasUploaded(true);
     };
 
     return (
@@ -81,7 +94,7 @@ export default function FormUploadDocs() {
                         <FormField
                             control={form.control}
                             name="file"
-                            render={({ field }) => {
+                            render={() => {
                                 return (
                                     <FormItem>
                                         <FormLabel>File</FormLabel>

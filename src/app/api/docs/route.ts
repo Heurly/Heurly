@@ -39,7 +39,6 @@ async function extractTextFromPDF(pdfData: Uint8Array): Promise<string> {
             }
         });
     }
-    console.log("TEXT CONTENT:", textContent);
     return textContent;
 }
 
@@ -73,7 +72,6 @@ async function isDocsToxic(file: File) {
     const isTextNotToxic = predictions.every(
         (prediction) => prediction.results[0]?.match === false,
     );
-    console.log(JSON.stringify(predictions));
     return !isTextNotToxic;
 }
 
@@ -212,7 +210,7 @@ async function postFile(file: File, userId: User["id"]) {
             userId: userId,
         },
     });
-
+    console.log(resDb);
     return {
         success: true,
     };

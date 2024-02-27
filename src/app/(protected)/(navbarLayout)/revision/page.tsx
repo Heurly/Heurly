@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import ID from "@/utils/id";
-import { Archive, FileStack, Zap } from "lucide-react";
+import { Archive, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function ChoosePlugInPage() {

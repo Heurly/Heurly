@@ -24,6 +24,7 @@ export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
 
     useEffect(() => {
         onChange(date);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [date]);
 
     const handleDateSelect = (selectedDate: Date | undefined) => {

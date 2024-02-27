@@ -1,4 +1,3 @@
-import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { redirect } from "next/navigation";
 
