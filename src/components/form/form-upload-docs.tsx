@@ -43,10 +43,10 @@ export default function FormUploadDocs() {
         const sendForm = new FormData();
         if (!files) return;
 
-        for (let i = 0; i < files.length; i++) {
+        for (const file of files) {
             // Correctly check if the file at the current index is not undefined
-            if (files[i]) {
-                sendForm.append("file", files[i] as File);
+            if (file) {
+                sendForm.append("file", file);
             }
         }
 
@@ -57,13 +57,13 @@ export default function FormUploadDocs() {
             body: sendForm,
         }).then((res) => res.json());
 
-        if (resUpload?.error) {
+        if (resUpload && resUpload.error) {
             form.setError("file", {
                 message: resUpload.error,
             });
             return;
         }
-        if (resUpload?.success) setWasUploaded(true);
+        if (resUpload && resUpload.success) setWasUploaded(true);
     };
 
     return (

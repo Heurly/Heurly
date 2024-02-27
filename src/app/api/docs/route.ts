@@ -6,14 +6,12 @@ import * as z from "zod";
 import slugify from "slugify";
 // import tf from "@tensorflow/tfjs-node";
 import * as toxicity from "@tensorflow-models/toxicity";
-import fs from "fs";
 import { getDocument } from "pdfjs-dist";
-import { TextItem } from "pdfjs-dist/types/src/display/api";
 // Dynamically set the worker source
 const pdfjs = await import("pdfjs-dist");
 pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<Response> {
     // handle the form data
     const res = await handleFormUploadDocs(await request.formData());
     return Response.json(res);
@@ -79,7 +77,7 @@ async function isDocsToxic(file: File) {
     return !isTextNotToxic;
 }
 
-export async function handleFormUploadDocs(data: FormData) {
+async function handleFormUploadDocs(data: FormData) {
     const fileEntry = data.get("file") as unknown as FileList;
 
     const userId = data.get("userId") as User["id"];
@@ -131,7 +129,7 @@ export async function handleFormUploadDocs(data: FormData) {
     }
 
     if ((fileEntry as unknown) instanceof FileList) {
-        const resCheckFileList = trustFileList.safeParse(fileEntry as FileList);
+        const resCheckFileList = trustFileList.safeParse(fileEntry);
 
         if (!resCheckFileList.success) {
             return {
@@ -176,7 +174,7 @@ export async function handleFormUploadDocs(data: FormData) {
     };
 }
 
-export async function postFile(file: File, userId: User["id"]) {
+async function postFile(file: File, userId: User["id"]) {
     // validate the file
     const res = trustFile.safeParse(file);
     if (!res.success) {
