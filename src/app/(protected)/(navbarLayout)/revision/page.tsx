@@ -19,7 +19,7 @@ export default function ChoosePlugInPage() {
         {
             name: "Q & A",
             icon: <MessageCircleQuestion />,
-            href: "/Q&A",
+            href: "/QandA",
         },
     ];
 
