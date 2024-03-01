@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import ID from "@/utils/id";
-import { Archive, Zap } from "lucide-react";
+import { Archive, MessageCircleQuestion, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function ChoosePlugInPage() {
@@ -15,6 +15,11 @@ export default function ChoosePlugInPage() {
             name: "Flashcards",
             icon: <Zap />,
             href: "/flashcards",
+        },
+        {
+            name: "Q & A",
+            icon: <MessageCircleQuestion />,
+            href: "/Q&A",
         },
     ];
 

@@ -48,6 +48,24 @@ model Unit {
   code     Int    @unique @db.SmallInt
 }
 
+model Question {
+  id           Int      @id @default(autoincrement())
+  question     String
+  descriptijon String
+  upvotes      Int      @default(0)
+  downvotes    Int      @default(0)
+  Answer       Answer[]
+}
+
+model Answer {
+  id         Int      @id @default(autoincrement())
+  answer     String
+  upvotes      Int      @default(0)
+  downvotes    Int      @default(0)
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId Int
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
