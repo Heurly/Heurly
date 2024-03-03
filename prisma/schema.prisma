@@ -52,7 +52,7 @@ model Unit {
 model Question {
   id           String   @id @default(cuid())
   question     String
-  descriptijon String
+  description String
   upvotes      Int      @default(0)
   downvotes    Int      @default(0)
   answer       Answer[]

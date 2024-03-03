@@ -1,9 +1,11 @@
-import QuestionCard from "@/components/Q&A/question-card";
-import { Button } from "@/components/ui/button";
+import QandACard from "@/components/Q&A/QandA-card";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { getQuestions } from "@/server/questions";
 import ID from "@/utils/id";
 import { MailQuestion, UserSearch } from "lucide-react";
 import Link from "next/link";
+
+import cn from "classnames";
 
 export default async function ListQuestions() {
     const questions = await getQuestions();
@@ -17,9 +19,10 @@ export default async function ListQuestions() {
                         key={ID()}
                         className="w-full"
                     >
-                        <QuestionCard
-                            question={question.question}
-                            description={question.descriptijon} // Renamed from descriptijon
+                        <QandACard
+                            type={"question"}
+                            title={question.question}
+                            text={question.description} // Renamed from descriptijon
                             date={question.createdAt} // Assuming createdAt is the date
                             author={question.user.name ?? "anonymous"} // Assuming userId is the author
                             upvotes={question.upvotes}
@@ -30,9 +33,15 @@ export default async function ListQuestions() {
                 {questions.length === 0 && <p>Aucune question trouvée</p>}
             </div>
             <div className="hidden h-full w-1/12 flex-col gap-y-5 md:flex">
-                <Button className="h-28 rounded-3xl">
+                <Link
+                    className={cn(
+                        buttonVariants({ variant: "default" }),
+                        "h-28",
+                    )}
+                    href="/revision/QandA/create"
+                >
                     <MailQuestion />
-                </Button>
+                </Link>
                 <Button className="hidden h-24 rounded-3xl md:flex">
                     <UserSearch />
                 </Button>

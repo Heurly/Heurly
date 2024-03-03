@@ -20,7 +20,7 @@ export default function Vote({
     hasVotedUp,
 }: PropsVote) {
     return (
-        <div className="grid max-h-48 w-20 max-w-24">
+        <div className="grid max-h-20 w-20 max-w-24">
             <div className="flex flex-col md:flex-row">
                 <ChevronUpCircle
                     size={75}
