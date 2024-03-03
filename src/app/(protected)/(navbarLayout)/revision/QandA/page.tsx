@@ -1,6 +1,6 @@
 import QandACard from "@/components/Q&A/QandA-card";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { getQuestions } from "@/server/questions";
+import { getQuestions } from "@/server/question";
 import ID from "@/utils/id";
 import { MailQuestion, UserSearch } from "lucide-react";
 import Link from "next/link";

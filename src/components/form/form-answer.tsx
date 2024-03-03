@@ -1,79 +1,86 @@
 "use client";
 
-import { Form, FormField } from "@/components/ui/form";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
+} from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Reply, SendHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { formAnswerSchema } from "@/types/schema/form-answer";
+import type { Question, User } from "@prisma/client";
+import { handleFormCreateAnswer } from "@/server/answer";
+import { useRouter } from "next/navigation";
 
-const maxCharsContent = 500;
-const minCharsContent = 10;
-const maxCharsTitle = 100;
-const minCharsTitle = 5;
+type PropsFormAnswer = {
+    userId: User["id"];
+    questionId: Question["id"];
+};
 
-const formAnswerSchema = z.object({
-    title: z
-        .string({ required_error: "Le titre est requis" })
-        .max(maxCharsTitle, {
-            message: `Le titre ne doit pas dépasser ${maxCharsTitle} caractères`,
-        })
-        .min(minCharsTitle, {
-            message: `Le titre doit contenir au moins ${minCharsTitle} caractères`,
-        }),
-    content: z
-        .string({ required_error: "Le contenu est requis" })
-        .max(maxCharsContent, {
-            message: `Le contenu ne doit pas dépasser ${maxCharsContent} caractères`,
-        })
-        .min(minCharsContent, {
-            message: `Le contenu doit contenir au moins ${minCharsContent} caractères`,
-        }),
-});
+export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
+    const router = useRouter();
 
-export default function FormAnswer() {
     const form = useForm<z.infer<typeof formAnswerSchema>>({
         resolver: zodResolver(formAnswerSchema),
     });
 
-    const onSubmit = (data: z.infer<typeof formAnswerSchema>) => {
+    const onSubmit = async (data: z.infer<typeof formAnswerSchema>) => {
+        const res = await handleFormCreateAnswer({
+            ...data,
+            userId,
+            questionId,
+        });
+
+        if (res.success === true) {
+            form.reset();
+            router.refresh();
+        }
         console.log(data);
     };
 
     return (
-        <Form {...form}>
-            <form
-                className="flex flex-col items-end gap-5"
-                onSubmit={form.handleSubmit(onSubmit)}
-            >
-                <div className="flex w-full gap-x-3">
-                    <Reply />
-                    <FormField
-                        control={form.control}
-                        name="title"
-                        render={() => (
-                            <Input type="text" placeholder="Votre titre" />
-                        )}
-                    />
-                </div>
+        <>
+            {!userId ? (
+                <p>Vous devez être connecté pour répondre à une question</p>
+            ) : (
+                <Form {...form}>
+                    <form
+                        className="flex flex-col items-end gap-5"
+                        onSubmit={form.handleSubmit(onSubmit)}
+                    >
+                        <div className="flex w-full gap-x-3">
+                            <Reply />{" "}
+                            <FormField
+                                control={form.control}
+                                name="content"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Votre réponse"
+                                                className="h-40 rounded-t-none "
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
-                <FormField
-                    control={form.control}
-                    name="content"
-                    render={() => (
-                        <Textarea
-                            placeholder="Votre réponse"
-                            className="h-40 rounded-b-3xl rounded-t-none "
-                        />
-                    )}
-                />
-                <Button type="submit" className="md:w-1/12">
-                    <SendHorizontal />
-                    &nbsp;Envoyer
-                </Button>
-            </form>
-        </Form>
+                        <Button type="submit" className="w-full md:w-40">
+                            <SendHorizontal />
+                            &nbsp;Envoyer
+                        </Button>
+                    </form>
+                </Form>
+            )}
+        </>
     );
 }

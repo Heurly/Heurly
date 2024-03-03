@@ -1,4 +1,4 @@
-import { trustFile, trustFileList } from "@/types/schema/fileUpload";
+import { trustFile, trustFileList } from "@/types/schema/file-upload";
 import { uploadFile } from "@/server/b2";
 import { db } from "@/server/db";
 import type { User } from "next-auth";

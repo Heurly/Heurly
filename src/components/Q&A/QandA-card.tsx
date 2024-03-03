@@ -1,19 +1,20 @@
 "use client";
 
-import { Card, CardContent } from "../ui/card";
-import DateFormatted from "../ui/date-formatted";
+import { Card, CardContent } from "@/components/ui/card";
+import DateFormatted from "@/components/ui/date-formatted";
 import Vote from "@/components/Q&A/Vote";
 import cn from "classnames";
 import React, { useState } from "react";
-import { buttonVariants } from "../ui/button";
-import { HelpCircle, Reply } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import type { User } from "@prisma/client";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type PropsQuestionCard = {
     type: "question" | "answer";
-    title: string;
+    title?: string;
     text: string;
     date: Date;
-    author: string;
+    author: User;
     upvotes: number;
     downvotes: number;
     hasVotedDown?: boolean;
@@ -50,10 +51,13 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
         function handleDownVote() {
             console.log("downvote");
         }
+
+        if (!author.name) return;
+
         return (
             <Card
                 ref={ref}
-                className={cn(className, "w-11/12 px-10 py-16 ", {
+                className={cn(className, "w-11/12 md:px-10 md:py-16 ", {
                     "w-full": type == "question",
                 })}
                 {...props}
@@ -62,22 +66,34 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                     <div className="grid gap-y-3">
                         <div className="flex flex-col">
                             <div className="flex flex-col">
-                                <div className="flex gap-3">
-                                    {type == "question" ? (
-                                        <HelpCircle />
-                                    ) : (
-                                        <Reply />
-                                    )}
-                                    <h2 className="text-xl font-bold">
-                                        {title}
-                                    </h2>
+                                <div className="flex items-center gap-3">
+                                    <Avatar>
+                                        <AvatarImage
+                                            src={author.image ?? ""}
+                                            alt={author.name}
+                                        />
+                                        <AvatarFallback>
+                                            {author.name
+                                                .split(" ")
+                                                .map((n) => n[0])
+                                                .join("")}
+                                        </AvatarFallback>
+                                    </Avatar>
+
+                                    <div>
+                                        {title && (
+                                            <h2 className="text-xl font-bold">
+                                                {title}
+                                            </h2>
+                                        )}
+                                        <p className=" text-sm">
+                                            {author.name} le{" "}
+                                            <DateFormatted format="dd/MM/yyyy à hh:mm:ss">
+                                                {date}
+                                            </DateFormatted>
+                                        </p>
+                                    </div>
                                 </div>
-                                <p className=" text-sm">
-                                    {author} le{" "}
-                                    <DateFormatted format="dd/MM/yyyy à hh:mm:ss">
-                                        {date}
-                                    </DateFormatted>
-                                </p>
                             </div>
                         </div>
                         <p>

@@ -2,6 +2,20 @@
 import type { Question } from "@prisma/client";
 import { db } from "@/server/db";
 
+export async function getQuestionById(questionId: Question["id"]) {
+    try {
+        const questionById = await db.question.findUnique({
+            where: {
+                id: questionId,
+            },
+        });
+
+        return questionById;
+    } catch (e) {
+        throw new Error("An error occured while fetching the question");
+    }
+}
+
 export async function getQuestions(nbQuestion = 10) {
     try {
         const questions = await db.question.findMany({
@@ -27,6 +41,7 @@ export async function getQuestionAndAnswers(id: Question["id"]) {
             },
             include: {
                 answer: true,
+                user: true,
             },
         });
 
