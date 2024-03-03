@@ -7,7 +7,7 @@ import Link from "next/link";
 
 import cn from "classnames";
 
-export default async function ListQuestions() {
+export default async function ListQuestionsPage() {
     const questions = await getQuestions();
 
     return (

@@ -29,6 +29,13 @@ export async function getQuestionAndAnswers(id: Question["id"]) {
                 answer: true,
             },
         });
+
+        if (questionAndAnswers) {
+            questionAndAnswers.answer.sort(
+                (a, b) => b.upvotes - b.downvotes - (a.upvotes - a.downvotes),
+            );
+        }
+
         return questionAndAnswers;
     } catch (e) {
         throw new Error("An error occured while fetching the question");
