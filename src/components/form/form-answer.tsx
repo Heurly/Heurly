@@ -38,10 +38,11 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
         });
 
         if (res.success === true) {
-            form.reset();
+            form.reset({
+                content: "",
+            });
             router.refresh();
         }
-        console.log(data);
     };
 
     return (

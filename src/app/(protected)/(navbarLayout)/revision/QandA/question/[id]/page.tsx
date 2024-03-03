@@ -36,6 +36,7 @@ export default async function QuestionPage({
     return (
         <div className="flex h-full flex-col items-center gap-y-5 overflow-auto">
             <QandACard
+                id={questionAndAnswersDb.id}
                 type={"question"}
                 title={questionAndAnswersDb.question}
                 text={questionAndAnswersDb.description}
@@ -55,9 +56,10 @@ export default async function QuestionPage({
             </Card>
 
             {questionAndAnswersDb.answer?.map(
-                ({ answer, upvotes, downvotes, createdAt }) => {
+                ({ answer, upvotes, downvotes, createdAt, id }) => {
                     return (
                         <QandACard
+                            id={id}
                             key={ID()}
                             type={"answer"}
                             text={answer}

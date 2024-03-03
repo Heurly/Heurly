@@ -50,44 +50,49 @@ model Unit {
 }
 
 model Question {
-  id          String     @id @default(cuid())
-  question    String
-  description String
-  upvotes     Int        @default(0)
-  downvotes   Int        @default(0)
-  answer      Answer[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @default(now())
-  user        User       @relation(fields: [userId], references: [id])
-  userId      String
-  UserVote    UserVote[]
+  id               String             @id @default(cuid())
+  question         String
+  description      String
+  answer           Answer[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  user             User               @relation(fields: [userId], references: [id])
+  userId           String
+  UserVoteQuestion UserVoteQuestion[]
 }
 
 model Answer {
-  id         Int        @id @default(autoincrement())
-  answer     String
-  upvotes    Int        @default(0)
-  downvotes  Int        @default(0)
-  question   Question   @relation(fields: [questionId], references: [id])
-  questionId String
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @default(now())
-  user       User       @relation(fields: [userId], references: [id])
-  userId     String
-  UserVote   UserVote[]
+  id             String           @id @default(cuid())
+  answer         String
+  question       Question         @relation(fields: [questionId], references: [id])
+  questionId     String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  user           User             @relation(fields: [userId], references: [id])
+  userId         String
+  UserVoteAnswer UserVoteAnswer[]
 }
 
-model UserVote {
+model UserVoteAnswer {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  answer    Answer   @relation(fields: [answerId], references: [id])
+  answerId  String
+  vote      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model UserVoteQuestion {
   id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
   userId     String
   question   Question @relation(fields: [questionId], references: [id])
   questionId String
-  answer     Answer   @relation(fields: [answerId], references: [id])
-  answerId   Int
-  vote       String
-
-  @@unique([userId, questionId])
-  @@unique([userId, answerId])
+  vote       Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
 
 model Account {
@@ -135,6 +140,8 @@ model User {
   Docs             Docs[]
   Question         Question[]
   Answer           Answer[]
+  UserVoteAnswer   UserVoteAnswer[]
+  UserVoteQuestion UserVoteQuestion[]
 }
 
 model VerificationToken {

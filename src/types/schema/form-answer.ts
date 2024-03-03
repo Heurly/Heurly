@@ -3,7 +3,7 @@ const maxCharsContent = 500;
 const minCharsContent = 10;
 
 export const dataCreateAnswer = z.object({
-    userId: z.string({ required_error: "L'utilisateur est requis" }),
+    userId: z.string({ required_error: "L'utilisateur est requis" }).cuid(),
     questionId: z.string({ required_error: "La question est requise" }),
     content: z.string().refine((data) => {
         formAnswerSchema.parse({ content: data });

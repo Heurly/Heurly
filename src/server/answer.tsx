@@ -2,6 +2,7 @@
 import { dataCreateAnswer, formAnswerSchema } from "@/types/schema/form-answer";
 import * as z from "zod";
 import { db } from "@/server/db";
+import { revalidatePath } from "next/cache";
 
 export async function handleFormCreateAnswer(
     data: z.infer<typeof dataCreateAnswer>,
@@ -40,6 +41,7 @@ export async function handleFormCreateAnswer(
             questionId: data.questionId,
         },
     });
-
+    // revalidate the data
+    revalidatePath(`/revision/QandA/question/${data.questionId}`);
     return { success: true, data: res };
 }

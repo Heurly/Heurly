@@ -20,11 +20,12 @@ export default async function ListQuestionsPage() {
                         className="w-full"
                     >
                         <QandACard
+                            id={question.id}
                             type={"question"}
                             title={question.question}
-                            text={question.description} // Renamed from descriptijon
-                            date={question.createdAt} // Assuming createdAt is the date
-                            author={question.user.name ?? "anonymous"} // Assuming userId is the author
+                            text={question.description}
+                            date={question.createdAt}
+                            author={question.user}
                             upvotes={question.upvotes}
                             downvotes={question.downvotes}
                         />
@@ -38,7 +39,7 @@ export default async function ListQuestionsPage() {
                         buttonVariants({ variant: "default" }),
                         "h-28",
                     )}
-                    href="/revision/QandA/create"
+                    href="/revision/QandA/question/create"
                 >
                     <MailQuestion />
                 </Link>

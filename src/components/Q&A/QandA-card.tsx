@@ -8,8 +8,11 @@ import React, { useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import type { User } from "@prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { addVoteToAnswer, addVoteToQuestion } from "@/server/vote";
+import { useRouter } from "next/navigation";
 
 type PropsQuestionCard = {
+    id: string;
     type: "question" | "answer";
     title?: string;
     text: string;
@@ -25,6 +28,7 @@ type PropsQuestionCard = {
 const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
     (
         {
+            id,
             className,
             type,
             title,
@@ -40,16 +44,32 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
         ref,
     ) => {
         const [seeMore, setSeeMore] = useState(false);
-
-        function handleSeeMore() {
+        const router = useRouter();
+        async function handleSeeMore() {
             setSeeMore(!seeMore);
         }
-        function handleUpVote() {
+        async function handleUpVote() {
             console.log("upvote");
+
+            if (type == "question") {
+                await addVoteToQuestion(id, 1);
+            }
+            if (type == "answer") {
+                await addVoteToAnswer(id, 1);
+            }
+            router.refresh();
         }
 
-        function handleDownVote() {
+        async function handleDownVote() {
             console.log("downvote");
+
+            if (type == "question") {
+                await addVoteToQuestion(id, 0);
+            }
+            if (type == "answer") {
+                await addVoteToAnswer(id, 0);
+            }
+            router.refresh();
         }
 
         if (!author.name) return;
