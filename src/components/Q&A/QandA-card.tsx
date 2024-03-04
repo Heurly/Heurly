@@ -1,11 +1,6 @@
 "use client";
 
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import DateFormatted from "@/components/ui/date-formatted";
 import Vote from "@/components/Q&A/Vote";
 import cn from "classnames";
