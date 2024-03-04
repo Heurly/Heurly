@@ -17,7 +17,7 @@ import {
 import { TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
-import { addWeeks, startOfWeek } from "date-fns";
+import { addDays, addWeeks, startOfWeek } from "date-fns";
 import { IcalObject } from "ical2json";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -80,7 +80,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
 
     const handleDateChange = async (date: Date) => {
         await reloadData(startOfWeek(date), addWeeks(date, 2));
-        const newDate = date.toISOString().slice(0, 10);
+        const newDate = addDays(date, 1).toISOString().slice(0, 10);
         if (calendarRef.current) calendarRef.current.getApi().gotoDate(newDate);
     };
 
