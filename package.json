@@ -43,7 +43,6 @@
         "@tensorflow-models/toxicity": "^1.2.2",
         "@tensorflow/tfjs": "^4.17.0",
         "@tensorflow/tfjs-node": "^4.17.0",
-        "@types/pdfjs-dist": "^2.10.378",
         "backblaze-b2": "^1.7.0",
         "class-variance-authority": "^0.7.0",
         "classnames": "^2.5.1",

@@ -56,7 +56,7 @@ export default async function QuestionPage({
             </Card>
 
             {questionAndAnswersDb.answer?.map(
-                ({ answer, upvotes, downvotes, createdAt, id }) => {
+                ({ answer, upvotes, downvotes, createdAt, user, id }) => {
                     return (
                         <QandACard
                             id={id}
@@ -64,7 +64,7 @@ export default async function QuestionPage({
                             type={"answer"}
                             text={answer}
                             date={createdAt}
-                            author={questionAndAnswersDb.user}
+                            author={user}
                             upvotes={upvotes}
                             downvotes={downvotes}
                         />
