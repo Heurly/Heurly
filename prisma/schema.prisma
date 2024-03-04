@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// why cuid : https://dev.to/harshhhdev/uuidguid-cuid-nanoid-whats-the-difference-5dj1
 model Docs {
   id          Int      @id @default(autoincrement())
   title       String
@@ -46,6 +47,52 @@ model Unit {
   name     String @default("")
   fullName String @default("")
   code     Int    @unique @db.SmallInt
+}
+
+model Question {
+  id               String             @id @default(cuid())
+  question         String
+  description      String
+  answer           Answer[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  user             User               @relation(fields: [userId], references: [id])
+  userId           String
+  UserVoteQuestion UserVoteQuestion[]
+}
+
+model Answer {
+  id             String           @id @default(cuid())
+  answer         String
+  question       Question         @relation(fields: [questionId], references: [id])
+  questionId     String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  user           User             @relation(fields: [userId], references: [id])
+  userId         String
+  UserVoteAnswer UserVoteAnswer[]
+}
+
+model UserVoteAnswer {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  answer    Answer   @relation(fields: [answerId], references: [id])
+  answerId  String
+  vote      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model UserVoteQuestion {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId String
+  vote       Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
 
 model Account {
@@ -91,6 +138,10 @@ model User {
   sessions         Session[]
   UserTimetableURL UserTimetableURL[]
   Docs             Docs[]
+  Question         Question[]
+  Answer           Answer[]
+  UserVoteAnswer   UserVoteAnswer[]
+  UserVoteQuestion UserVoteQuestion[]
 }
 
 model VerificationToken {

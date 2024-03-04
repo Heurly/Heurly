@@ -2,7 +2,7 @@
 import "server-only";
 import B2 from "backblaze-b2";
 import { env } from "@/env";
-import { trustFile } from "@/types/schema/fileUpload";
+import { trustFile } from "@/types/schema/file-upload";
 import slugify from "slugify";
 
 const b2 = new B2({

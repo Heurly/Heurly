@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 // import {  handleFormUploadDocs } from "@/server/docs";
-import { formUploadDocsSchema } from "@/types/schema/fileUpload";
+import { formUploadDocsSchema } from "@/types/schema/file-upload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useState } from "react";

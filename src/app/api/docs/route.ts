@@ -1,17 +1,19 @@
-import { trustFile, trustFileList } from "@/types/schema/fileUpload";
+import { trustFile, trustFileList } from "@/types/schema/file-upload";
 import { uploadFile } from "@/server/b2";
 import { db } from "@/server/db";
 import type { User } from "next-auth";
 import * as z from "zod";
 import slugify from "slugify";
-// import tf from "@tensorflow/tfjs-node";
-import * as toxicity from "@tensorflow-models/toxicity";
 import { getDocument } from "pdfjs-dist";
 // Dynamically set the worker source
 const pdfjs = await import("pdfjs-dist");
 pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
 
+let apiURL: string;
+
 export async function POST(request: Request): Promise<Response> {
+    apiURL = request.headers.get("origin") ?? "";
+
     // handle the form data
     const res = await handleFormUploadDocs(await request.formData());
     return Response.json(res);
@@ -21,8 +23,16 @@ function isDocsTypeSafe(file: File) {
     return trustFile.safeParse(file).success;
 }
 
-async function extractTextFromPDF(pdfData: Uint8Array): Promise<string> {
-    const loadingTask = getDocument({ data: pdfData });
+type ToxicityResponse = {
+    isToxic: boolean;
+};
+
+async function extractTextFromPDF(pdfFile: File): Promise<string> {
+    const fileContentArrayBuffer = await pdfFile.arrayBuffer();
+    // Convert ArrayBuffer to Uint8Array
+    const fileContent = new Uint8Array(fileContentArrayBuffer);
+
+    const loadingTask = getDocument({ data: fileContent });
     const pdf = await loadingTask.promise;
 
     let textContent = "";
@@ -40,39 +50,6 @@ async function extractTextFromPDF(pdfData: Uint8Array): Promise<string> {
         });
     }
     return textContent;
-}
-
-async function isDocsToxic(file: File) {
-    const fileContentArrayBuffer = await file.arrayBuffer();
-    // Convert ArrayBuffer to Uint8Array
-    const fileContent = new Uint8Array(fileContentArrayBuffer);
-
-    let textContent = "";
-
-    // Extract the PDF content
-    try {
-        textContent = await extractTextFromPDF(fileContent);
-    } catch (e) {
-        throw new Error("Error extracting text from PDF", e as Error);
-    }
-
-    const threshold = 0.9;
-
-    const toxicityLabels = [
-        "identity_attack",
-        "insult",
-        "obscene",
-        "severe_toxicity",
-        "sexual_explicit",
-        "threat",
-        "toxicity",
-    ];
-    const model = await toxicity.load(threshold, toxicityLabels);
-    const predictions = await model.classify(textContent);
-    const isTextNotToxic = predictions.every(
-        (prediction) => prediction.results[0]?.match === false,
-    );
-    return !isTextNotToxic;
 }
 
 async function handleFormUploadDocs(data: FormData) {
@@ -95,9 +72,25 @@ async function handleFormUploadDocs(data: FormData) {
                 error: "This file is not valid",
             };
         }
+        const pdfText = await extractTextFromPDF(file);
 
-        // check if the file is toxic
-        const isToxic = await isDocsToxic(file);
+        let isToxic: boolean;
+
+        try {
+            const resIsToxic = await fetch(`${apiURL}/api/toxicity`, {
+                method: "POST",
+                body: JSON.stringify({ text: pdfText }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((res) => res.json())
+                .then((res) => res as ToxicityResponse);
+
+            isToxic = resIsToxic.isToxic ?? true;
+        } catch (e) {
+            throw new Error(`Error while checking toxicity`);
+        }
 
         if (isToxic) {
             return {
