@@ -12,15 +12,15 @@ export default function ChoosePlugInPage() {
             href: "/docs",
         },
         {
-            name: "Flashcards",
-            icon: <Zap />,
-            href: "/flashcards",
-        },
-        {
             name: "Q & A",
             icon: <MessageCircleQuestion />,
             href: "/QandA",
         },
+        // {
+        //     name: "Flashcards",
+        //     icon: <Zap />,
+        //     href: "/flashcards",
+        // },
     ];
 
     return (

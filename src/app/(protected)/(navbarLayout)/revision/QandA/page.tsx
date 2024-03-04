@@ -44,9 +44,9 @@ export default async function ListQuestionsPage() {
                 >
                     <MailQuestion />
                 </Link>
-                <Button className="hidden h-24 rounded-3xl md:flex">
+                {/* <Button className="hidden h-24 rounded-3xl md:flex">
                     <UserSearch />
-                </Button>
+                </Button> */}
             </div>
             <Link
                 href="/revision/QandA/question/create"
