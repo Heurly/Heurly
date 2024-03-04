@@ -48,9 +48,9 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
         async function handleSeeMore() {
             setSeeMore(!seeMore);
         }
-        async function handleUpVote() {
-            console.log("upvote");
-
+        async function handleUpVote(
+            e: React.MouseEvent<SVGSVGElement, MouseEvent>,
+        ) {
             if (type == "question") {
                 await addVoteToQuestion(id, 1);
             }
@@ -60,9 +60,9 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
             router.refresh();
         }
 
-        async function handleDownVote() {
-            console.log("downvote");
-
+        async function handleDownVote(
+            e: React.MouseEvent<SVGSVGElement, MouseEvent>,
+        ) {
             if (type == "question") {
                 await addVoteToQuestion(id, 0);
             }
@@ -77,7 +77,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
         return (
             <Card
                 ref={ref}
-                className={cn(className, "w-11/12 md:px-10 md:py-16 ", {
+                className={cn(className, "w-11/12 py-5 md:px-10 md:py-16", {
                     "w-full": type == "question",
                 })}
                 {...props}
@@ -102,12 +102,20 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
 
                                     <div>
                                         {title && (
-                                            <h2 className="text-xl font-bold">
+                                            <h2 className="text-lg font-bold md:text-xl">
                                                 {title}
                                             </h2>
                                         )}
-                                        <p className=" text-sm">
-                                            {author.name} le{" "}
+                                        <p className="text-xs">
+                                            {author.name.length > 15
+                                                ? author.name.split(" ")[0] +
+                                                  " " +
+                                                  author.name
+                                                      .split(" ")[1]
+                                                      ?.charAt(0) +
+                                                  "."
+                                                : author.name}{" "}
+                                            le&nbsp;
                                             <DateFormatted format="dd/MM/yyyy à hh:mm:ss">
                                                 {date}
                                             </DateFormatted>
@@ -116,7 +124,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                                 </div>
                             </div>
                         </div>
-                        <p>
+                        <p className="text-sm md:text-base">
                             {
                                 // If the text length is more than 200 and seeMore is false, show a truncated version of the text
                                 text.length > 200 && !seeMore ? (
@@ -143,9 +151,19 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                     </div>
                     <Vote
                         upvotes={upvotes}
-                        onClickUpVote={handleUpVote}
+                        onClickUpVote={async (
+                            e: React.MouseEvent<SVGSVGElement, MouseEvent>,
+                        ) => {
+                            e.stopPropagation();
+                            await handleUpVote(e);
+                        }}
                         downvotes={downvotes}
-                        onClickDownVote={handleDownVote}
+                        onClickDownVote={async (
+                            e: React.MouseEvent<SVGSVGElement, MouseEvent>,
+                        ) => {
+                            e.stopPropagation();
+                            await handleDownVote(e);
+                        }}
                         hasVotedDown={hasVotedDown ?? false}
                         hasVotedUp={hasVotedUp ?? false}
                     />

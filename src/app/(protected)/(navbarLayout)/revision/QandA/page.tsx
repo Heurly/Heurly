@@ -11,7 +11,7 @@ export default async function ListQuestionsPage() {
     const questions = await getQuestions();
 
     return (
-        <div className="flex w-full items-center justify-start gap-5 md:h-full md:overflow-auto">
+        <div className="my-16 flex w-full items-center justify-start gap-5 md:my-0 md:h-full md:overflow-auto">
             <div className="flex h-full flex-col items-center justify-start gap-5 overflow-auto md:w-11/12 ">
                 {questions?.map((question) => (
                     <Link

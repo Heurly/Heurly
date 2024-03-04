@@ -34,7 +34,7 @@ export default async function QuestionPage({
     if (!session) redirect("/login");
 
     return (
-        <div className="flex h-full flex-col items-center gap-y-5 overflow-auto">
+        <div className="mt-16 flex h-full flex-col items-center gap-y-5 overflow-auto md:mt-0">
             <QandACard
                 id={questionAndAnswersDb.id}
                 type={"question"}
@@ -46,7 +46,7 @@ export default async function QuestionPage({
                 downvotes={questionAndAnswersDb.downvotes}
                 className="sticky top-0 z-10"
             />
-            <Card className="w-11/12 px-10 py-16">
+            <Card className="w-11/12 py-5 md:px-10 md:py-16">
                 <CardContent>
                     <FormAnswer
                         userId={session.user.id}

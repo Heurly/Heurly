@@ -42,6 +42,11 @@ export async function getQuestions(nbQuestion = 10) {
             return { ...question, upvotes, downvotes };
         });
 
+        // sort the questions by the number of upvotes - downvotes
+        resQuestions.sort(
+            (a, b) => b.upvotes - b.downvotes - (a.upvotes - a.downvotes),
+        );
+
         return resQuestions;
     } catch (e) {
         throw new Error("An error occured while fetching the questions");
@@ -93,6 +98,10 @@ export async function getQuestionAndAnswers(id: Question["id"]) {
             answer: tabAnswers,
         };
 
+        // sort the answers by the number of upvotes - downvotes
+        res.answer.sort(
+            (a, b) => b.upvotes - b.downvotes - (a.upvotes - a.downvotes),
+        );
         return res;
     } catch (e) {
         throw new Error("An error occured while fetching the question");
