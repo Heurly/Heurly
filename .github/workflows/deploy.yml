@@ -26,7 +26,7 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: /tmp/.buildx-cache
-                  key: ${{ runner.os }}-buildx-dir-${{ hashFiles('package.json') }}
+                  key: ${{ runner.os }}-buildx-${{ github.sha }}  
                   restore-keys: |
                     ${{ runner.os }}-buildx-
             - name: Build and push
