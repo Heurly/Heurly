@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React from "react";
-import cn from "classnames";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -18,6 +17,7 @@ const GoBackButton = React.forwardRef<HTMLButtonElement, PropsGoBackButton>(
                 onClick={() => router.back()}
                 {...props}
                 ref={ref}
+                className={className}
             >
                 <ChevronLeft
                     size={30}

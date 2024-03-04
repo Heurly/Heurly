@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import GoBackButton from "@/components/utils/go-back-button";
 import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";
-import router from "next/router";
 
 export default async function CreateQuestionPage() {
     const session = await getServerAuthSession();

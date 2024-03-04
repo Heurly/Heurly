@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import type { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { formCreateQuestionSchema } from "@/types/schema/form-create-question";
 import { handleFormCreateQuestion } from "@/server/question";
 
