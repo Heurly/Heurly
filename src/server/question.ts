@@ -65,6 +65,7 @@ export async function getQuestionAndAnswers(id: Question["id"]) {
                 answer: {
                     include: {
                         UserVoteAnswer: true,
+                        user: true,
                     },
                 },
             },
