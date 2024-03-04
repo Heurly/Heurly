@@ -44,6 +44,7 @@ export default async function QuestionPage({
                 author={questionAndAnswersDb.user ?? "anonymous"}
                 upvotes={questionAndAnswersDb.upvotes}
                 downvotes={questionAndAnswersDb.downvotes}
+                nbrAnswers={questionAndAnswersDb.answer?.length}
                 className="sticky top-0 z-10"
             />
             <Card className="w-11/12 py-5 md:px-10 md:py-16">

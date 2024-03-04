@@ -28,6 +28,9 @@ export async function getQuestions(nbQuestion = 10) {
             include: {
                 user: true,
                 UserVoteQuestion: true,
+                _count: {
+                    select: { answer: true },
+                },
             },
         });
 

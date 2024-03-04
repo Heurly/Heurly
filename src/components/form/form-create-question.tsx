@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import type { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { formCreateQuestionSchema } from "@/types/schema/form-create-question";
 import { handleFormCreateQuestion } from "@/server/question";
 
@@ -52,44 +51,25 @@ export default function FormCreateQuestion({
     };
 
     return (
-        <Card className="mt-16 py-16 md:mt-0">
-            <CardContent>
-                {!userId ? (
-                    <p>Vous devez être connecté pour créer une question</p>
-                ) : (
-                    <Form {...form}>
-                        <form
-                            className="flex flex-col items-end gap-5"
-                            onSubmit={form.handleSubmit(onSubmit)}
-                        >
-                            <div className="flex w-full gap-x-3">
-                                <FormField
-                                    control={form.control}
-                                    name="question"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full">
-                                            <FormLabel>Question</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Comment fait-on pour...?"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
+        <>
+            {!userId ? (
+                <p>Vous devez être connecté pour créer une question</p>
+            ) : (
+                <Form {...form}>
+                    <form
+                        className="flex flex-col items-end gap-5"
+                        onSubmit={form.handleSubmit(onSubmit)}
+                    >
+                        <div className="flex w-full gap-x-3">
                             <FormField
                                 control={form.control}
-                                name="description"
+                                name="question"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>Description</FormLabel>
+                                        <FormLabel>Question</FormLabel>
                                         <FormControl>
-                                            <Textarea
-                                                placeholder="Salut ! ..."
-                                                className="h-40 rounded-t-none "
+                                            <Input
+                                                placeholder="Comment fait-on pour...?"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -97,14 +77,31 @@ export default function FormCreateQuestion({
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="w-full md:w-40">
-                                <SendHorizontal />
-                                &nbsp;Envoyer
-                            </Button>
-                        </form>
-                    </Form>
-                )}
-            </CardContent>
-        </Card>
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder="Salut ! ..."
+                                            className="h-40 rounded-t-none "
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full md:w-40">
+                            <SendHorizontal />
+                            &nbsp;Envoyer
+                        </Button>
+                    </form>
+                </Form>
+            )}
+        </>
     );
 }
