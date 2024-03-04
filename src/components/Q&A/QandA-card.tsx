@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+} from "@/components/ui/card";
 import DateFormatted from "@/components/ui/date-formatted";
 import Vote from "@/components/Q&A/Vote";
 import cn from "classnames";
@@ -23,6 +28,7 @@ type PropsQuestionCard = {
     hasVotedDown?: boolean;
     hasVotedUp?: boolean;
     className?: string;
+    nbrAnswers?: number;
 };
 
 const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
@@ -39,6 +45,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
             downvotes,
             hasVotedDown,
             hasVotedUp,
+            nbrAnswers: nbAnswers,
             ...props
         },
         ref,
@@ -70,6 +77,19 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
 
         if (!author.name) return;
 
+        const authorName =
+            author.name.length > 15
+                ? author.name.split(" ")[0] +
+                  " " +
+                  author.name.split(" ")[1]?.charAt(0) +
+                  "."
+                : author.name;
+
+        const authorInitials = author.name
+            .split(" ")
+            .map((n) => n[0])
+            .join("");
+
         return (
             <Card
                 ref={ref}
@@ -80,7 +100,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
             >
                 <CardContent className="flex justify-between md:gap-x-5">
                     <div className="grid gap-y-3">
-                        <div className="flex flex-col">
+                        <div className="flex flex-col" aria-label="card header">
                             <div className="flex flex-col">
                                 <div className="flex items-center gap-3">
                                     <Avatar>
@@ -89,10 +109,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                                             alt={author.name}
                                         />
                                         <AvatarFallback>
-                                            {author.name
-                                                .split(" ")
-                                                .map((n) => n[0])
-                                                .join("")}
+                                            {authorInitials}
                                         </AvatarFallback>
                                     </Avatar>
 
@@ -103,15 +120,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                                             </h2>
                                         )}
                                         <p className="text-xs">
-                                            {author.name.length > 15
-                                                ? author.name.split(" ")[0] +
-                                                  " " +
-                                                  author.name
-                                                      .split(" ")[1]
-                                                      ?.charAt(0) +
-                                                  "."
-                                                : author.name}{" "}
-                                            le&nbsp;
+                                            {authorName}&nbsp;le&nbsp;
                                             <DateFormatted format="dd/MM/yyyy à hh:mm:ss">
                                                 {date}
                                             </DateFormatted>
@@ -164,6 +173,9 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                         hasVotedUp={hasVotedUp ?? false}
                     />
                 </CardContent>
+                <CardFooter>
+                    <p className="text-xs">Nb de réponses : {nbAnswers}</p>
+                </CardFooter>
             </Card>
         );
     },

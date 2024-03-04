@@ -5,17 +5,15 @@ import React from "react";
 import cn from "classnames";
 import Link from "next/link";
 
+type clickEvent = React.MouseEvent<SVGSVGElement, MouseEvent>;
+
 type PropsVote = {
     upvotes: number;
     downvotes: number;
     hasVotedUp: boolean;
     hasVotedDown: boolean;
-    onClickUpVote: (
-        e: React.MouseEvent<SVGSVGElement, MouseEvent>,
-    ) => Promise<void>;
-    onClickDownVote: (
-        e: React.MouseEvent<SVGSVGElement, MouseEvent>,
-    ) => Promise<void>;
+    onClickUpVote: (e: clickEvent) => Promise<void>;
+    onClickDownVote: (e: clickEvent) => Promise<void>;
     className?: string;
 };
 
@@ -33,6 +31,19 @@ const Vote = React.forwardRef<HTMLDivElement, PropsVote>(
         },
         ref,
     ) => {
+        const [upVote, setUpVote] = React.useState(hasVotedUp);
+        const [downVote, setDownVote] = React.useState(hasVotedDown);
+
+        const handleUpVote = async (e: clickEvent) => {
+            setUpVote(!upVote);
+            await onClickUpVote(e);
+        };
+
+        const handleDownVote = async (e: clickEvent) => {
+            setDownVote(!upVote);
+            await onClickDownVote(e);
+        };
+
         return (
             <Link href="#">
                 <div
@@ -44,9 +55,9 @@ const Vote = React.forwardRef<HTMLDivElement, PropsVote>(
                         <ChevronUpCircle
                             size={75}
                             strokeWidth={1}
-                            onClick={onClickUpVote}
+                            onClick={async (e) => await handleUpVote(e)}
                             className="cursor-pointer"
-                            fill={hasVotedUp ? "hsl(var(--primary))" : "white"}
+                            fill={upVote ? "hsl(var(--primary))" : "white"}
                         />
                         <div className="flex h-full w-full items-center justify-center">
                             {upvotes}
@@ -57,12 +68,10 @@ const Vote = React.forwardRef<HTMLDivElement, PropsVote>(
                         <ChevronDownCircle
                             size={75}
                             strokeWidth={1}
-                            onClick={onClickDownVote}
+                            onClick={async (e) => await handleDownVote(e)}
                             className="cursor-pointer"
                             fill={
-                                hasVotedDown
-                                    ? "hsl(var(--primary))"
-                                    : "transparent"
+                                downVote ? "hsl(var(--primary))" : "transparent"
                             }
                         />
                         <div className="flex h-full w-full items-center justify-center">

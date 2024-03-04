@@ -28,6 +28,7 @@ export default async function ListQuestionsPage() {
                             author={question.user}
                             upvotes={question.upvotes}
                             downvotes={question.downvotes}
+                            nbrAnswers={question._count.answer}
                         />
                     </Link>
                 ))}
