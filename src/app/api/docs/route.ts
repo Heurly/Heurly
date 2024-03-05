@@ -5,6 +5,7 @@ import type { User } from "next-auth";
 import * as z from "zod";
 import slugify from "slugify";
 import { getDocument } from "pdfjs-dist";
+
 // Dynamically set the worker source
 const pdfjs = await import("pdfjs-dist");
 pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
