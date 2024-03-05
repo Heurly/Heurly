@@ -77,13 +77,13 @@ export async function uploadFile(file: File) {
     }
     if (!uploadUrlFromB2 || !authorizationTokenFromB2)
         throw new Error("Error when getting upload URL.");
-
+    const fileName = "heurly_" + slugify(file.name, "_");
     const fileBuffer = Buffer.from(await file.arrayBuffer());
     try {
         const response = await b2.uploadFile({
             uploadUrl: uploadUrlFromB2,
             uploadAuthToken: authorizationTokenFromB2,
-            fileName: "heurly_" + slugify(file.name, "_"),
+            fileName: fileName,
             data: fileBuffer,
         });
         if (response.status !== 200) {
@@ -92,6 +92,9 @@ export async function uploadFile(file: File) {
             };
         }
         console.log(response);
+        return {
+            url: uploadUrlFromB2,
+        };
     } catch (e) {
         return {
             error: "Error when uploading file.",

@@ -106,8 +106,9 @@ async function handleFormUploadDocs(data: FormData) {
             };
         }
 
+        const url = res.url ?? "";
         // post the file to the database
-        const resPostFile = await postFile(file, userId);
+        const resPostFile = await postFile(file, userId, url);
         if (resPostFile?.error) {
             return {
                 error: resPostFile.error,
@@ -131,6 +132,7 @@ async function handleFormUploadDocs(data: FormData) {
         // Handle multiple file uploads
         for (const file of fileEntry) {
             // upload the file to the cloud
+            let url = "";
             try {
                 const res = await uploadFile(file);
                 if (res?.error) {
@@ -138,6 +140,7 @@ async function handleFormUploadDocs(data: FormData) {
                         error: res.error,
                     };
                 }
+                url = res.url ?? "";
             } catch (e) {
                 return {
                     error: `Error uploading the file ${file.name}`,
@@ -146,7 +149,7 @@ async function handleFormUploadDocs(data: FormData) {
 
             // post the file to the database
             try {
-                const resPostFileMultiple = await postFile(file, userId);
+                const resPostFileMultiple = await postFile(file, userId, url);
                 if (resPostFileMultiple?.error) {
                     return {
                         error: resPostFileMultiple.error,
@@ -165,7 +168,7 @@ async function handleFormUploadDocs(data: FormData) {
     };
 }
 
-async function postFile(file: File, userId: User["id"]) {
+async function postFile(file: File, userId: User["id"], url: string) {
     // validate the file
     const res = trustFile.safeParse(file);
     if (!res.success) {
@@ -201,6 +204,7 @@ async function postFile(file: File, userId: User["id"]) {
             title: slugify(file.name, "_"),
             description: "A file",
             userId: userId,
+            url: url,
         },
     });
     console.log(resDb);
