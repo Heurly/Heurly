@@ -1,5 +1,5 @@
 "use server";
-import type { Question } from "@prisma/client";
+import type { Question, User } from "@prisma/client";
 import { db } from "@/server/db";
 import * as z from "zod";
 import { dataCreateQuestionSchema } from "@/types/schema/form-create-question";
@@ -17,8 +17,19 @@ export async function getQuestionById(questionId: Question["id"]) {
         throw new Error("An error occured while fetching the question");
     }
 }
+/**
+ *
+ * @param nbQuestion
+ * @param userId the id of the user, if provided, the function will return the votes of the user
+ * @returns
+ */
+export async function getQuestions(nbQuestion = 10, userId?: User["id"]) {
+    // validate the id
+    const schemaId = z.string().cuid();
+    if (!schemaId.safeParse(userId).success) {
+        throw new Error("Invalid id");
+    }
 
-export async function getQuestions(nbQuestion = 10) {
     try {
         const questions = await db.question.findMany({
             take: nbQuestion,
@@ -27,7 +38,11 @@ export async function getQuestions(nbQuestion = 10) {
             },
             include: {
                 user: true,
-                UserVoteQuestion: true,
+                UserVoteQuestion: {
+                    where: {
+                        userId: userId,
+                    },
+                },
                 _count: {
                     select: { answer: true },
                 },
@@ -56,18 +71,38 @@ export async function getQuestions(nbQuestion = 10) {
     }
 }
 
-export async function getQuestionAndAnswers(id: Question["id"]) {
+export async function getQuestionAndAnswers(
+    questionId: Question["id"],
+    userId?: User["id"],
+) {
+    // validate the params
+    const schemaId = z.string().cuid();
+    if (
+        !schemaId.safeParse(questionId).success &&
+        !schemaId.safeParse(userId).success
+    ) {
+        throw new Error("Invalid id");
+    }
+
     try {
         const questionAndAnswers = await db.question.findUnique({
             where: {
-                id,
+                id: questionId,
             },
             include: {
                 user: true,
-                UserVoteQuestion: true,
+                UserVoteQuestion: {
+                    where: {
+                        userId: userId,
+                    },
+                },
                 answer: {
                     include: {
-                        UserVoteAnswer: true,
+                        UserVoteAnswer: {
+                            where: {
+                                userId: userId,
+                            },
+                        },
                         user: true,
                     },
                 },

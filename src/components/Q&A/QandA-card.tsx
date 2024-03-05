@@ -169,7 +169,9 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                     />
                 </CardContent>
                 <CardFooter>
-                    <p className="text-xs">Nb de réponses : {nbAnswers}</p>
+                    {typeof nbAnswers == "number" && (
+                        <p className="text-xs">Nb de réponses : {nbAnswers}</p>
+                    )}
                 </CardFooter>
             </Card>
         );
