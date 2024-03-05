@@ -1,14 +1,18 @@
 import QandACard from "@/components/Q&A/QandA-card";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { getQuestions } from "@/server/question";
 import ID from "@/utils/id";
-import { MailQuestion, UserSearch } from "lucide-react";
+import { MailQuestion } from "lucide-react";
 import Link from "next/link";
 
 import cn from "classnames";
+import { getServerAuthSession } from "@/server/auth";
+import { redirect } from "next/navigation";
 
 export default async function ListQuestionsPage() {
-    const questions = await getQuestions();
+    const session = await getServerAuthSession();
+    if (!session) redirect("/login");
+    const questions = await getQuestions(10, session.user.id);
 
     return (
         <div className="my-16 flex w-full items-center justify-start gap-5 md:my-0 md:h-full md:overflow-auto">
@@ -29,6 +33,12 @@ export default async function ListQuestionsPage() {
                             upvotes={question.upvotes}
                             downvotes={question.downvotes}
                             nbrAnswers={question._count.answer}
+                            hasVotedUp={
+                                question.UserVoteQuestion[0]?.vote === 1
+                            }
+                            hasVotedDown={
+                                question.UserVoteQuestion[0]?.vote === 0
+                            }
                         />
                     </Link>
                 ))}
