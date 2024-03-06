@@ -1,0 +1,27 @@
+{
+    "name": "Heuly",
+    "short_name": "heurly",
+    "icons": [
+        {
+            "src": "/icons/heurly-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/heurly-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "/icons/heurly-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#E0F2FE",
+    "background_color": "#E0F2FE",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait"
+}
