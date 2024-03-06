@@ -5,7 +5,7 @@ import { env } from "@/env";
 import { trustFile } from "@/types/schema/file-upload";
 import slugify from "slugify";
 
-const b2 = new B2({
+export const b2 = new B2({
     applicationKeyId: env.BUCKET_KEY_ID,
     applicationKey: env.BUCKET_APP_KEY,
 });
@@ -92,8 +92,9 @@ export async function uploadFile(file: File) {
             };
         }
         console.log(response);
+        const fileId = (response.data as { fileId: string })?.fileId;
         return {
-            url: uploadUrlFromB2,
+            id: fileId,
         };
     } catch (e) {
         return {
