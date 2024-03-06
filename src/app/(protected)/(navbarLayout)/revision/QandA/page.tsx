@@ -10,7 +10,7 @@ import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";
 
 export const metadata = {
-    title: "Questions",
+    title: "Heuly - Questions",
     description:
         "Cette page répertorie toutes les questions posées par les utilisateurs d'Heurly ! Vous pouvez y répondre ou poser votre propre question.",
 };
