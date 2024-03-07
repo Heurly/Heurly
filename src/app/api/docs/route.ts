@@ -21,6 +21,7 @@ export async function POST(request: Request): Promise<Response> {
 }
 
 function isDocsTypeSafe(file: File) {
+    log({ type: TLog.info, text: "Checking if the file is valid" });
     return trustFile.safeParse(file).success;
 }
 
@@ -109,8 +110,9 @@ async function handleFormUploadDocs(data: FormData) {
             };
         }
 
+        const fileId = res.id ?? "";
         // post the file to the database
-        const resPostFile = await postFile(file, userId);
+        const resPostFile = await postFile(file, userId, fileId);
         if (resPostFile?.error) {
             return {
                 error: resPostFile.error,
@@ -134,6 +136,7 @@ async function handleFormUploadDocs(data: FormData) {
         // Handle multiple file uploads
         for (const file of fileEntry) {
             // upload the file to the cloud
+            let fileId = "";
             try {
                 const res = await uploadFile(file);
                 if (res?.error) {
@@ -141,6 +144,7 @@ async function handleFormUploadDocs(data: FormData) {
                         error: res.error,
                     };
                 }
+                fileId = res.id ?? "";
             } catch (e) {
                 return {
                     error: `Error uploading the file ${file.name}`,
@@ -149,7 +153,11 @@ async function handleFormUploadDocs(data: FormData) {
 
             // post the file to the database
             try {
-                const resPostFileMultiple = await postFile(file, userId);
+                const resPostFileMultiple = await postFile(
+                    file,
+                    userId,
+                    fileId,
+                );
                 if (resPostFileMultiple?.error) {
                     return {
                         error: resPostFileMultiple.error,
@@ -168,7 +176,7 @@ async function handleFormUploadDocs(data: FormData) {
     };
 }
 
-async function postFile(file: File, userId: User["id"]) {
+async function postFile(file: File, userId: User["id"], fileId: string) {
     log({ type: TLog.info, text: "Posting file to the database" });
     // validate the file
     const res = trustFile.safeParse(file);
@@ -205,6 +213,7 @@ async function postFile(file: File, userId: User["id"]) {
             title: slugify(file.name, "_"),
             description: "A file",
             userId: userId,
+            url: fileId,
         },
     });
     console.log(resDb);

@@ -4,8 +4,9 @@ import B2 from "backblaze-b2";
 import { env } from "@/env";
 import { trustFile } from "@/types/schema/file-upload";
 import slugify from "slugify";
+import { TLog, log } from "@/logger/logger";
 
-const b2 = new B2({
+export const b2 = new B2({
     applicationKeyId: env.BUCKET_KEY_ID,
     applicationKey: env.BUCKET_APP_KEY,
 });
@@ -27,6 +28,7 @@ interface BucketResponse {
 }
 
 async function getBucketId() {
+    log({ type: TLog.info, text: "Getting bucket ID" });
     // Authorize with Backblaze B2
     await b2.authorize();
     try {
@@ -46,6 +48,7 @@ async function getBucketId() {
 }
 
 export async function uploadFile(file: File) {
+    log({ type: TLog.info, text: "Uploading file to the cloud" });
     // zod verification for file size and type
 
     const res = trustFile.safeParse(file);
@@ -77,13 +80,13 @@ export async function uploadFile(file: File) {
     }
     if (!uploadUrlFromB2 || !authorizationTokenFromB2)
         throw new Error("Error when getting upload URL.");
-
+    const fileName = "heurly_" + slugify(file.name, "_");
     const fileBuffer = Buffer.from(await file.arrayBuffer());
     try {
         const response = await b2.uploadFile({
             uploadUrl: uploadUrlFromB2,
             uploadAuthToken: authorizationTokenFromB2,
-            fileName: "heurly_" + slugify(file.name, "_"),
+            fileName: fileName,
             data: fileBuffer,
         });
         if (response.status !== 200) {
@@ -92,6 +95,10 @@ export async function uploadFile(file: File) {
             };
         }
         console.log(response);
+        const fileId = (response.data as { fileId: string })?.fileId;
+        return {
+            id: fileId,
+        };
     } catch (e) {
         return {
             error: "Error when uploading file.",

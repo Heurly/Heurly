@@ -3,8 +3,10 @@ import type { Question, User } from "@prisma/client";
 import { db } from "@/server/db";
 import * as z from "zod";
 import { dataCreateQuestionSchema } from "@/types/schema/form-create-question";
+import { TLog, log } from "@/logger/logger";
 
 export async function getQuestionById(questionId: Question["id"]) {
+    log({ type: TLog.info, text: "Fetching question by id" });
     try {
         const questionById = await db.question.findUnique({
             where: {
@@ -24,6 +26,7 @@ export async function getQuestionById(questionId: Question["id"]) {
  * @returns
  */
 export async function getQuestions(nbQuestion = 10, userId?: User["id"]) {
+    log({ type: TLog.info, text: "Fetching questions" });
     // validate the id
     const schemaId = z.string().cuid();
     if (!schemaId.safeParse(userId).success) {
@@ -75,6 +78,7 @@ export async function getQuestionAndAnswers(
     questionId: Question["id"],
     userId?: User["id"],
 ) {
+    log({ type: TLog.info, text: "Fetching question and answers" });
     // validate the params
     const schemaId = z.string().cuid();
     if (
@@ -150,6 +154,7 @@ export async function getQuestionAndAnswers(
 export async function handleFormCreateQuestion(
     data: z.infer<typeof dataCreateQuestionSchema>,
 ) {
+    log({ type: TLog.info, text: "Handling form create question" });
     // Validate the data
     const resParseRawData = dataCreateQuestionSchema.safeParse(data);
     if (!resParseRawData.success) {
