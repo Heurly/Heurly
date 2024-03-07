@@ -3,10 +3,12 @@ import { dataCreateAnswer, formAnswerSchema } from "@/types/schema/form-answer";
 import * as z from "zod";
 import { db } from "@/server/db";
 import { revalidatePath } from "next/cache";
+import { TLog, log } from "@/logger/logger";
 
 export async function handleFormCreateAnswer(
     data: z.infer<typeof dataCreateAnswer>,
 ) {
+    log({ type: TLog.info, text: "Handling form create answer" });
     // Validate the data
     const resParseRawData = formAnswerSchema.safeParse(data);
     if (!resParseRawData.success) {

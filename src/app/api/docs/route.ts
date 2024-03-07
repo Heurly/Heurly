@@ -5,13 +5,14 @@ import type { User } from "next-auth";
 import * as z from "zod";
 import slugify from "slugify";
 import { getDocument } from "pdfjs-dist";
-// Dynamically set the worker source
-const pdfjs = await import("pdfjs-dist");
-pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
+import { log, TLog } from "@/logger/logger";
 
+import * as pdfjs from "pdfjs-dist";
+pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
 let apiURL: string;
 
 export async function POST(request: Request): Promise<Response> {
+    log({ type: TLog.info, text: "Handling POST request" });
     apiURL = request.headers.get("origin") ?? "";
 
     // handle the form data
@@ -20,6 +21,7 @@ export async function POST(request: Request): Promise<Response> {
 }
 
 function isDocsTypeSafe(file: File) {
+    log({ type: TLog.info, text: "Checking if the file is valid" });
     return trustFile.safeParse(file).success;
 }
 
@@ -28,6 +30,7 @@ type ToxicityResponse = {
 };
 
 async function extractTextFromPDF(pdfFile: File): Promise<string> {
+    log({ type: TLog.info, text: "Extracting text from PDF" });
     const fileContentArrayBuffer = await pdfFile.arrayBuffer();
     // Convert ArrayBuffer to Uint8Array
     const fileContent = new Uint8Array(fileContentArrayBuffer);
@@ -53,6 +56,7 @@ async function extractTextFromPDF(pdfFile: File): Promise<string> {
 }
 
 async function handleFormUploadDocs(data: FormData) {
+    log({ type: TLog.info, text: "Handling form upload" });
     const fileEntry = data.get("file") as unknown as FileList;
 
     const userId = data.get("userId") as User["id"];
@@ -173,6 +177,7 @@ async function handleFormUploadDocs(data: FormData) {
 }
 
 async function postFile(file: File, userId: User["id"], fileId: string) {
+    log({ type: TLog.info, text: "Posting file to the database" });
     // validate the file
     const res = trustFile.safeParse(file);
     if (!res.success) {
