@@ -9,10 +9,12 @@ import { db } from "@/server/db";
 import { CalendarData, CourseEvent, TEventTimetable } from "@/types/timetable";
 import type { User } from "@prisma/client";
 import { convert } from "ical2json";
+import { TLog, log } from "@/logger/logger";
 
 const COURSES_EXCEPTIONS = ["BDE"];
 
 function filterCourses(courses: CourseEvent[], dateFilter: ApiFilter<number>) {
+    log({ type: TLog.info, text: "Filtering courses" });
     if (dateFilter.equals != undefined) {
         courses = courses.filter((m) => {
             const start = parseISO(m.DTSTART);
@@ -29,6 +31,7 @@ function filterCourses(courses: CourseEvent[], dateFilter: ApiFilter<number>) {
 }
 
 function distanceToCourseCode(target: string, entry: string) {
+    log({ type: TLog.info, text: "Calculating distance to course code" });
     if (entry.length > target.length) {
         const strippedEntry = entry.slice(0, entry.length - 1);
 
@@ -41,6 +44,7 @@ function distanceToCourseCode(target: string, entry: string) {
 }
 
 async function translateCoursesCodes(courses: CourseEvent[]) {
+    log({ type: TLog.info, text: "Translating courses codes" });
     // Retrieve necessary courses label batch
     const conditions = [];
     for (const course of courses) {
@@ -109,6 +113,8 @@ export async function getTimetableData(
     modules?: number[] | null,
 ): Promise<TEventTimetable[] | IcalObject | null> {
     if (modules == null && userId == null) return null;
+
+    log({ type: TLog.info, text: "Retrieving timetable data" });
 
     // if there is no modules, we get the url user UserTimetableURL
     if (modules == null) {

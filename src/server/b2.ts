@@ -4,6 +4,7 @@ import B2 from "backblaze-b2";
 import { env } from "@/env";
 import { trustFile } from "@/types/schema/file-upload";
 import slugify from "slugify";
+import { TLog, log } from "@/logger/logger";
 
 const b2 = new B2({
     applicationKeyId: env.BUCKET_KEY_ID,
@@ -27,6 +28,7 @@ interface BucketResponse {
 }
 
 async function getBucketId() {
+    log({ type: TLog.info, text: "Getting bucket ID" });
     // Authorize with Backblaze B2
     await b2.authorize();
     try {
@@ -46,6 +48,7 @@ async function getBucketId() {
 }
 
 export async function uploadFile(file: File) {
+    log({ type: TLog.info, text: "Uploading file to the cloud" });
     // zod verification for file size and type
 
     const res = trustFile.safeParse(file);
@@ -91,7 +94,6 @@ export async function uploadFile(file: File) {
                 error: "Error when uploading file.",
             };
         }
-        console.log(response);
     } catch (e) {
         return {
             error: "Error when uploading file.",
