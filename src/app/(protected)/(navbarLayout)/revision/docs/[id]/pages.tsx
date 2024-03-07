@@ -6,7 +6,7 @@ export default async function PageDocs({
 }: {
     params: { id: string };
 }) {
-    let e;
+  
     if (!id) redirect("/404");
 
     return (
