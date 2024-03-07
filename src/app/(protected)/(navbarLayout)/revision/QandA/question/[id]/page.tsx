@@ -26,12 +26,15 @@ export default async function QuestionPage({
     params: { id: string };
 }) {
     if (!params.id) redirect("/404");
-    const questionAndAnswersDb = await getQuestionAndAnswers(params.id);
-
-    if (!questionAndAnswersDb) redirect("/404");
 
     const session = await getServerAuthSession();
     if (!session) redirect("/login");
+
+    const questionAndAnswersDb = await getQuestionAndAnswers(
+        params.id,
+        session.user.id,
+    );
+    if (!questionAndAnswersDb) redirect("/404");
 
     return (
         <div className="mt-16 flex h-full flex-col items-center gap-y-5 overflow-auto md:mt-0">
@@ -44,7 +47,14 @@ export default async function QuestionPage({
                 author={questionAndAnswersDb.user ?? "anonymous"}
                 upvotes={questionAndAnswersDb.upvotes}
                 downvotes={questionAndAnswersDb.downvotes}
+                nbrAnswers={questionAndAnswersDb.answer?.length}
                 className="sticky top-0 z-10"
+                hasVotedDown={
+                    questionAndAnswersDb.UserVoteQuestion[0]?.vote === 0
+                }
+                hasVotedUp={
+                    questionAndAnswersDb.UserVoteQuestion[0]?.vote === 1
+                }
             />
             <Card className="w-11/12 py-5 md:px-10 md:py-16">
                 <CardContent>
@@ -56,7 +66,15 @@ export default async function QuestionPage({
             </Card>
 
             {questionAndAnswersDb.answer?.map(
-                ({ answer, upvotes, downvotes, createdAt, id }) => {
+                ({
+                    answer,
+                    upvotes,
+                    downvotes,
+                    createdAt,
+                    user,
+                    id,
+                    UserVoteAnswer: [vote],
+                }) => {
                     return (
                         <QandACard
                             id={id}
@@ -64,9 +82,11 @@ export default async function QuestionPage({
                             type={"answer"}
                             text={answer}
                             date={createdAt}
-                            author={questionAndAnswersDb.user}
+                            author={user}
                             upvotes={upvotes}
                             downvotes={downvotes}
+                            hasVotedUp={vote?.vote === 1}
+                            hasVotedDown={vote?.vote === 0}
                         />
                     );
                 },

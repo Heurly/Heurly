@@ -3,11 +3,13 @@ import type { User } from "@prisma/client";
 import { db } from "./db";
 import * as z from "zod";
 import { convert } from "ical2json";
+import { TLog, log } from "@/logger/logger";
 
 async function addProfileUnitByUrl(
     userId: User["id"],
     url: string,
 ): Promise<boolean> {
+    log({ type: TLog.info, text: `Adding profile URL for ${userId}` });
     try {
         const urlSchema = z.string().url();
         // This will throw if the URL is invalid, so let's wrap it in a try-catch
@@ -27,7 +29,6 @@ async function addProfileUnitByUrl(
 
         const rawIcal = await resIcal.text();
         convert(rawIcal);
-        // Assuming `convert` throws for invalid ical, or you need another way to validate it
 
         // verify if the url is not already in the database
         const urlExists = await db.userTimetableURL.findFirst({

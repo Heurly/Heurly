@@ -18,7 +18,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "npm run format:fix && git add ."
+            "pre-commit": "npm run lint || (npm run format:fix && git add -A .)"
         }
     },
     "dependencies": {
@@ -57,6 +57,7 @@
         "lucide-react": "^0.323.0",
         "next": "^14.0.4",
         "next-auth": "^4.24.5",
+        "pdfjs-dist": "^4.0.379",
         "react": "18.2.0",
         "react-day-picker": "^8.10.0",
         "react-dom": "18.2.0",
@@ -65,7 +66,6 @@
         "slugify": "^1.6.6",
         "tailwind-merge": "^2.2.1",
         "tailwindcss-animate": "^1.0.7",
-        "tesseract.js": "^5.0.5",
         "use-debounce": "^10.0.0",
         "uuid": "^9.0.1",
         "zod": "^3.22.4"
@@ -82,7 +82,6 @@
         "autoprefixer": "^10.4.14",
         "eslint": "^8.54.0",
         "eslint-config-next": "^14.0.4",
-        "pdfjs-dist": "^4.0.379",
         "postcss": "^8.4.31",
         "prettier": "^3.1.0",
         "prettier-plugin-tailwindcss": "^0.5.7",

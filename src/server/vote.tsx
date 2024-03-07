@@ -1,4 +1,5 @@
 "use server";
+import { TLog, log } from "@/logger/logger";
 import { db } from "@/server/db";
 import type { Answer, Question } from "@prisma/client";
 
@@ -11,6 +12,7 @@ export async function addVoteToQuestion(
     questionId: Question["id"],
     vote: Vote,
 ) {
+    log({ type: TLog.info, text: `Adding vote to question $${questionId}` });
     try {
         const question = await db.question.findUnique({
             where: {
@@ -55,11 +57,14 @@ export async function addVoteToQuestion(
             },
         });
     } catch (e) {
-        throw new Error("An error occured while adding the vote");
+        throw new Error(
+            `An error occured while adding the vote for the question : ${questionId}`,
+        );
     }
 }
 
 export async function addVoteToAnswer(answerId: Answer["id"], vote: Vote) {
+    log({ type: TLog.info, text: `Adding vote to answer $${answerId}` });
     try {
         const answer = await db.answer.findUnique({
             where: {
@@ -105,6 +110,8 @@ export async function addVoteToAnswer(answerId: Answer["id"], vote: Vote) {
             },
         });
     } catch (e) {
-        throw new Error("An error occured while adding the vote");
+        throw new Error(
+            `An error occured while adding the vote to the answer : ${answerId}`,
+        );
     }
 }
