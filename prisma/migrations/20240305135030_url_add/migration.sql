@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE "Docs" ADD COLUMN     "url" TEXT NOT NULL;
+ALTER TABLE "Docs" ADD COLUMN     "url" TEXT;
