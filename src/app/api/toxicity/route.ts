@@ -1,3 +1,4 @@
+import { TLog, log } from "@/logger/logger";
 import * as toxicity from "@tensorflow-models/toxicity";
 // import tfnode from "@tensorflow/tfjs-node";
 // require("@tensorflow/tfjs-node")
@@ -17,6 +18,7 @@ type RequestBody = {
  * @returns if getLabels is true, returns the labels of the toxic text, else returns if the text is toxic or not
  */
 export async function POST(request: Request): Promise<Response> {
+    log({ type: TLog.info, text: "Handling toxicity POST request" });
     // handle the form data
     const jsonData = (await request.json()) as RequestBody;
     const testText = jsonData.text;
@@ -37,6 +39,7 @@ enum ToxicityLabels {
 }
 
 async function isTextToxic(textContent: string, getLabels = false) {
+    log({ type: TLog.info, text: "Checking if the text is toxic" });
     const threshold = 0.9;
 
     const toxicityLabels = [

@@ -21,6 +21,7 @@ export async function POST(request: Request): Promise<Response> {
 }
 
 function isDocsTypeSafe(file: File) {
+    log({ type: TLog.info, text: "Checking if the file is valid" });
     return trustFile.safeParse(file).success;
 }
 
