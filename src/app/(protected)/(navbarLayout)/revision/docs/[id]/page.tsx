@@ -39,7 +39,6 @@ export default async function PageDocs({ params }: { params: { id: string } }) {
     const blobURL = URL.createObjectURL(blob);
     // pdf type
     // Create File variable
-    let e;
     return (
         <>
             <Card className="flex h-full w-full flex-col gap-5 p-10">
