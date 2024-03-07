@@ -33,7 +33,7 @@ export default async function PageDocsList() {
     );
 }
 
-export function FileCard({ file }: { file: Docs }) {
+function FileCard({ file }: { file: Docs }) {
     return (
         <Card className="flex h-1/6 w-full flex-col justify-center gap-5 p-10">
             <div className="flex w-full items-center justify-between">

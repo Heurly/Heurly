@@ -6,7 +6,7 @@ import { trustFile } from "@/types/schema/file-upload";
 import slugify from "slugify";
 import { TLog, log } from "@/logger/logger";
 
-export const b2 = new B2({
+const b2 = new B2({
     applicationKeyId: env.BUCKET_KEY_ID,
     applicationKey: env.BUCKET_APP_KEY,
 });
