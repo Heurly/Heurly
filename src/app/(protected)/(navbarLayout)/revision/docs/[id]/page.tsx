@@ -25,6 +25,7 @@ export default async function PageDocs({ params }: { params: { id: string } }) {
     // Description
     // File viewer with pdf js
     // File authorization
+    if (doc.url === null) return;
     await b2.authorize();
     const fileP = await b2.downloadFileById({
         fileId: doc.url,
