@@ -53,11 +53,6 @@ export default function NavBar() {
             icon: <CalendarCheck />,
             href: "/event",
         },
-        {
-            name: "Installer heurly",
-            icon: <InstallPwaButton variant={"icon"} />,
-            href: "/#",
-        },
     ];
     return (
         <nav className="fixed bottom-0 left-1/2 z-40 mb-4 flex w-11/12 -translate-x-1/2 flex-col items-center justify-between rounded-3xl bg-sky-200 px-3 py-4 md:relative md:left-[unset] md:top-[unset] md:h-full md:w-[unset] md:translate-x-0 md:py-10">
@@ -65,14 +60,26 @@ export default function NavBar() {
                 <Logo className=" w-16" />
             </Link>
             <div className="flex w-full justify-between gap-10 px-5 md:w-[unset] md:flex-col">
-                {navbarElement.map(({ href, name, icon }, index) => (
-                    <NavBarItems
-                        key={index}
-                        name={name}
-                        icon={icon}
-                        href={href}
-                    />
-                ))}
+                {navbarElement.map(({ href, name, icon }, index) => {
+                    return (
+                        <NavBarItems
+                            key={index}
+                            name={name}
+                            icon={icon}
+                            href={href}
+                        />
+                    );
+                })}
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <InstallPwaButton variant={"icon"}/>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Installer heurly</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </div>
             <div className="hidden flex-col justify-between gap-5 md:flex">
                 <NavBarItems

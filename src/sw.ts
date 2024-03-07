@@ -19,7 +19,7 @@ installSerwist({
     fallbacks: {
         entries: [
             {
-                url: "/~offline",
+                url: "/offline",
                 revision,
                 matcher({ request }) {
                     return request.destination === "document";
