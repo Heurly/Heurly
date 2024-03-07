@@ -13,6 +13,7 @@ import {
     LogOut,
     Settings,
 } from "lucide-react";
+import InstallPwaButton from "../PWA/install-pwa-button";
 
 type PropsNavBarItems = {
     name: React.ReactNode;
@@ -51,6 +52,11 @@ export default function NavBar() {
             name: "Evénements",
             icon: <CalendarCheck />,
             href: "/event",
+        },
+        {
+            name: "Installer heurly",
+            icon: <InstallPwaButton variant={"icon"} />,
+            href: "/#",
         },
     ];
     return (
