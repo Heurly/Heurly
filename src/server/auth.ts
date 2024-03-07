@@ -52,11 +52,7 @@ export const authOptions: NextAuthOptions = {
             user: User;
         }) {
             if (account && user) {
-                if (
-                    account.provider === "google" &&
-                    user.email &&
-                    user.email_verified
-                ) {
+                if (account.provider === "google" && user.email) {
                     return user.email.endsWith("@edu.esiee.fr");
                 }
                 return true;
