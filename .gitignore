@@ -41,3 +41,6 @@ secrets.env
 
 # typescript
 *.tsbuildinfo
+
+# turborepo
+.turbo
