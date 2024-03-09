@@ -35,6 +35,8 @@ export const env = createEnv({
         BUCKET_APP_KEY: z.string(),
         BUCKET_KEY_ID: z.string(),
         BUCKET_NAME: z.string(),
+        BUCKET_ENDPOINT: z.string().url(),
+        BUCKET_REGION: z.string(),
     },
 
     /**
@@ -62,6 +64,8 @@ export const env = createEnv({
         BUCKET_APP_KEY: process.env.BUCKET_APP_KEY,
         BUCKET_KEY_ID: process.env.BUCKET_KEY_ID,
         BUCKET_NAME: process.env.BUCKET_NAME,
+        BUCKET_ENDPOINT: process.env.BUCKET_ENDPOINT,
+        BUCKET_REGION: process.env.BUCKET_REGION,
     },
     /**
      * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

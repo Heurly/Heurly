@@ -78,7 +78,7 @@ async function handleFormUploadDocs(data: FormData) {
         }
         const pdfText = await extractTextFromPDF(file);
 
-        let isToxic: boolean;
+        let isToxic :boolean;
 
         try {
             const resIsToxic = await fetch(`${apiURL}/api/toxicity`, {
@@ -110,7 +110,8 @@ async function handleFormUploadDocs(data: FormData) {
             };
         }
 
-        const fileId = res.id ?? "";
+        // const fileId = res.data?. ?? "";
+        const fileId = "";
         // post the file to the database
         const resPostFile = await postFile(file, userId, fileId);
         if (resPostFile?.error) {
@@ -144,7 +145,8 @@ async function handleFormUploadDocs(data: FormData) {
                         error: res.error,
                     };
                 }
-                fileId = res.id ?? "";
+                
+                fileId = res?.data?.VersionId ?? "";
             } catch (e) {
                 return {
                     error: `Error uploading the file ${file.name}`,
