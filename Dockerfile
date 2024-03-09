@@ -4,6 +4,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY . .
+RUN npm i -g pnpm
 RUN pnpm install
 
 # Stage 2
@@ -38,6 +39,7 @@ ENV BUCKET_APP_KEY=${BUCKET_APP_KEY}
 ARG BUCKET_NAME
 ENV BUCKET_NAME=${BUCKET_NAME}
 RUN NODE_ENV="production"
+RUN npm i -g pnpm
 RUN pnpm add turbo --global
 RUN turbo build && pnpm prune --production
 
