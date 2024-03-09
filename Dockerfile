@@ -39,6 +39,7 @@ ENV BUCKET_APP_KEY=${BUCKET_APP_KEY}
 ARG BUCKET_NAME
 ENV BUCKET_NAME=${BUCKET_NAME}
 RUN NODE_ENV="production"
+RUN npm i -g pnpm
 RUN pnpm add turbo --global
 RUN turbo build && pnpm prune --production
 
