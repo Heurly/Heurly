@@ -4,7 +4,6 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY . .
-RUN npm i -g pnpm
 RUN pnpm install
 
 # Stage 2
