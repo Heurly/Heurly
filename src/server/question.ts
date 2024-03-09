@@ -7,7 +7,7 @@ import { TLog, log } from "@/logger/logger";
 
 export async function getQuestionById(questionId: Question["id"]) {
     log({ type: TLog.info, text: "Fetching question by id" });
-    
+
     try {
         const questionById = await db.question.findUnique({
             where: {

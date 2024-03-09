@@ -73,7 +73,7 @@ export default function NavBar() {
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
-                            <InstallPwaButton variant={"icon"}/>
+                            <InstallPwaButton variant={"icon"} />
                         </TooltipTrigger>
                         <TooltipContent>
                             <p>Installer heurly</p>

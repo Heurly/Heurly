@@ -10,7 +10,7 @@
         "db:seed": "tsx prisma/seed.ts",
         "dev": "next dev",
         "postinstall": "prisma generate",
-        "lint": "next lint",
+        "lint": "turbo next lint",
         "start": "next start",
         "format": "prettier --check --ignore-path .gitignore .",
         "format:fix": "prettier --write --ignore-path .gitignore .",
