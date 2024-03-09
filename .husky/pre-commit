@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run lint || (npm run format:fix && git add -A .)
+turbo lint || (turbo format:fix && git add -A .)
