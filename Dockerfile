@@ -4,7 +4,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY . .
-RUN npm install
+RUN pnpm install
 
 # Stage 2
 FROM node:20-alpine AS builder
@@ -38,7 +38,8 @@ ENV BUCKET_APP_KEY=${BUCKET_APP_KEY}
 ARG BUCKET_NAME
 ENV BUCKET_NAME=${BUCKET_NAME}
 RUN NODE_ENV="production"
-RUN npm run build && npm prune --production
+RUN pnpm add turbo --global
+RUN turbo build && pnpm prune --production
 
 # Stage 3
 FROM node:20-alpine AS runner
