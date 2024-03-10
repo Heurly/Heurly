@@ -9,11 +9,11 @@ import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { deleteUserDoc, getDocsByUser } from "@/server/docs";
+import { getDocsByUser } from "@/server/docs";
 import ID from "@/utils/id";
-import { FileText, Trash } from "lucide-react";
 import { getURLsByUser } from "@/server/url-timetable";
 import { Separator } from "@/components/ui/separator";
+import ListUserFile from "@/components/profile/list-user-file";
 
 export const metadata = {
     title: "Mon profil",
@@ -104,28 +104,10 @@ export default async function PageUserProfile() {
                         <p>Vous n&apos;avez pas encore de documents.</p>
                     ) : (
                         <div className="flex gap-5">
-                            {userDocs.map(({ id, title }) => (
-                                <Link href={`/QandA/docs/${id}`} key={ID()}>
-                                    <Card
-                                        key={ID()}
-                                        className="relative cursor-pointer p-10"
-                                    >
-                                        <div
-                                            className="absolute right-0 top-0 flex h-10 w-10 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border bg-white transition hover:bg-red-300"
-                                            onClick={async () => {
-                                                await deleteUserDoc(
-                                                    id,
-                                                    session.user.id,
-                                                );
-                                            }}
-                                        >
-                                            <Trash />
-                                        </div>
-                                        <FileText />
-                                        {title}
-                                    </Card>
-                                </Link>
-                            ))}
+                            <ListUserFile
+                                userId={session?.user.id}
+                                userDocs={userDocs}
+                            />
                         </div>
                     )}
                 </CardContent>
