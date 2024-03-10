@@ -1,0 +1,76 @@
+"use server"
+import { Docs, User } from "@prisma/client";
+import { db } from "./db";
+import { DocsModel, UserModel } from "prisma/zod";
+
+
+/**
+ * 
+ * @returns {Promise<Docs[]>} A promise that resolves to an array of docs
+ */
+export async function getDocs(): Promise<Docs[]> {
+    try {
+        const resDBDocs = await db.docs.findMany();
+        return resDBDocs;
+    } catch (e) {
+        throw new Error("Error: Could not get docs.");
+    }
+}
+
+/**
+ * 
+ * @param userId The id of the user to get docs for
+ * @returns {Promise<Docs[]>} A promise that resolves to an array of docs
+ */
+export async function getDocsByUser(userId: User["id"]): Promise<Docs[]> {
+    // zod verification for user id
+    const resCheckUserId = UserModel.shape.id.safeParse(userId);
+
+    if (!resCheckUserId.success) throw new Error("Error: Invalid user id.");
+
+    try {
+        const resDBUserDocs = await db.docs.findMany({
+            where: {
+                userId: userId
+            }
+        });
+        return resDBUserDocs;
+    } catch (e) {
+        throw new Error("Error: Could not get docs by user.");
+    }
+}
+
+
+/**
+ * 
+ * @param docId The id of the doc to delete
+ * @param userId The id of the user who owns the doc
+ * @returns {Promise<{success: boolean, data: Docs}>} A promise that resolves to an object with a success boolean and the deleted doc
+ */
+export async function deleteUserDoc(docId: Docs["id"], userId: User["id"]): Promise<{ success: boolean, data: Docs }> {
+    // zod verification for user id
+    const resCheckUserId = UserModel.shape.id.safeParse(userId);
+
+    if (!resCheckUserId.success) throw new Error("Error: Invalid user id.");
+
+    // zod verification for doc id
+    const resCheckDocId = DocsModel.shape.id.safeParse(docId);
+
+    if (!resCheckDocId.success) throw new Error("Error: Invalid doc id.");
+
+    try {
+        const resDBDeleteDoc = await db.docs.delete({
+            where: {
+                id: docId,
+                userId: userId
+            }
+        });
+        return {
+            success: true,
+            data: resDBDeleteDoc
+        };
+    } catch (e) {
+        throw new Error("Error: Could not delete doc.");
+    }
+}
+
