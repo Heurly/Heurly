@@ -6,7 +6,7 @@ import { getDocument } from "pdfjs-dist";
 import { log, TLog } from "@/logger/logger";
 
 import * as pdfjs from "pdfjs-dist";
-import bucket from "@/server/bucket";
+import { bucket } from "@/server/bucket";
 import { UserModel } from "prisma/zod";
 pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
 let apiURL: string;
