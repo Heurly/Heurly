@@ -1,5 +1,4 @@
 import { trustFile, trustFileList } from "@/types/schema/file-upload";
-import { uploadFile } from "@/server/b2";
 import { db } from "@/server/db";
 import type { User } from "next-auth";
 import * as z from "zod";
@@ -8,6 +7,7 @@ import { getDocument } from "pdfjs-dist";
 import { log, TLog } from "@/logger/logger";
 
 import * as pdfjs from "pdfjs-dist";
+import bucket from "@/server/bucket";
 pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
 let apiURL: string;
 
@@ -78,7 +78,7 @@ async function handleFormUploadDocs(data: FormData) {
         }
         const pdfText = await extractTextFromPDF(file);
 
-        let isToxic :boolean;
+        let isToxic: boolean;
 
         try {
             const resIsToxic = await fetch(`${apiURL}/api/toxicity`, {
@@ -103,14 +103,13 @@ async function handleFormUploadDocs(data: FormData) {
         }
 
         // upload the file to the cloud
-        const res = await uploadFile(file);
-        if (res?.error) {
+        const res = await bucket.uploadFile(file);
+        if (!res.success) {
             return {
-                error: res.error,
+                error: "Error uploading the file",
             };
         }
 
-        // const fileId = res.data?. ?? "";
         const fileId = "";
         // post the file to the database
         const resPostFile = await postFile(file, userId, fileId);
@@ -136,16 +135,17 @@ async function handleFormUploadDocs(data: FormData) {
 
         // Handle multiple file uploads
         for (const file of fileEntry) {
+            
             // upload the file to the cloud
             let fileId = "";
             try {
-                const res = await uploadFile(file);
-                if (res?.error) {
+                const res = await bucket.uploadFile(file);
+                if (!res.success) {
                     return {
-                        error: res.error,
+                        error: "Error uploading the file",
                     };
                 }
-                
+
                 fileId = res?.data?.VersionId ?? "";
             } catch (e) {
                 return {
