@@ -20,7 +20,7 @@ export default async function PageDocs() {
     // // File viewer with pdf js
     // // File authorization
     // if (doc.url === null) return;
-    // const fileP = 
+    // const fileP =
     // const blob = new Blob([fileP.data], { type: "application/pdf" });
     // const blobURL = URL.createObjectURL(blob);
     // // pdf type

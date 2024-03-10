@@ -135,7 +135,6 @@ async function handleFormUploadDocs(data: FormData) {
 
         // Handle multiple file uploads
         for (const file of fileEntry) {
-            
             // upload the file to the cloud
             let fileId = "";
             try {
@@ -190,7 +189,7 @@ async function postFile(file: File, userId: User["id"], fileId: string) {
 
     // validate the user ID
     const userIdCheck = UserModel.shape.id.safeParse(userId);
-  
+
     if (!userIdCheck.success) {
         return {
             error: "Invalid user ID",

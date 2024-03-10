@@ -8,7 +8,9 @@ import type { Unit } from "@prisma/client";
  * Fetch all units
  * @returns {Promise<{label: string, code: number}[]>} A promise that resolves to an array of units
  */
-export async function getAllUnits(): Promise<{ label: string; code: number }[]> {
+export async function getAllUnits(): Promise<
+    { label: string; code: number }[]
+> {
     log({ type: TLog.info, text: "Fetching all units" });
     const res = await db.unit.findMany();
 
@@ -25,7 +27,7 @@ export async function getAllUnits(): Promise<{ label: string; code: number }[]> 
  * @param unitId The id of the unit
  * @returns {Promise<Unit>} A promise that resolves to a unit
  */
-export async function getUnitById(unitId: Unit["id"]): Promise<Unit | null>{
+export async function getUnitById(unitId: Unit["id"]): Promise<Unit | null> {
     log({ type: TLog.info, text: "Fetching unit by id" });
     const res = await db.unit.findUnique({
         where: {
@@ -41,7 +43,9 @@ export async function getUnitById(unitId: Unit["id"]): Promise<Unit | null>{
  * @param unitCode The code of the unit
  * @returns {Promise<Unit>} A promise that resolves to a unit
  */
-export async function getUnitByCode(unitCode: Unit["code"]): Promise<Unit | null>{
+export async function getUnitByCode(
+    unitCode: Unit["code"],
+): Promise<Unit | null> {
     log({ type: TLog.info, text: "Fetching unit by code" });
     const res = await db.unit.findUnique({
         where: {

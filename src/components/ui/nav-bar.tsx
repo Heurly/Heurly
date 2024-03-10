@@ -83,12 +83,7 @@ export default function NavBar() {
                 </TooltipProvider>
             </div>
             <div className="hidden flex-col justify-between gap-5 md:flex">
-
-                <NavBarItems
-                    href="/profile"
-                    name="Profil"
-                    icon={<User />}
-                />
+                <NavBarItems href="/profile" name="Profil" icon={<User />} />
                 <NavBarItems
                     href="/logout"
                     name="Déconnexion"
