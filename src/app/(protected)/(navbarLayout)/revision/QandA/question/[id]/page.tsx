@@ -12,6 +12,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props) {
     const question = await getQuestionById(params.id);
+    if (!question) return null;
     const title = question?.question;
     const description = question?.description;
     return {

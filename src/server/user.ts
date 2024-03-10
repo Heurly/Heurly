@@ -5,7 +5,13 @@ import * as z from "zod";
 import { convert } from "ical2json";
 import { TLog, log } from "@/logger/logger";
 
-async function addProfileUnitByUrl(
+/**
+ * This function adds a profile unit by URL
+ * @param userId The id of the user to add the profile unit to
+ * @param url The URL of the profile unit
+ * @returns {Promise<boolean>} A promise that resolves to a boolean
+ */
+export async function addProfileUnitByUrl(
     userId: User["id"],
     url: string,
 ): Promise<boolean> {
@@ -51,8 +57,3 @@ async function addProfileUnitByUrl(
         return false;
     }
 }
-
-//
-// return ical;
-
-export { addProfileUnitByUrl };

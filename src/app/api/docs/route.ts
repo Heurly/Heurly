@@ -1,13 +1,13 @@
 import { trustFile, trustFileList } from "@/types/schema/file-upload";
 import { db } from "@/server/db";
 import type { User } from "next-auth";
-import * as z from "zod";
 import slugify from "slugify";
 import { getDocument } from "pdfjs-dist";
 import { log, TLog } from "@/logger/logger";
 
 import * as pdfjs from "pdfjs-dist";
 import bucket from "@/server/bucket";
+import { UserModel } from "prisma/zod";
 pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
 let apiURL: string;
 
@@ -189,10 +189,9 @@ async function postFile(file: File, userId: User["id"], fileId: string) {
     }
 
     // validate the user ID
-    const userIdSchema = z.string().cuid();
-
-    const checkUserId = userIdSchema.safeParse(userId);
-    if (!checkUserId.success) {
+    const userIdCheck = UserModel.shape.id.safeParse(userId);
+  
+    if (!userIdCheck.success) {
         return {
             error: "Invalid user ID",
         };

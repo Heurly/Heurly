@@ -15,7 +15,7 @@ export async function handleFormCreateAnswer(
         throw resParseRawData.error;
     }
 
-    // verify the user
+    // verify the user exists
     const user = await db.user.findUnique({
         where: {
             id: data.userId,
@@ -25,7 +25,7 @@ export async function handleFormCreateAnswer(
         throw new Error("L'utilisateur n'existe pas");
     }
 
-    // verify the question
+    // verify the question exists
     const question = await db.question.findUnique({
         where: {
             id: data.questionId,

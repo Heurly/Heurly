@@ -12,6 +12,7 @@ import {
     FileStack,
     LogOut,
     Settings,
+    User,
 } from "lucide-react";
 import InstallPwaButton from "../PWA/install-pwa-button";
 
@@ -82,6 +83,12 @@ export default function NavBar() {
                 </TooltipProvider>
             </div>
             <div className="hidden flex-col justify-between gap-5 md:flex">
+
+                <NavBarItems
+                    href="/profile"
+                    name="Profil"
+                    icon={<User />}
+                />
                 <NavBarItems
                     href="/logout"
                     name="Déconnexion"
