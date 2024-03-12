@@ -1,5 +1,5 @@
 "use client";
-import { deleteUserDoc, getDocs, getDocsByUser } from "@/server/docs";
+import { deleteUserDoc, getDocsByUser } from "@/server/docs";
 import type { Docs, User } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -15,7 +15,7 @@ type PropsListUserFile = {
 };
 
 const ListUserFile = React.forwardRef<HTMLDivElement, PropsListUserFile>(
-    ({ userId, className, userDocs }) => {
+    ({ userId, className, userDocs }, ref) => {
         const [docs, setDocs] = useState<Docs[]>(userDocs ?? []);
 
         useEffect(() => {
@@ -28,7 +28,7 @@ const ListUserFile = React.forwardRef<HTMLDivElement, PropsListUserFile>(
         }, [userId]);
 
         return (
-            <div className={cn(className)}>
+            <div className={cn(className)} ref={ref}>
                 {docs.map(({ id: docsId, title }) => (
                     <Link href={`/QandA/docs/${docsId}`} key={ID()}>
                         <Card

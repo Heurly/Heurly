@@ -2,6 +2,8 @@
 import { Docs, User } from "@prisma/client";
 import { db } from "./db";
 import { DocsModel, UserModel } from "prisma/zod";
+import { bucket } from "./bucket";
+import { TLog, log } from "@/logger/logger";
 
 /**
  *
@@ -45,10 +47,7 @@ export async function getDocsByUser(userId: User["id"]): Promise<Docs[]> {
  * @param userId The id of the user who owns the doc
  * @returns {Promise<{success: boolean, data: Docs}>} A promise that resolves to an object with a success boolean and the deleted doc
  */
-export async function deleteUserDoc(
-    docId: Docs["id"],
-    userId: User["id"],
-): Promise<{ success: boolean; data: Docs }> {
+export async function deleteUserDoc(docId: Docs["id"], userId: User["id"]) {
     // zod verification for user id
     const resCheckUserId = UserModel.shape.id.safeParse(userId);
 
@@ -60,17 +59,37 @@ export async function deleteUserDoc(
     if (!resCheckDocId.success) throw new Error("Error: Invalid doc id.");
 
     try {
+        // get the id of the doc
+        const resDBDoc = await db.docs.findUnique({
+            where: {
+                id: docId,
+            },
+        });
+
+        if (!resDBDoc?.url) return;
+
+        // delete the doc in the cloud storage
+        const resDeleteFromBucket = await bucket.deleteFileByName(
+            "heurly_" + resDBDoc.title,
+        );
+        if (!resDeleteFromBucket.success)
+            throw new Error("Error: Could not delete doc. (bucket error)");
+
+        // delete the doc in the db
         const resDBDeleteDoc = await db.docs.delete({
             where: {
                 id: docId,
                 userId: userId,
             },
         });
+        if (!resDBDeleteDoc)
+            throw new Error("Error: Could not delete doc. (db error)");
+
         return {
             success: true,
             data: resDBDeleteDoc,
         };
     } catch (e) {
-        throw new Error("Error: Could not delete doc.");
+        log({ type: TLog.error, text: `${e as string}` });
     }
 }

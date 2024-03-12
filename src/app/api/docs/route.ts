@@ -102,17 +102,26 @@ async function handleFormUploadDocs(data: FormData) {
             };
         }
 
+        let fileIdOneFile;
         // upload the file to the cloud
-        const res = await bucket.uploadFile(file);
-        if (!res.success) {
-            return {
-                error: "Error uploading the file",
-            };
+        try {
+            const resUploadOneFile = await bucket.uploadFile(file);
+            if (!resUploadOneFile.success) {
+                return {
+                    error: "Error uploading the file",
+                };
+            }
+            fileIdOneFile = resUploadOneFile?.data?.VersionId ?? "";
+        } catch (e) {
+            log({
+                type: TLog.error,
+                text: `Error uploading the file ${file.name}`,
+            });
         }
 
-        const fileId = "";
+        if (!fileIdOneFile) return;
         // post the file to the database
-        const resPostFile = await postFile(file, userId, fileId);
+        const resPostFile = await postFile(file, userId, fileIdOneFile);
         if (resPostFile?.error) {
             return {
                 error: resPostFile.error,
@@ -146,6 +155,10 @@ async function handleFormUploadDocs(data: FormData) {
                 }
 
                 fileId = res?.data?.VersionId ?? "";
+                log({
+                    type: TLog.info,
+                    text: `File uploaded with id ${fileId}`,
+                });
             } catch (e) {
                 return {
                     error: `Error uploading the file ${file.name}`,

@@ -90,7 +90,10 @@ export class Bucket {
     public async deleteFileByName(
         fileName: string,
     ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
-        log({ type: TLog.info, text: "Deleting file from the cloud" });
+        log({
+            type: TLog.info,
+            text: `Deleting file ${fileName} from the cloud`,
+        });
 
         // zod verification for file name
         const fileNameSchema = z.string().startsWith(this.prefix);
@@ -116,32 +119,33 @@ export class Bucket {
         }
     }
 
-    /**
-     *
-     * This function will delete a file from the cloud
-     * @param fileId {string} the id of the file to delete
-     * @returns {Promise<{success: boolean, data: BucketUploadOutputData}>}
-     */
-    public async deleteFileById(
-        fileId: string,
-    ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
-        log({ type: TLog.info, text: "Deleting file from the cloud" });
+    // /**
+    //  *
+    //  * This function will delete a file from the cloud
+    //  * @param fileId {string} the id of the file to delete
+    //  * @returns {Promise<{success: boolean, data: BucketUploadOutputData}>}
+    //  */
+    // public async deleteFileById(
+    //     fileId: string,
+    // ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
+    //     log({ type: TLog.info, text: `Deleting file ${fileId} from the cloud` });
 
-        try {
-            const response = await this.client.send(
-                new DeleteObjectCommand({
-                    Bucket: env.BUCKET_NAME,
-                    Key: fileId,
-                }),
-            );
-            return {
-                success: true,
-                data: response,
-            };
-        } catch (error) {
-            throw new Error("Error: Could not delete file.");
-        }
-    }
+    //     try {
+    //         const response = await this.client.send(
+    //             new DeleteObjectCommand({
+    //                 Bucket: env.BUCKET_NAME,
+    //                 Key: fileId,
+    //             }),
+    //         );
+    //         return {
+    //             success: true,
+    //             data: response,
+    //         };
+    //     } catch (error) {
+    //         log({ type: TLog.error, text: `${error}` })
+    //         throw new Error("Error: Could not delete file.");
+    //     }
+    // }
 
     public async getFileUrlById(fileId: string): Promise<string> {
         return `https://${env.BUCKET_NAME}.${env.BUCKET_ENDPOINT}/${fileId}`;
