@@ -4,9 +4,23 @@ import { db } from "@/server/db";
 import * as z from "zod";
 import { dataCreateQuestionSchema } from "@/types/schema/form-create-question";
 import { TLog, log } from "@/logger/logger";
+import { QuestionModel, UserModel } from "prisma/zod";
 
-export async function getQuestionById(questionId: Question["id"]) {
+/**
+ *
+ * @param questionId The id of the question to get
+ * @returns {Promise<Question>} A promise that resolves to a question
+ */
+export async function getQuestionById(
+    questionId: Question["id"],
+): Promise<Question | null> {
     log({ type: TLog.info, text: "Fetching question by id" });
+
+    // validate the id
+    const resCheckQuestionID = QuestionModel.shape.id.safeParse(questionId);
+    if (!resCheckQuestionID.success) {
+        throw new Error("Invalid id");
+    }
 
     try {
         const questionById = await db.question.findUnique({
@@ -22,17 +36,18 @@ export async function getQuestionById(questionId: Question["id"]) {
 }
 /**
  *
- * @param nbQuestion
+ * @param nbQuestion the number of questions to fetch
  * @param userId the id of the user, if provided, the function will return the votes of the user
- * @returns
+ *
  */
 export async function getQuestions(nbQuestion = 10, userId?: User["id"]) {
     log({ type: TLog.info, text: "Fetching questions" });
-    // validate the id
-    const schemaId = z.string().cuid();
-    if (!schemaId.safeParse(userId).success) {
-        throw new Error("Invalid id");
-    }
+
+    const resCheckUserId = UserModel.shape.id.safeParse(userId);
+    if (!resCheckUserId.success) throw new Error("Invalid user id");
+
+    const resCheckNb = z.number().safeParse(nbQuestion);
+    if (!resCheckNb.success) throw new Error("Invalid number of questions");
 
     try {
         const questions = await db.question.findMany({
@@ -75,19 +90,27 @@ export async function getQuestions(nbQuestion = 10, userId?: User["id"]) {
     }
 }
 
+/**
+ *
+ * @param questionId The id of the question to get
+ * @param userId The id of the user, if provided, the function will return the votes of the user
+ * @returns {Promise<Question>} A promise that resolves to a question
+ */
 export async function getQuestionAndAnswers(
     questionId: Question["id"],
     userId?: User["id"],
 ) {
     log({ type: TLog.info, text: "Fetching question and answers" });
-    // validate the params
-    const schemaId = z.string().cuid();
-    if (
-        !schemaId.safeParse(questionId).success &&
-        !schemaId.safeParse(userId).success
-    ) {
+
+    // validate the question id
+    const resCheckQuestionID = QuestionModel.shape.id.safeParse(questionId);
+    if (!resCheckQuestionID.success) {
         throw new Error("Invalid id");
     }
+
+    // validate the user id
+    const resCheckUserId = UserModel.shape.id.safeParse(userId);
+    if (!resCheckUserId.success) throw new Error("Invalid user id");
 
     try {
         const questionAndAnswers = await db.question.findUnique({
@@ -152,9 +175,14 @@ export async function getQuestionAndAnswers(
     }
 }
 
+/**
+ *
+ * @param data The data to create the question
+ * @returns {Promise<{success: boolean, data: Question}>} A promise that resolves to an object with a success boolean and the created question
+ */
 export async function handleFormCreateQuestion(
     data: z.infer<typeof dataCreateQuestionSchema>,
-) {
+): Promise<{ success: boolean; data: Question }> {
     log({ type: TLog.info, text: "Handling form create question" });
     // Validate the data
     const resParseRawData = dataCreateQuestionSchema.safeParse(data);

@@ -1,13 +1,13 @@
 import { trustFile, trustFileList } from "@/types/schema/file-upload";
-import { uploadFile } from "@/server/b2";
 import { db } from "@/server/db";
 import type { User } from "next-auth";
-import * as z from "zod";
 import slugify from "slugify";
 import { getDocument } from "pdfjs-dist";
 import { log, TLog } from "@/logger/logger";
 
 import * as pdfjs from "pdfjs-dist";
+import { bucket } from "@/server/bucket";
+import { UserModel } from "prisma/zod";
 pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
 let apiURL: string;
 
@@ -102,17 +102,26 @@ async function handleFormUploadDocs(data: FormData) {
             };
         }
 
+        let fileIdOneFile;
         // upload the file to the cloud
-        const res = await uploadFile(file);
-        if (res?.error) {
-            return {
-                error: res.error,
-            };
+        try {
+            const resUploadOneFile = await bucket.uploadFile(file);
+            if (!resUploadOneFile.success) {
+                return {
+                    error: "Error uploading the file",
+                };
+            }
+            fileIdOneFile = resUploadOneFile?.data?.VersionId ?? "";
+        } catch (e) {
+            log({
+                type: TLog.error,
+                text: `Error uploading the file ${file.name}`,
+            });
         }
 
-        const fileId = res.id ?? "";
+        if (!fileIdOneFile) return;
         // post the file to the database
-        const resPostFile = await postFile(file, userId, fileId);
+        const resPostFile = await postFile(file, userId, fileIdOneFile);
         if (resPostFile?.error) {
             return {
                 error: resPostFile.error,
@@ -138,13 +147,18 @@ async function handleFormUploadDocs(data: FormData) {
             // upload the file to the cloud
             let fileId = "";
             try {
-                const res = await uploadFile(file);
-                if (res?.error) {
+                const res = await bucket.uploadFile(file);
+                if (!res.success) {
                     return {
-                        error: res.error,
+                        error: "Error uploading the file",
                     };
                 }
-                fileId = res.id ?? "";
+
+                fileId = res?.data?.VersionId ?? "";
+                log({
+                    type: TLog.info,
+                    text: `File uploaded with id ${fileId}`,
+                });
             } catch (e) {
                 return {
                     error: `Error uploading the file ${file.name}`,
@@ -187,10 +201,9 @@ async function postFile(file: File, userId: User["id"], fileId: string) {
     }
 
     // validate the user ID
-    const userIdSchema = z.string().cuid();
+    const userIdCheck = UserModel.shape.id.safeParse(userId);
 
-    const checkUserId = userIdSchema.safeParse(userId);
-    if (!checkUserId.success) {
+    if (!userIdCheck.success) {
         return {
             error: "Invalid user ID",
         };

@@ -8,6 +8,11 @@ enum Vote {
     down = 0,
 }
 
+/**
+ * This function adds a vote to a question
+ * @param questionId The id of the question
+ * @param vote The vote to add
+ */
 export async function addVoteToQuestion(
     questionId: Question["id"],
     vote: Vote,
@@ -63,6 +68,11 @@ export async function addVoteToQuestion(
     }
 }
 
+/**
+ * This function adds a vote to an answer
+ * @param answerId The id of the answer
+ * @param vote The vote to add
+ */
 export async function addVoteToAnswer(answerId: Answer["id"], vote: Vote) {
     log({ type: TLog.info, text: `Adding vote to answer $${answerId}` });
     try {

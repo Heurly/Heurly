@@ -13,6 +13,12 @@ import { TLog, log } from "@/logger/logger";
 
 const COURSES_EXCEPTIONS = ["BDE"];
 
+/**
+ * This function filters the courses
+ * @param courses The courses to filter
+ * @param dateFilter The date filter
+ * @returns {CourseEvent[]} The filtered courses
+ */
 function filterCourses(courses: CourseEvent[], dateFilter: ApiFilter<number>) {
     log({ type: TLog.info, text: "Filtering courses" });
     if (dateFilter.equals != undefined) {
@@ -30,7 +36,13 @@ function filterCourses(courses: CourseEvent[], dateFilter: ApiFilter<number>) {
     return courses;
 }
 
-function distanceToCourseCode(target: string, entry: string) {
+/**
+ * This function calculates the distance between two strings
+ * @param target The target string
+ * @param entry The entry string
+ * @returns {number} The distance between the two strings
+ */
+function distanceToCourseCode(target: string, entry: string): number {
     log({ type: TLog.info, text: "Calculating distance to course code" });
     if (entry.length > target.length) {
         const strippedEntry = entry.slice(0, entry.length - 1);
@@ -43,6 +55,10 @@ function distanceToCourseCode(target: string, entry: string) {
     return distance(target, entry);
 }
 
+/**
+ * This function translates the courses codes to their respective labels
+ * @param courses The courses to translate
+ */
 async function translateCoursesCodes(courses: CourseEvent[]) {
     log({ type: TLog.info, text: "Translating courses codes" });
     // Retrieve necessary courses label batch
@@ -101,11 +117,11 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
 }
 
 /**
- *
- * @param dateFilter
- * @param modules
- * @param userId
- * @returns
+ *  This function retrieves the timetable data
+ * @param dateFilter The date filter
+ * @param modules The modules to get the timetable for
+ * @param userId The user id
+ * @returns {Promise<TEventTimetable[] | IcalObject | null>} A promise that resolves to the timetable data
  */
 export async function getTimetableData(
     dateFilter: ApiFilter<number>,
