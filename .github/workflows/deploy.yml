@@ -48,13 +48,15 @@ jobs:
                       BUCKET_KEY_ID=${{ secrets.BUCKET_KEY_ID }}
                       BUCKET_APP_KEY=${{ secrets.BUCKET_APP_KEY }}
                       BUCKET_NAME=${{ secrets.BUCKET_NAME }}
+                      BUCKET_REGION=${{ secrets.BUCKET_REGION }}
+                      BUCKET_ENDPOINT=${{ secrets.BUCKET_ENDPOINT }}
                       BUILDKIT_INLINE_CACHE=1
                   cache-from: type=local,src=/tmp/.buildx-cache
                   cache-to: type=local,dest=/tmp/.buildx-cache-new
             - name: Move cache
               run: |
-                    rm -rf /tmp/.buildx-cache
-                    mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+                  rm -rf /tmp/.buildx-cache
+                  mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
     deploy:
         needs: build
