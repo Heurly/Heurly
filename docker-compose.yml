@@ -1,10 +1,10 @@
-version: '3'
+version: "3"
 
 services:
-  heurly:
-    container_name: test.heurly
-    image: test.heurly
-    ports:
-      - "3000:3003"
-    volumes:
-     - ./.env:/app/.env
+    heurly:
+        container_name: test.heurly
+        image: test.heurly
+        ports:
+            - "3000:3003"
+        volumes:
+            - ./.env:/app/.env
