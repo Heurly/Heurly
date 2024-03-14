@@ -92,7 +92,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                 ref={ref}
                 className={cn(
                     className,
-                    "grid w-11/12 max-w-full grid-cols-[1fr_3rem] grid-rows-[6rem_1fr_3rem] md:grid-cols-[1fr_6rem]",
+                    "grid w-11/12 max-w-full grid-cols-[1fr_4rem] grid-rows-[6rem_1.5fr_3rem] gap-y-3 md:grid-cols-[1fr_6rem] md:gap-y-0",
                     {
                         "w-full": type == "question",
                     },
@@ -113,7 +113,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
 
                         <div>
                             {title && (
-                                <h2 className="text-lg font-bold md:text-xl">
+                                <h2 className="font-bold md:text-lg">
                                     {title}
                                 </h2>
                             )}
@@ -126,8 +126,8 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="col-start-1 flex items-start justify-between md:gap-x-5">
-                    <p className="text-sm md:text-base">
+                <CardContent className="col-start-1 flex items-start justify-between pr-0 md:gap-x-5 md:pr-[unset]">
+                    <p className="self-center text-sm md:text-base">
                         {
                             // If the text length is more than 200 and seeMore is false, show a truncated version of the text
                             text.length > 200 && !seeMore ? (
@@ -177,7 +177,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                     }}
                     hasVotedDown={hasVotedDown ?? false}
                     hasVotedUp={hasVotedUp ?? false}
-                    className="col-start-2 row-span-3 row-start-1"
+                    className="col-start-2 row-span-3 row-start-1 pt-5"
                 />
             </Card>
         );

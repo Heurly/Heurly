@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Reply, SendHorizontal } from "lucide-react";
+import { SendHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formAnswerSchema } from "@/types/schema/form-answer";
 import type { Question, User } from "@prisma/client";
