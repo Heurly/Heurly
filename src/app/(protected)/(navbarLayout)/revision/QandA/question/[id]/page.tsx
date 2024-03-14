@@ -1,9 +1,11 @@
 import QandACard from "@/components/Q&A/QandA-card";
 import FormAnswer from "@/components/form/form-answer";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { getServerAuthSession } from "@/server/auth";
 import { getQuestionAndAnswers, getQuestionById } from "@/server/question";
 import ID from "@/utils/id";
+import nameToInitials from "@/utils/nameToInitials";
 import { redirect } from "next/navigation";
 
 type Props = {
@@ -57,7 +59,16 @@ export default async function QuestionPage({
                     questionAndAnswersDb.UserVoteQuestion[0]?.vote === 1
                 }
             />
-            <Card className="w-11/12 py-5 md:px-10 md:py-16">
+            <Card className="w-11/12 py-5 md:p-7">
+                <Avatar>
+                    <AvatarImage
+                        src={session.user.image ?? ""}
+                        alt={session.user.name ?? ""}
+                    />
+                    <AvatarFallback>
+                        {nameToInitials(session.user.name ?? "")}
+                    </AvatarFallback>
+                </Avatar>
                 <CardContent>
                     <FormAnswer
                         userId={session.user.id}

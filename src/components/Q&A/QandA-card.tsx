@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+} from "@/components/ui/card";
 import DateFormatted from "@/components/ui/date-formatted";
 import Vote from "@/components/Q&A/Vote";
 import cn from "classnames";
@@ -11,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { addVoteToAnswer, addVoteToQuestion } from "@/server/vote";
 import { useRouter } from "next/navigation";
 import { Reply } from "lucide-react";
+import nameToInitials from "@/utils/nameToInitials";
 
 type PropsQuestionCard = {
     id: string;
@@ -81,95 +87,72 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                   "."
                 : author.name;
 
-        const authorInitials = author.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("");
-
         return (
             <Card
                 ref={ref}
-                className={cn(className, "w-11/12 max-w-full py-5 md:py-7", {
-                    "w-full": type == "question",
-                })}
+                className={cn(
+                    className,
+                    "grid w-11/12 max-w-full grid-cols-[1fr_3rem] grid-rows-[6rem_1fr_3rem] md:grid-cols-[1fr_6rem]",
+                    {
+                        "w-full": type == "question",
+                    },
+                )}
                 {...props}
             >
-                <CardContent className="flex justify-between md:gap-x-5">
-                    <div className="grid gap-y-3">
-                        <div className="flex flex-col" aria-label="card header">
-                            <div className="flex flex-col">
-                                <div className="flex items-center gap-3">
-                                    <Avatar>
-                                        <AvatarImage
-                                            src={author.image ?? ""}
-                                            alt={author.name}
-                                        />
-                                        <AvatarFallback>
-                                            {authorInitials}
-                                        </AvatarFallback>
-                                    </Avatar>
+                <CardHeader className="col-start-1">
+                    <div className="flex items-center gap-3">
+                        <Avatar>
+                            <AvatarImage
+                                src={author.image ?? ""}
+                                alt={author.name}
+                            />
+                            <AvatarFallback>
+                                {nameToInitials(author.name)}
+                            </AvatarFallback>
+                        </Avatar>
 
-                                    <div>
-                                        {title && (
-                                            <h2 className="text-lg font-bold md:text-xl">
-                                                {title}
-                                            </h2>
-                                        )}
-                                        <p className="text-xs">
-                                            {authorName}&nbsp;le&nbsp;
-                                            <DateFormatted format="dd/MM/yyyy à hh:mm:ss">
-                                                {date}
-                                            </DateFormatted>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div>
+                            {title && (
+                                <h2 className="text-lg font-bold md:text-xl">
+                                    {title}
+                                </h2>
+                            )}
+                            <p className="text-xs">
+                                {authorName}&nbsp;le&nbsp;
+                                <DateFormatted format="dd/MM/yyyy à hh:mm:ss">
+                                    {date}
+                                </DateFormatted>
+                            </p>
                         </div>
-                        <p className="text-sm md:text-base">
-                            {
-                                // If the text length is more than 200 and seeMore is false, show a truncated version of the text
-                                text.length > 200 && !seeMore ? (
-                                    <>{text.substring(0, 200)}...</>
-                                ) : (
-                                    // Otherwise, show the full text
-                                    text
-                                )
-                            }
-                            {
-                                // If the text length is more than 200, show a button to toggle the text display
-                                text.length > 200 && (
-                                    <button
-                                        className={buttonVariants({
-                                            variant: "link",
-                                        })}
-                                        onClick={handleSeeMore}
-                                    >
-                                        {!seeMore ? "Voir plus" : "Voir moins"}
-                                    </button>
-                                )
-                            }
-                        </p>
                     </div>
-                    <Vote
-                        upvotes={upvotes}
-                        onClickUpVote={async (
-                            e: React.MouseEvent<SVGSVGElement, MouseEvent>,
-                        ) => {
-                            e.stopPropagation();
-                            await handleUpVote();
-                        }}
-                        downvotes={downvotes}
-                        onClickDownVote={async (
-                            e: React.MouseEvent<SVGSVGElement, MouseEvent>,
-                        ) => {
-                            e.stopPropagation();
-                            await handleDownVote();
-                        }}
-                        hasVotedDown={hasVotedDown ?? false}
-                        hasVotedUp={hasVotedUp ?? false}
-                    />
+                </CardHeader>
+                <CardContent className="col-start-1 flex items-start justify-between md:gap-x-5">
+                    <p className="text-sm md:text-base">
+                        {
+                            // If the text length is more than 200 and seeMore is false, show a truncated version of the text
+                            text.length > 200 && !seeMore ? (
+                                <>{text.substring(0, 200)}...</>
+                            ) : (
+                                // Otherwise, show the full text
+                                text
+                            )
+                        }
+                        {
+                            // If the text length is more than 200, show a button to toggle the text display
+                            text.length > 200 && (
+                                <button
+                                    className={buttonVariants({
+                                        variant: "link",
+                                    })}
+                                    onClick={handleSeeMore}
+                                >
+                                    {!seeMore ? "Voir plus" : "Voir moins"}
+                                </button>
+                            )
+                        }
+                    </p>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="col-start-1">
                     {typeof nbAnswers == "number" && (
                         <div className="flex items-center justify-center gap-1">
                             <Reply />
@@ -177,6 +160,25 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                         </div>
                     )}
                 </CardFooter>
+                <Vote
+                    upvotes={upvotes}
+                    onClickUpVote={async (
+                        e: React.MouseEvent<SVGSVGElement, MouseEvent>,
+                    ) => {
+                        e.stopPropagation();
+                        await handleUpVote();
+                    }}
+                    downvotes={downvotes}
+                    onClickDownVote={async (
+                        e: React.MouseEvent<SVGSVGElement, MouseEvent>,
+                    ) => {
+                        e.stopPropagation();
+                        await handleDownVote();
+                    }}
+                    hasVotedDown={hasVotedDown ?? false}
+                    hasVotedUp={hasVotedUp ?? false}
+                    className="col-start-2 row-span-3 row-start-1"
+                />
             </Card>
         );
     },

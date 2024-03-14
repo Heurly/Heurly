@@ -56,7 +56,6 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
                         onSubmit={form.handleSubmit(onSubmit)}
                     >
                         <div className="flex w-full gap-x-3">
-                            <Reply />{" "}
                             <FormField
                                 control={form.control}
                                 name="content"

@@ -45,39 +45,39 @@ const Vote = React.forwardRef<HTMLDivElement, PropsVote>(
         };
 
         return (
-            <Link href="#">
+            <Link href="#" className={cn(className)} {...props}>
                 <div
-                    className={cn("grid w-20 max-w-24", className)}
-                    {...props}
+                    className={cn(
+                        "grid h-full max-h-24 gap-1 p-2 md:grid-cols-2",
+                    )}
                     ref={ref}
                 >
-                    <div className="flex flex-col md:flex-row">
-                        <ChevronUpCircle
-                            size={75}
-                            strokeWidth={1}
-                            onClick={async (e) => await handleUpVote(e)}
-                            className="cursor-pointer"
-                            fill={upVote ? "hsl(var(--primary))" : "white"}
-                        />
-                        <div className="flex h-full w-full items-center justify-center">
-                            {upvotes}
-                        </div>
-                    </div>
+                    <ChevronUpCircle
+                        size="3rem"
+                        strokeWidth={1}
+                        onClick={async (e) => await handleUpVote(e)}
+                        className="max-w-10 cursor-pointer place-self-center"
+                        fill={upVote ? "hsl(var(--primary))" : "white"}
+                    />
+                    <p className="place-self-center md:col-start-2 md:self-center md:justify-self-start">
+                        {upvotes}
+                    </p>
 
-                    <div className="flex flex-col-reverse md:flex-row">
-                        <ChevronDownCircle
-                            size={75}
-                            strokeWidth={1}
-                            onClick={async (e) => await handleDownVote(e)}
-                            className="cursor-pointer"
-                            fill={
-                                downVote ? "hsl(var(--primary))" : "transparent"
-                            }
-                        />
-                        <div className="flex h-full w-full items-center justify-center">
-                            {downvotes}
-                        </div>
-                    </div>
+                    <ChevronDownCircle
+                        size="3rem"
+                        strokeWidth={1}
+                        onClick={async (e) => await handleDownVote(e)}
+                        className="max-w-10 cursor-pointer place-self-center"
+                        fill={downVote ? "hsl(var(--primary))" : "transparent"}
+                    />
+                    <p
+                        className={cn(
+                            "md:col-start-2 md:self-center md:justify-self-start",
+                            "row-start-3 place-self-center md:row-start-[unset]",
+                        )}
+                    >
+                        {downvotes}
+                    </p>
                 </div>
             </Link>
         );
