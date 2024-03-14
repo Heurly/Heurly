@@ -10,6 +10,7 @@ import type { User } from "@prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { addVoteToAnswer, addVoteToQuestion } from "@/server/vote";
 import { useRouter } from "next/navigation";
+import { Reply } from "lucide-react";
 
 type PropsQuestionCard = {
     id: string;
@@ -88,7 +89,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
         return (
             <Card
                 ref={ref}
-                className={cn(className, "w-11/12 py-5 md:px-10 md:py-16", {
+                className={cn(className, "w-11/12 max-w-full py-5 md:py-7", {
                     "w-full": type == "question",
                 })}
                 {...props}
@@ -170,7 +171,10 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                 </CardContent>
                 <CardFooter>
                     {typeof nbAnswers == "number" && (
-                        <p className="text-xs">Nb de réponses : {nbAnswers}</p>
+                        <div className="flex items-center justify-center gap-1">
+                            <Reply />
+                            {nbAnswers}
+                        </div>
                     )}
                 </CardFooter>
             </Card>
