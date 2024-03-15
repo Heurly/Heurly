@@ -44,3 +44,6 @@ secrets.env
 
 # turborepo
 .turbo
+
+/public/sw.js
+/public/swe-worker-*.js
