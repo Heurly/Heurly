@@ -43,6 +43,7 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
             form.reset({
                 content: "",
             });
+            isClicked && setIsClicked(false);
             router.refresh();
         }
     };
@@ -71,7 +72,7 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
                                                 className={cn(
                                                     "rounded-none border-b transition",
                                                     isClicked
-                                                        ? "h-40 "
+                                                        ? "h-40"
                                                         : "h-2 min-h-[2.5rem] border-x-0 border-t-0",
                                                 )}
                                                 {...field}
