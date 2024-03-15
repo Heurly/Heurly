@@ -54,7 +54,8 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
     ) => {
         const [seeMore, setSeeMore] = useState(false);
         const router = useRouter();
-        async function handleSeeMore() {
+        async function handleSeeMore(e: React.MouseEvent<HTMLButtonElement>) {
+            e.preventDefault();
             setSeeMore(!seeMore);
         }
         async function handleUpVote(
@@ -148,7 +149,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                             text.length > 200 && (
                                 <Button
                                     variant="link"
-                                    className="p-0"
+                                    className="h-0 p-0"
                                     onClick={handleSeeMore}
                                 >
                                     {!seeMore ? "Voir plus" : "Voir moins"}
