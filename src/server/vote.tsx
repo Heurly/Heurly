@@ -2,6 +2,7 @@
 import { TLog, log } from "@/logger/logger";
 import { db } from "@/server/db";
 import type { Answer, Question } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 enum Vote {
     up = 1,
@@ -48,6 +49,8 @@ export async function addVoteToQuestion(
                     vote: vote,
                 },
             });
+            revalidatePath(`/revision/QandA/question/${questionId}`);
+            revalidatePath(`/revision/QandA`);
             return {
                 success: true,
                 data: resUpdateVoteQuestion,

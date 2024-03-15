@@ -14,6 +14,7 @@ import ID from "@/utils/id";
 import { getURLsByUser } from "@/server/url-timetable";
 import { Separator } from "@/components/ui/separator";
 import ListUserFile from "@/components/profile/list-user-file";
+import nameToInitials from "@/utils/nameToInitials";
 
 export const metadata = {
     title: "Mon profil",
@@ -32,10 +33,6 @@ export default async function PageUserProfile() {
     const name = session?.user.name;
 
     if (!name) return null;
-    const initials = name
-        .split(" ")
-        .map((n) => n[0])
-        .join("");
 
     return (
         <div className="mt-16 grid h-full grid-cols-1 gap-5 md:mt-0 md:grid-cols-3 md:grid-rows-3">
@@ -46,7 +43,7 @@ export default async function PageUserProfile() {
                             src={session.user.image ?? ""}
                             alt={name ?? "image de profil"}
                         />
-                        <AvatarFallback>{initials}</AvatarFallback>
+                        <AvatarFallback>{nameToInitials(name)}</AvatarFallback>
                     </Avatar>
                     <h1>{session?.user.name}</h1>
                     <p>{session?.user.email}</p>

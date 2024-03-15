@@ -11,12 +11,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Reply, SendHorizontal } from "lucide-react";
+import { SendHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formAnswerSchema } from "@/types/schema/form-answer";
 import type { Question, User } from "@prisma/client";
 import { handleFormCreateAnswer } from "@/server/answer";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import cn from "classnames";
 
 type PropsFormAnswer = {
     userId: User["id"];
@@ -41,9 +43,12 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
             form.reset({
                 content: "",
             });
+            isClicked && setIsClicked(false);
             router.refresh();
         }
     };
+
+    const [isClicked, setIsClicked] = useState(false);
 
     return (
         <>
@@ -56,7 +61,6 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
                         onSubmit={form.handleSubmit(onSubmit)}
                     >
                         <div className="flex w-full gap-x-3">
-                            <Reply />{" "}
                             <FormField
                                 control={form.control}
                                 name="content"
@@ -65,8 +69,16 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
                                         <FormControl>
                                             <Textarea
                                                 placeholder="Votre réponse"
-                                                className="h-40 rounded-t-none "
+                                                className={cn(
+                                                    "rounded-none border-b transition",
+                                                    isClicked
+                                                        ? "h-40"
+                                                        : "h-2 min-h-[2.5rem] border-x-0 border-t-0",
+                                                )}
                                                 {...field}
+                                                onClick={() =>
+                                                    setIsClicked(true)
+                                                }
                                             />
                                         </FormControl>
                                         <FormMessage />

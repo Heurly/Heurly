@@ -9,7 +9,7 @@ datasource db {
 
 // why cuid : https://dev.to/harshhhdev/uuidguid-cuid-nanoid-whats-the-difference-5dj1
 model Docs {
-  id          String      @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
   description String
   url         String?
@@ -17,6 +17,13 @@ model Docs {
   updatedAt   DateTime @default(now())
   uploadedBy  User     @relation(fields: [userId], references: [id])
   userId      String
+}
+
+model BetaWhitelist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Course {

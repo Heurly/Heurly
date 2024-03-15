@@ -10,11 +10,11 @@ import {
     Calendar,
     CalendarCheck,
     FileStack,
-    LogOut,
     Settings,
     User,
 } from "lucide-react";
 import InstallPwaButton from "../PWA/install-pwa-button";
+import LogOutButton from "../log-out-button";
 
 type PropsNavBarItems = {
     name: React.ReactNode;
@@ -85,9 +85,9 @@ export default function NavBar() {
             <div className="hidden flex-col justify-between gap-5 md:flex">
                 <NavBarItems href="/profile" name="Profil" icon={<User />} />
                 <NavBarItems
-                    href="/logout"
+                    href="/#"
                     name="Déconnexion"
-                    icon={<LogOut />}
+                    icon={<LogOutButton />}
                 />
                 <NavBarItems
                     href="/settings"

@@ -1,6 +1,5 @@
 import QandACard from "@/components/Q&A/QandA-card";
-import FormAnswer from "@/components/form/form-answer";
-import { Card, CardContent } from "@/components/ui/card";
+import ResponseCard from "@/components/Q&A/response-card";
 import { getServerAuthSession } from "@/server/auth";
 import { getQuestionAndAnswers, getQuestionById } from "@/server/question";
 import ID from "@/utils/id";
@@ -38,7 +37,7 @@ export default async function QuestionPage({
     if (!questionAndAnswersDb) redirect("/404");
 
     return (
-        <div className="mt-16 flex h-full flex-col items-center gap-y-5 overflow-auto md:mt-0">
+        <div className="flex h-full w-full flex-col items-center gap-y-5 overflow-auto">
             <QandACard
                 id={questionAndAnswersDb.id}
                 type={"question"}
@@ -57,14 +56,7 @@ export default async function QuestionPage({
                     questionAndAnswersDb.UserVoteQuestion[0]?.vote === 1
                 }
             />
-            <Card className="w-11/12 py-5 md:px-10 md:py-16">
-                <CardContent>
-                    <FormAnswer
-                        userId={session.user.id}
-                        questionId={params.id}
-                    />
-                </CardContent>
-            </Card>
+            <ResponseCard user={session.user} questionId={params.id} />
 
             {questionAndAnswersDb.answer?.map(
                 ({
@@ -88,6 +80,7 @@ export default async function QuestionPage({
                             downvotes={downvotes}
                             hasVotedUp={vote?.vote === 1}
                             hasVotedDown={vote?.vote === 0}
+                            className="w-11/12"
                         />
                     );
                 },
