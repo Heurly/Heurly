@@ -56,7 +56,10 @@ const Vote = React.forwardRef<HTMLDivElement, PropsVote>(
                 <ChevronUpCircle
                     size="2.5rem"
                     strokeWidth={1}
-                    onClick={async (e) => await handleUpVote(e)}
+                    onClick={async (e) => {
+                        e.stopPropagation();
+                        await handleUpVote(e);
+                    }}
                     className="max-w-10 cursor-pointer place-self-center"
                     fill={upVote ? "hsl(var(--primary))" : "white"}
                 />
@@ -67,7 +70,10 @@ const Vote = React.forwardRef<HTMLDivElement, PropsVote>(
                 <ChevronDownCircle
                     size="2.5rem"
                     strokeWidth={1}
-                    onClick={async (e) => await handleDownVote(e)}
+                    onClick={async (e) => {
+                        e.stopPropagation();
+                        await handleDownVote(e);
+                    }}
                     className="max-w-10 cursor-pointer place-self-center"
                     fill={downVote ? "hsl(var(--primary))" : "transparent"}
                 />

@@ -57,7 +57,10 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
         async function handleSeeMore() {
             setSeeMore(!seeMore);
         }
-        async function handleUpVote() {
+        async function handleUpVote(
+            e: React.MouseEvent<SVGSVGElement, MouseEvent>,
+        ) {
+            e.preventDefault();
             if (type == "question") {
                 await addVoteToQuestion(id, 1);
             }
@@ -67,7 +70,10 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
             router.refresh();
         }
 
-        async function handleDownVote() {
+        async function handleDownVote(
+            e: React.MouseEvent<SVGSVGElement, MouseEvent>,
+        ) {
+            e.preventDefault();
             if (type == "question") {
                 await addVoteToQuestion(id, 0);
             }
@@ -163,17 +169,11 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                     upvotes={upvotes}
                     onClickUpVote={async (
                         e: React.MouseEvent<SVGSVGElement, MouseEvent>,
-                    ) => {
-                        e.stopPropagation();
-                        await handleUpVote();
-                    }}
+                    ) => await handleUpVote(e)}
                     downvotes={downvotes}
                     onClickDownVote={async (
                         e: React.MouseEvent<SVGSVGElement, MouseEvent>,
-                    ) => {
-                        e.stopPropagation();
-                        await handleDownVote();
-                    }}
+                    ) => await handleDownVote(e)}
                     hasVotedDown={hasVotedDown ?? false}
                     hasVotedUp={hasVotedUp ?? false}
                     className="col-start-2 row-span-3 row-start-1 pt-5"
