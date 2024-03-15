@@ -40,7 +40,7 @@ export default async function QuestionPage({
     if (!questionAndAnswersDb) redirect("/404");
 
     return (
-        <div className="mt-16 flex h-full flex-col items-center gap-y-5 overflow-auto md:mt-0">
+        <div className="mt-16 flex h-full w-full flex-col items-center gap-y-5 overflow-auto md:mt-0">
             <QandACard
                 id={questionAndAnswersDb.id}
                 type={"question"}
@@ -99,6 +99,7 @@ export default async function QuestionPage({
                             downvotes={downvotes}
                             hasVotedUp={vote?.vote === 1}
                             hasVotedDown={vote?.vote === 0}
+                            className="w-11/12"
                         />
                     );
                 },

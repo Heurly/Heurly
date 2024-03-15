@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "../ui/button";
+import cn from "classnames";
 
 type PropsGoBackButton = {
     className?: string;
@@ -17,7 +18,7 @@ const GoBackButton = React.forwardRef<HTMLButtonElement, PropsGoBackButton>(
                 onClick={() => router.back()}
                 {...props}
                 ref={ref}
-                className={className}
+                className={cn(className)}
             >
                 <ChevronLeft
                     size={30}

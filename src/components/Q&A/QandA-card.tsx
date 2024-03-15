@@ -99,7 +99,7 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                 ref={ref}
                 className={cn(
                     className,
-                    "grid w-11/12 max-w-full grid-cols-[1fr_4rem] grid-rows-[6rem_1.5fr_3rem] gap-y-3 md:grid-cols-[1fr_6rem] md:gap-y-0",
+                    "grid max-w-full grid-cols-[1fr_4rem] grid-rows-[6rem_1.5fr_3rem] gap-y-3 md:grid-cols-[1fr_6rem] md:gap-y-0",
                     {
                         "w-full": type == "question",
                     },
