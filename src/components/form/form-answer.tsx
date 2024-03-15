@@ -17,6 +17,8 @@ import { formAnswerSchema } from "@/types/schema/form-answer";
 import type { Question, User } from "@prisma/client";
 import { handleFormCreateAnswer } from "@/server/answer";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import cn from "classnames";
 
 type PropsFormAnswer = {
     userId: User["id"];
@@ -45,6 +47,8 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
         }
     };
 
+    const [isClicked, setIsClicked] = useState(false);
+
     return (
         <>
             {!userId ? (
@@ -64,8 +68,16 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
                                         <FormControl>
                                             <Textarea
                                                 placeholder="Votre réponse"
-                                                className="h-40 rounded-t-none "
+                                                className={cn(
+                                                    "rounded-none border-b transition",
+                                                    isClicked
+                                                        ? "h-40 "
+                                                        : "h-2 min-h-[2.5rem] border-x-0 border-t-0",
+                                                )}
                                                 {...field}
+                                                onClick={() =>
+                                                    setIsClicked(true)
+                                                }
                                             />
                                         </FormControl>
                                         <FormMessage />
