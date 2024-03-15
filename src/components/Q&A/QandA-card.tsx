@@ -10,7 +10,7 @@ import DateFormatted from "@/components/ui/date-formatted";
 import Vote from "@/components/Q&A/Vote";
 import cn from "classnames";
 import React, { useState } from "react";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import type { User } from "@prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { addVoteToAnswer, addVoteToQuestion } from "@/server/vote";
@@ -140,14 +140,13 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
                         {
                             // If the text length is more than 200, show a button to toggle the text display
                             text.length > 200 && (
-                                <button
-                                    className={buttonVariants({
-                                        variant: "link",
-                                    })}
+                                <Button
+                                    variant="link"
+                                    className="p-0"
                                     onClick={handleSeeMore}
                                 >
                                     {!seeMore ? "Voir plus" : "Voir moins"}
-                                </button>
+                                </Button>
                             )
                         }
                     </p>
