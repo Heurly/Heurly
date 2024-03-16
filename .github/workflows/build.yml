@@ -18,10 +18,7 @@ jobs:
                   host: ${{ secrets.PI_HOST }}
                   username: ${{ secrets.PI_USERNAME }}
                   password: ${{ secrets.PI_PASSWORD }}
-                  script: |
-                      cd /home/heurly/Heurly-OPS
-                      echo ${{secrets.DOCKER_TOKEN}} | docker login --username ${{secrets.DOCKER_USERNAME}} --password-stdin 2> /dev/null
-                      ./scripts/add-container.sh ${{ env.GITHUB_REF_NAME_SLUG_URL }}
+                  script: docker exec -it -d beta.heurly.daemon sh ./pull-deploy.sh
 
             - name: Discord notification
               env:
