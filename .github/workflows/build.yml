@@ -1,0 +1,30 @@
+name: ci-push
+
+on:
+    push:
+        branches:
+            - beta
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Inject slug/short variables
+              uses: rlespinasse/github-slug-action@v4.x
+
+            - name: SSH and Docker Pull
+              uses: appleboy/ssh-action@v1.0.0
+              with:
+                  host: ${{ secrets.PI_HOST }}
+                  username: ${{ secrets.PI_USERNAME }}
+                  password: ${{ secrets.PI_PASSWORD }}
+                  script: docker exec -it -d beta.heurly.daemon sh ./pull-deploy.sh
+
+            - name: Discord notification
+              env:
+                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  DISCORD_EMBEDS: '[{"title": "Deployment - Link of ${{ env.GITHUB_REF_SLUG }}", "description": "[${{ github.repository }}] Branch ${{ env.GITHUB_REF_SLUG }} has been deployed.", "url": "https://${{ env.GITHUB_REF_SLUG }}.heurly.fr", "color": 14847590}]'
+              uses: Ilshidur/action-discord@master
+              with:
+                  args: ""
+                  # étape pour ajouter le reverse proxy
