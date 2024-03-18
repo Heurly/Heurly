@@ -8,15 +8,17 @@ type PropsLogOutButton = {
     className?: string;
 };
 
-const LogOutButton = React.forwardRef<HTMLButtonElement, PropsLogOutButton>(
-    ({ className }, ref) => {
-        return (
-            <button ref={ref} className={cn(className)}>
-                <LogOut onClick={() => signOut({ callbackUrl: "/login" })} />
-            </button>
-        );
-    },
-);
+const LogOutButton = React.forwardRef<
+    SVGSVGElement | undefined,
+    PropsLogOutButton
+>(({ className }) => {
+    return (
+        <LogOut
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className={cn(className)}
+        />
+    );
+});
 
 LogOutButton.displayName = "LogOutButton";
 
