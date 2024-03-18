@@ -1,5 +1,10 @@
 "use client";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+} from "@/components/ui/card";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import frLocale from "@fullcalendar/core/locales/fr";
@@ -157,7 +162,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                 </div>
             </CardHeader>
 
-            <CardContent className="h-full">
+            <CardContent className="h-full overflow-auto">
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
