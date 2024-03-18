@@ -112,6 +112,14 @@
     border: none !important;
 }
 
+.fc-scrollgrid-sync-inner {
+    background-color: hsl(var(--background)) !important;
+}
+
+.fc-timegrid-axis {
+    background-color: hsl(var(--background)) !important;
+}
+
 .fc .fc-timegrid-slot-label {
     height: 1.7rem !important;
 }
