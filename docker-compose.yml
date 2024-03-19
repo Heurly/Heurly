@@ -3,8 +3,10 @@ version: "3"
 services:
     heurly:
         container_name: test.heurly
-        image: test.heurly
+        build:
+            context: .
+            dockerfile: Dockerfile
         ports:
-            - "3000:3003"
-        volumes:
-            - ./.env:/app/.env
+            - "3000:3000"
+        env_file:
+            - .env
