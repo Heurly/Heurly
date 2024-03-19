@@ -47,3 +47,9 @@ secrets.env
 
 /public/sw.js
 /public/swe-worker-*.js
+
+# pnpm
+pnpm-lock.yaml
+
+# jetbrains
+.idea/
