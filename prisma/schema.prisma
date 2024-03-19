@@ -28,10 +28,13 @@ model BetaWhitelist {
 
 model Course {
   id          Int     @id @default(autoincrement())
-  code_cours  String  @default("")
-  nom_cours   String  @default("")
-  professeur  String? @default("")
+  code        String
+  name        String  @default("")
+  professor   String  @default("")
   description String? @default("")
+  year        String  @default("")
+  unit        String  @default("")
+  small_code  String  @default("")
   School      School? @relation(fields: [schoolId], references: [id])
   schoolId    Int?
 }

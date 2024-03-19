@@ -11,11 +11,11 @@ type PropsLogOutButton = {
 const LogOutButton = React.forwardRef<
     SVGSVGElement | undefined,
     PropsLogOutButton
->(({ className }) => {
+>((props, ref) => {
     return (
         <LogOut
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className={cn(className)}
+            className={cn(props.className)}
         />
     );
 });

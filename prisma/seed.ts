@@ -14,10 +14,13 @@ async function main() {
 
     const resCourses = courses.map((course) => {
         return {
-            code_cours: course.CODE_COURS,
-            nom_cours: course.NOM_COURS,
-            professeur: course.PROFESSEUR,
-            description: course.DESCRIPTION,
+            code: course.code,
+            name: course.name,
+            professor: course.professor,
+            description: course.description,
+            year: course.year,
+            unit: course.unit,
+            small_code: course.small_code,
         };
     });
 
