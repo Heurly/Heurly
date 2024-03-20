@@ -35,7 +35,7 @@ export default function LoginPage() {
                 </div>
                 <div
                     className={cn(
-                        "flex w-full items-center justify-center  gap-10 rounded-t-xl bg-white py-10",
+                        "flex w-full items-center justify-center rounded-t-xl bg-white py-10 md:gap-10",
                         "md:h-full md:flex-col md:rounded-none",
                     )}
                 >
