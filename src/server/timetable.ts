@@ -13,48 +13,6 @@ import { log, TLog } from "@/logger/logger";
 const COURSES_EXCEPTIONS = ["BDE"];
 
 /**
- * This function filters the courses
- * @param courses The courses to filter
- * @param dateFilter The date filter
- * @returns {CourseEvent[]} The filtered courses
- */
-function filterCourses(courses: CourseEvent[], dateFilter: ApiFilter<number>) {
-    log({ type: TLog.info, text: "Filtering courses" });
-    if (dateFilter.equals != undefined) {
-        courses = courses.filter((m) => {
-            const start = parseISO(m.DTSTART);
-            start.setHours(0, 0, 0, 0);
-
-            return (
-                dateFilter.equals != undefined &&
-                start.getTime() == dateFilter.equals
-            );
-        });
-    }
-
-    return courses;
-}
-
-/**
- * This function calculates the distance between two strings
- * @param target The target string
- * @param entry The entry string
- * @returns {number} The distance between the two strings
- */
-function distanceToCourseCode(target: string, entry: string): number {
-    log({ type: TLog.info, text: "Calculating distance to course code" });
-    if (entry.length > target.length) {
-        const strippedEntry = entry.slice(0, entry.length - 1);
-
-        if (strippedEntry == target) {
-            return 0;
-        }
-    }
-
-    return distance(target, entry);
-}
-
-/**
  * This function translates the courses codes to their respective labels
  * @param courses The courses to translate
  */
