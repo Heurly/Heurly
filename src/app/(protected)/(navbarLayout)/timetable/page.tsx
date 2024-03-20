@@ -31,7 +31,7 @@ export default async function PageTimetable() {
     const isNewUser = userUrlCount <= 0;
 
     return (
-        <AlertDialog open={isNewUser}>
+        <AlertDialog open={true}>
             <main className="h-full w-full">
                 {isNewUser && (
                     <AlertDialogContent>
