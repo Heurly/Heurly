@@ -7,7 +7,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef, useState } from "react";
 import { DatePicker } from "@/components/ui/datepicker";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, LoaderCircle } from "lucide-react";
 import iCalendarPlugin from "@fullcalendar/icalendar";
 import {
     goToNextPeriod,
@@ -17,23 +17,42 @@ import {
 import { TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
-import { addDays, endOfWeek, startOfWeek } from "date-fns";
+import { addDays, addYears, parseISO, subYears } from "date-fns";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useDebouncedCallback } from "use-debounce";
 import { DatesSetArg } from "@fullcalendar/core/index.js";
 
+const SMALL_EVENT_THRESHOLD = 1.5 * 60 * 60 * 1000;
+
 export default function Timetable({ userId }: { userId: User["id"] }) {
+    const session = useSession();
     const calendarRef = useRef<FullCalendar>(null);
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
+    const [events, setEvents] = useState<TEventTimetable[]>([]);
+    const [max, setMax] = useState<number | undefined>(undefined);
+    const [min, setMin] = useState<number | undefined>(undefined);
     const nbPxPhone = 768;
     const startTime = "08:00:00";
     const endTime = "20:00:00";
-    const [events, setEvents] = useState<TEventTimetable[]>([]);
-    const session = useSession();
+
+    const shouldReload = (dateFrom: Date, dateTo: Date) => {
+        let res = false;
+
+        if (min === undefined || dateFrom.getTime() < min) {
+            setMin(dateFrom.getTime());
+            res = true;
+        }
+        if (max === undefined || dateTo.getTime() > max) {
+            setMax(dateTo.getTime());
+            res = true;
+        }
+
+        return res;
+    };
 
     const reloadData = async (dateFrom: Date, dateTo: Date) => {
-        if (!userId) return;
+        if (!userId || !shouldReload(dateFrom, dateTo)) return;
 
         const ical = await getTimetableData(
             dateFrom.getTime(),
@@ -44,22 +63,28 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
 
         const events =
             ical?.VCALENDAR[0]?.VEVENT?.map((event) => {
+                const start = parseISO(event.DTSTART);
+                const end = parseISO(event.DTEND);
+                const small =
+                    end.getTime() - start.getTime() < SMALL_EVENT_THRESHOLD;
+
                 return {
                     title: event.SUMMARY,
                     start: event.DTSTART,
                     end: event.DTEND,
                     room: event.LOCATION,
                     description: event.DESCRIPTION,
+                    small: small,
                 };
             }) ?? [];
         setEvents(events ?? []);
     };
 
     const handleDateChange = async (date: Date) => {
-        await reloadData(
-            addDays(startOfWeek(date), 1),
-            addDays(endOfWeek(date), 1),
-        );
+        const from = subYears(date, 1);
+        const to = addYears(date, 1);
+
+        await reloadData(from, to);
         const newDate = addDays(date, 1).toISOString().slice(0, 10);
         if (calendarRef.current) calendarRef.current.getApi().gotoDate(newDate);
     };
@@ -75,18 +100,22 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
             }
         };
 
+        checkScreenSize();
         window.addEventListener("resize", checkScreenSize);
-
         return () => {
             window.removeEventListener("resize", checkScreenSize);
         };
     }, []);
 
+    const refeshCallback = useDebouncedCallback(async (arg: DatesSetArg) => {
+        await reloadData(arg.start, arg.end);
+    }, 1000);
+
     return (
         <Card className="h-[100svh] py-2 md:flex md:h-full md:flex-col md:p-10">
             <CardHeader>
                 <div className="flex flex-col items-center justify-between md:flex-row">
-                    <div className="mb-3 flex flex-col-reverse items-center justify-center gap-5 md:flex-row">
+                    <div className="flex flex-col-reverse items-center justify-center gap-5 md:flex-row">
                         <DatePicker
                             onChange={handleDateChange}
                             className="hidden md:flex"
@@ -101,10 +130,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     </div>
                     <div className="flex w-full items-center justify-center gap-x-5 md:justify-end">
                         {!session.data && (
-                            <p>
-                                Votre emplois du temps ne peut plus être mis à
-                                jour
-                            </p>
+                            <LoaderCircle className="animate-spin" />
                         )}
                         <Button
                             className="aspect-square rounded-full bg-sky-50 p-3 md:order-2"
@@ -154,10 +180,10 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     // contentHeight="1rem"
                     aspectRatio={1.5}
                     nowIndicator={true}
-                    datesSet={useDebouncedCallback(async (arg: DatesSetArg) => {
-                        await reloadData(arg.start, arg.end);
+                    datesSet={async (arg) => {
                         setPeriodDisplay(updatePeriodDisplay(arg));
-                    }, 1000)}
+                        void (await refeshCallback(arg));
+                    }}
                 />
             </CardContent>
         </Card>

@@ -27,6 +27,7 @@ export type TEventInfo = {
         title: string;
         extendedProps: {
             room: string;
+            small?: boolean;
         };
     };
     timeText: string;

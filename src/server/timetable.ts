@@ -1,58 +1,9 @@
 "use server";
-import { convert, IcalObject } from "ical2json";
-import { PLANIF_ENDPOINT } from "@/app/api/ApiHelper";
 import { lines2tree } from "icalts";
-import { distance } from "fastest-levenshtein";
-import { format, parseISO } from "date-fns";
-import ApiFilter from "@/types/apiFilter";
+import { format } from "date-fns";
 import { db } from "@/server/db";
-import { CalendarData, CourseEvent, TEventTimetable } from "@/types/timetable";
+import { CalendarData, CourseEvent } from "@/types/timetable";
 import type { User } from "@prisma/client";
-import { log, TLog } from "@/logger/logger";
-
-const COURSES_EXCEPTIONS = ["BDE"];
-
-/**
- * This function filters the courses
- * @param courses The courses to filter
- * @param dateFilter The date filter
- * @returns {CourseEvent[]} The filtered courses
- */
-function filterCourses(courses: CourseEvent[], dateFilter: ApiFilter<number>) {
-    log({ type: TLog.info, text: "Filtering courses" });
-    if (dateFilter.equals != undefined) {
-        courses = courses.filter((m) => {
-            const start = parseISO(m.DTSTART);
-            start.setHours(0, 0, 0, 0);
-
-            return (
-                dateFilter.equals != undefined &&
-                start.getTime() == dateFilter.equals
-            );
-        });
-    }
-
-    return courses;
-}
-
-/**
- * This function calculates the distance between two strings
- * @param target The target string
- * @param entry The entry string
- * @returns {number} The distance between the two strings
- */
-function distanceToCourseCode(target: string, entry: string): number {
-    log({ type: TLog.info, text: "Calculating distance to course code" });
-    if (entry.length > target.length) {
-        const strippedEntry = entry.slice(0, entry.length - 1);
-
-        if (strippedEntry == target) {
-            return 0;
-        }
-    }
-
-    return distance(target, entry);
-}
 
 /**
  * This function translates the courses codes to their respective labels
@@ -83,7 +34,7 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
  * @param dateFrom
  * @param dateTo
  * @param userId The user id
- * @returns {Promise<TEventTimetable[] | IcalObject | null>} A promise that resolves to the timetable data
+ * @returns {Promise<TEventTimetable[] | null>} A promise that resolves to the timetable data
  */
 export async function getTimetableData(
     dateFrom: number,

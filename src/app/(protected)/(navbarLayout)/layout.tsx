@@ -12,7 +12,7 @@ export default function NavBarLayout({
         <div className="h-[100svh] gap-x-6 md:flex md:flex-row md:justify-between md:p-5">
             <TopBar />
             <NavBar />
-            <div className="h-full w-full px-3 pb-28 pt-5 md:p-[unset]">
+            <div className="h-full w-full px-3 pb-28 pt-20 md:p-[unset]">
                 {children}
             </div>
         </div>
