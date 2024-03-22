@@ -17,11 +17,13 @@ import {
 import { TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
-import { addDays, addYears, subYears } from "date-fns";
+import { addDays, addYears, parseISO, subYears } from "date-fns";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useDebouncedCallback } from "use-debounce";
 import { DatesSetArg } from "@fullcalendar/core/index.js";
+
+const SMALL_EVENT_THRESHOLD = 1.5 * 60 * 60 * 1000;
 
 export default function Timetable({ userId }: { userId: User["id"] }) {
     const session = useSession();
@@ -52,7 +54,6 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
     const reloadData = async (dateFrom: Date, dateTo: Date) => {
         if (!userId || !shouldReload(dateFrom, dateTo)) return;
 
-        console.log("fetch");
         const ical = await getTimetableData(
             dateFrom.getTime(),
             dateTo.getTime(),
@@ -62,12 +63,18 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
 
         const events =
             ical?.VCALENDAR[0]?.VEVENT?.map((event) => {
+                const start = parseISO(event.DTSTART);
+                const end = parseISO(event.DTEND);
+                const small =
+                    end.getTime() - start.getTime() < SMALL_EVENT_THRESHOLD;
+
                 return {
                     title: event.SUMMARY,
                     start: event.DTSTART,
                     end: event.DTEND,
                     room: event.LOCATION,
                     description: event.DESCRIPTION,
+                    small: small,
                 };
             }) ?? [];
         setEvents(events ?? []);
