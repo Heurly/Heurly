@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - beta
+            - devops/vps
 
 jobs:
     build:
@@ -36,9 +37,9 @@ jobs:
                   file: ./Dockerfile
                   push: true
                   tags: ${{ secrets.DOCKER_USERNAME }}/heurly:${{ env.GITHUB_REF_NAME_SLUG_URL }}
-                  platforms: linux/arm64/v8
+                  platforms: linux/amd64
                   cache-from: type=local,src=/tmp/.buildx-cache
-                  cache-to: type=local,dest=/tmp/.buildx-cache
+                  cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
 
     deploy:
         needs: build
