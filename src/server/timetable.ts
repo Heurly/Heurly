@@ -1,5 +1,5 @@
 "use server";
-import { convert, IcalObject } from "ical2json";
+import { IcalObject } from "ical2json";
 import { PLANIF_ENDPOINT } from "@/app/api/ApiHelper";
 import { lines2tree } from "icalts";
 import { distance } from "fastest-levenshtein";
