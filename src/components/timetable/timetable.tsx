@@ -17,7 +17,7 @@ import {
 import { TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
-import { addDays, addWeeks, endOfWeek, startOfWeek } from "date-fns";
+import { addDays, addYears, subYears } from "date-fns";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useDebouncedCallback } from "use-debounce";
@@ -28,39 +28,29 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
     const calendarRef = useRef<FullCalendar>(null);
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
     const [events, setEvents] = useState<TEventTimetable[]>([]);
-    const [fetchedDates, setFetchedDates] = useState<number[]>([]);
+    const [max, setMax] = useState<number | undefined>(undefined);
+    const [min, setMin] = useState<number | undefined>(undefined);
     const nbPxPhone = 768;
     const startTime = "08:00:00";
     const endTime = "20:00:00";
 
-    const addToFetched = (dateFrom: Date, dateTo: Date) => {
-        let d = dateFrom;
-        const fetched = fetchedDates;
-
-        while (d.getTime() < dateTo.getTime()) {
-            const key = d.setHours(0, 0, 0, 0);
-            if (fetched.find((k) => key === k) === undefined) fetched.push(key);
-
-            d = addDays(d, 1);
-        }
-
-        setFetchedDates(fetched);
-    };
-
     const shouldReload = (dateFrom: Date, dateTo: Date) => {
-        let d = dateFrom;
+        let res = false;
 
-        while (d.getTime() < dateTo.getTime()) {
-            const key = d.setHours(0, 0, 0, 0);
-            if (fetchedDates.find((k) => key === k) === undefined) return true;
-            d = addDays(d, 1);
+        if (min === undefined || dateFrom.getTime() < min) {
+            setMin(dateFrom.getTime());
+            res = true;
+        }
+        if (max === undefined || dateTo.getTime() > max) {
+            setMax(dateTo.getTime());
+            res = true;
         }
 
-        return false;
+        return res;
     };
 
     const reloadData = async (dateFrom: Date, dateTo: Date) => {
-        if (!userId) return;
+        if (!userId || !shouldReload(dateFrom, dateTo)) return;
 
         console.log("fetch");
         const ical = await getTimetableData(
@@ -84,10 +74,10 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
     };
 
     const handleDateChange = async (date: Date) => {
-        const from = addDays(startOfWeek(date), 1);
-        const to = addWeeks(addDays(endOfWeek(date), 1), 52);
+        const from = subYears(date, 1);
+        const to = addYears(date, 1);
+
         await reloadData(from, to);
-        addToFetched(from, to);
         const newDate = addDays(date, 1).toISOString().slice(0, 10);
         if (calendarRef.current) calendarRef.current.getApi().gotoDate(newDate);
     };
@@ -103,18 +93,15 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
             }
         };
 
+        checkScreenSize();
         window.addEventListener("resize", checkScreenSize);
-
         return () => {
             window.removeEventListener("resize", checkScreenSize);
         };
     }, []);
 
     const refeshCallback = useDebouncedCallback(async (arg: DatesSetArg) => {
-        if (shouldReload(arg.start, arg.end)) {
-            await reloadData(arg.start, arg.end);
-            addToFetched(arg.start, arg.end);
-        }
+        await reloadData(arg.start, arg.end);
     }, 1000);
 
     return (

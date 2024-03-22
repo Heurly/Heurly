@@ -1,16 +1,9 @@
 "use server";
-import { convert, IcalObject } from "ical2json";
-import { PLANIF_ENDPOINT } from "@/app/api/ApiHelper";
 import { lines2tree } from "icalts";
-import { distance } from "fastest-levenshtein";
-import { format, parseISO } from "date-fns";
-import ApiFilter from "@/types/apiFilter";
+import { format } from "date-fns";
 import { db } from "@/server/db";
-import { CalendarData, CourseEvent, TEventTimetable } from "@/types/timetable";
+import { CalendarData, CourseEvent } from "@/types/timetable";
 import type { User } from "@prisma/client";
-import { log, TLog } from "@/logger/logger";
-
-const COURSES_EXCEPTIONS = ["BDE"];
 
 /**
  * This function translates the courses codes to their respective labels
@@ -41,7 +34,7 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
  * @param dateFrom
  * @param dateTo
  * @param userId The user id
- * @returns {Promise<TEventTimetable[] | IcalObject | null>} A promise that resolves to the timetable data
+ * @returns {Promise<TEventTimetable[] | null>} A promise that resolves to the timetable data
  */
 export async function getTimetableData(
     dateFrom: number,
