@@ -11,7 +11,7 @@ type PropsLogOutButton = {
 const LogOutButton = React.forwardRef<
     SVGSVGElement | undefined,
     PropsLogOutButton
->((props, ref) => {
+>((props) => {
     return (
         <LogOut
             onClick={() => signOut({ callbackUrl: "/login" })}

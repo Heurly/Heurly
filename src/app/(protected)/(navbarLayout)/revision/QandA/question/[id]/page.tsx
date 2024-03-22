@@ -1,5 +1,5 @@
-import QandACard from "@/components/Q&A/QandA-card";
-import ResponseCard from "@/components/Q&A/response-card";
+import QandACard from "@/components/QandA/QandA-card";
+import ResponseCard from "@/components/QandA/response-card";
 import { getServerAuthSession } from "@/server/auth";
 import { getQuestionAndAnswers, getQuestionById } from "@/server/question";
 import ID from "@/utils/id";
