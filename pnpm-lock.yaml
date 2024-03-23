@@ -1,5 +1,9 @@
 lockfileVersion: "6.0"
 
+settings:
+    autoInstallPeers: true
+    excludeLinksFromLockfile: false
+
 dependencies:
     "@aws-sdk/client-s3":
         specifier: ^3.529.1
@@ -5271,6 +5275,7 @@ packages:
             {
                 integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==,
             }
+        requiresBuild: true
 
     /emoji-regex@9.2.2:
         resolution:
@@ -6578,6 +6583,7 @@ packages:
                 integrity: sha512-zymm5+u+sCsSWyD9qNaejV3DFvhCKclKdizYaJUuHA83RLjb7nSuGnddCHGv0hk+KY7BMAlsWeK4Ueg6EV6XQg==,
             }
         engines: { node: ">=8" }
+        requiresBuild: true
 
     /is-generator-function@1.0.10:
         resolution:
@@ -8904,6 +8910,7 @@ packages:
             {
                 integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==,
             }
+        requiresBuild: true
         dev: false
 
     /tr46@1.0.1:
@@ -9197,6 +9204,7 @@ packages:
             {
                 integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==,
             }
+        requiresBuild: true
         dev: false
 
     /webidl-conversions@4.0.2:
@@ -9448,7 +9456,3 @@ packages:
                 integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==,
             }
         dev: false
-
-settings:
-    autoInstallPeers: true
-    excludeLinksFromLockfile: false
