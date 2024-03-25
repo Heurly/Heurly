@@ -78,3 +78,17 @@ export async function getAllNotes(): Promise<Notes[] | null> {
 
     return notes ?? null;
 }
+
+export async function deleteNotes(id: number) {
+    const session = await getServerAuthSession();
+    if (session?.user?.id === undefined) return null;
+
+    const deletion = await db.notes.delete({
+        where: {
+            id: id,
+            userId: session.user.id,
+        },
+    });
+
+    return deletion ?? null;
+}

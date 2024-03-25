@@ -1,8 +1,9 @@
+import DeleteDocButton from "@/components/docs/DeleteDocButton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import { createNotes, getAllNotes } from "@/server/notes";
+import { deleteNotes, getAllNotes } from "@/server/notes";
 import { Docs, Notes } from "@prisma/client";
 import { FileText } from "lucide-react";
 import Link from "next/link";
@@ -73,6 +74,7 @@ function NotesCard({ notes }: { notes: Notes }) {
                         <FileText className="mr-2 h-4 w-4" /> Open
                     </Button>
                 </Link>
+                <DeleteDocButton docId={notes.id} />
             </div>
         </Card>
     );
