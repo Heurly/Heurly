@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
 }
 
@@ -20,7 +20,7 @@ model Docs {
   userId      String
 }
 
-model BetaWhitelist {
+model BetaList {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
@@ -154,6 +154,34 @@ model User {
   Answer           Answer[]
   UserVoteAnswer   UserVoteAnswer[]
   UserVoteQuestion UserVoteQuestion[]
+}
+
+model Feature {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  Right       Right[]
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  Right       Right[]
+}
+
+model Right {
+  id        Int      @id @default(autoincrement())
+  featureId Int
+  roleId    String
+  feature   Feature  @relation(fields: [featureId], references: [id])
+  role      Role     @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model VerificationToken {

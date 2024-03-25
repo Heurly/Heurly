@@ -1,0 +1,46 @@
+[
+    {
+        "name": "show_timetable",
+        "description": "Display the timetable"
+    },
+    {
+        "name": "edit_timetable",
+        "description": "Edit the timetable url"
+    },
+    {
+        "name": "show_docs",
+        "description": "Display the docs"
+    },
+    {
+        "name": "edit_docs",
+        "description": "Upload docs"
+    },
+    {
+        "name": "show_note",
+        "description": "Display the note section"
+    },
+    {
+        "name": "edit_note",
+        "description": "takes note"
+    },
+    {
+        "name": "show_revision",
+        "description": "Display the revision section"
+    },
+    {
+        "name": "show_event",
+        "description": "Display the event section"
+    },
+    {
+        "name": "show_qanda",
+        "description": "Display the qanda section"
+    },
+    {
+        "name": "edit_qanda",
+        "description": "Ask question"
+    },
+    {
+        "name": "show_profile",
+        "description": "Display the profile section"
+    }
+]
