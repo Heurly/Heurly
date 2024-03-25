@@ -7,7 +7,7 @@ import {
     CardHeader,
 } from "@/components/ui/card";
 import DateFormatted from "@/components/ui/date-formatted";
-import Vote from "@/components/Q&A/Vote";
+import Vote from "@/components/QandA/Vote";
 import cn from "classnames";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";

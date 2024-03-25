@@ -1,4 +1,4 @@
-import QandACard from "@/components/Q&A/QandA-card";
+import QandACard from "@/components/QandA/QandA-card";
 import { getQuestions } from "@/server/question";
 import ID from "@/utils/id";
 import Link from "next/link";
