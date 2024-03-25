@@ -8,11 +8,16 @@ WORKDIR /app
 
 COPY prisma ./
 
+# Env Values
+ARG TIPTAP_TOKEN
+ENV TIPTAP_TOKEN=$TIPTAP_TOKEN
+
 # Install dependencies based on the preferred package manager
 
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml\* ./
 
-RUN yarn global add pnpm && pnpm i
+RUN yarn global add pnpm
+RUN pnpm config set "@tiptap-pro:registry" https://registry.tiptap.dev/ && pnpm config set "//registry.tiptap.dev/:_authToken" $TIPTAP_TOKEN && pnpm i
 
 ##### BUILDER
 
