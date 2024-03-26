@@ -8,16 +8,6 @@ import Link from "next/link";
 
 export default async function ChoosePlugInPage() {
     const plugIns = [
-        {
-            name: "Documents",
-            icon: <Archive />,
-            href: "/docs",
-        },
-        {
-            name: "Q & A",
-            icon: <MessageCircleQuestion />,
-            href: "/QandA",
-        },
         // {
         //     name: "Flashcards",
         //     icon: <Zap />,
@@ -34,16 +24,20 @@ export default async function ChoosePlugInPage() {
         isAllowedTo("show_qanda", userId),
     ]);
 
-    if (!isAllowedToSeeDocs.result)
-        plugIns.splice(
-            plugIns.findIndex(({ href }) => href == "/docs"),
-            1,
-        );
-    if (!isAllowedToSeeQandA.result)
-        plugIns.splice(
-            plugIns.findIndex(({ href }) => href == "/QandA"),
-            1,
-        );
+    if (isAllowedToSeeDocs.result)
+        plugIns.push({
+            name: "Documents",
+            icon: <Archive />,
+            href: "/docs",
+        });
+    if (isAllowedToSeeQandA.result)
+        plugIns.push({
+            name: "Q & A",
+            icon: <MessageCircleQuestion />,
+            href: "/QandA",
+        });
+
+    if (plugIns.length === 0) return null;
 
     return (
         <Card className="flex h-full w-full flex-col items-center justify-center gap-5 p-10">

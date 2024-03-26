@@ -46,23 +46,7 @@ export default async function NavBar() {
 
     const userId = session.user.id;
 
-    const navbarElement = [
-        {
-            name: "Emplois du temps",
-            icon: <Calendar />,
-            href: "/timetable",
-        },
-        {
-            name: "Révisions",
-            icon: <FileStack />,
-            href: "/revision",
-        },
-        {
-            name: "Evénements",
-            icon: <CalendarCheck />,
-            href: "/event",
-        },
-    ];
+    const navbarElement = [];
 
     const [
         isAllowedToSeeTimetable,
@@ -74,21 +58,24 @@ export default async function NavBar() {
         isAllowedTo("show_event", userId),
     ]);
 
-    if (!isAllowedToSeeTimetable.result)
-        navbarElement.splice(
-            navbarElement.findIndex(({ href }) => href === "/timetable"),
-            1,
-        );
-    if (!isAllowedToSeeRevision.result)
-        navbarElement.splice(
-            navbarElement.findIndex(({ href }) => href === "/revision"),
-            1,
-        );
-    if (!isAllowedToSeeEvent.result)
-        navbarElement.splice(
-            navbarElement.findIndex(({ href }) => href === "/event"),
-            1,
-        );
+    if (isAllowedToSeeTimetable.result)
+        navbarElement.push({
+            name: "Emplois du temps",
+            icon: <Calendar />,
+            href: "/timetable",
+        });
+    if (isAllowedToSeeRevision.result)
+        navbarElement.push({
+            name: "Révisions",
+            icon: <FileStack />,
+            href: "/revision",
+        });
+    if (isAllowedToSeeEvent.result)
+        navbarElement.push({
+            name: "Evénements",
+            icon: <CalendarCheck />,
+            href: "/event",
+        });
 
     return (
         <nav className="fixed bottom-0 left-1/2 z-40 mb-4 flex w-11/12 -translate-x-1/2 flex-col items-center justify-between rounded-3xl bg-sky-200 px-3 py-4 md:relative md:left-[unset] md:top-[unset] md:h-full md:w-[unset] md:translate-x-0 md:py-10">
