@@ -1,25 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import isAllowedTo from "@/components/utils/is-allowed-to";
 import { getServerAuthSession } from "@/server/auth";
-import { db } from "@/server/db";
+import { getDocs } from "@/server/docs";
 import { Docs } from "@prisma/client";
 import { FileText } from "lucide-react";
 import Link from "next/link";
 
-async function getDocs() {
-    // api call to get the docs
-    const session = await getServerAuthSession();
-    if (!session) return [];
-
-    const docs = db.docs.findMany({
-        where: {
-            userId: session.user.id,
-        },
-    });
-    return docs;
-}
-
 export default async function PageDocsList() {
+    const session = await getServerAuthSession();
+    if (!session) return null;
+
+    const isAllowed = await isAllowedTo("show_docs", session.user.id);
+
+    // if the user is not allowed to see the page, we return null
+    if (!isAllowed.result) return null;
+
     const docs: Docs[] = await getDocs();
     return (
         <>

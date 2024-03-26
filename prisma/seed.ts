@@ -5,6 +5,7 @@ import { stdin as input, stdout as output } from "process";
 import courses from "./seed-data/courses.json";
 import units from "./seed-data/units.json";
 import features from "./seed-data/features.json";
+import LogCatch from "@/components/utils/log-catch";
 
 type RawData = {
     fullname: string;
@@ -13,15 +14,6 @@ type RawData = {
 };
 
 const rl = createInterface({ input, output });
-
-function handleCatch(e: unknown | Error | string) {
-    if (e instanceof Error) {
-        log({ type: TLog.error, text: `❌ ${e.message}` });
-    }
-    if (typeof e === "string") {
-        log({ type: TLog.error, text: e });
-    }
-}
 
 async function getEmail() {
     const mail: string = await new Promise<string>((resolve) => {
@@ -52,7 +44,7 @@ async function main() {
         log({ type: TLog.info, text: "🪣  courses deleted" });
     } catch (e) {
         errorCode = 1;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     const resCourses = courses.map((course) => {
@@ -75,7 +67,7 @@ async function main() {
         log({ type: TLog.info, text: "🎒 Courses seeded" });
     } catch (e) {
         errorCode = 2;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     try {
@@ -84,7 +76,7 @@ async function main() {
         log({ type: TLog.info, text: "🪣  Units deleted" });
     } catch (e) {
         errorCode = 3;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     const rawUnits = units.ESIEE_PARIS as RawData[];
@@ -106,7 +98,7 @@ async function main() {
         log({ type: TLog.info, text: "📚 Units seeded" });
     } catch (e) {
         errorCode = 4;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     let insertSchool = null;
@@ -131,7 +123,7 @@ async function main() {
         }
     } catch (e) {
         errorCode = 5;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     try {
@@ -145,7 +137,7 @@ async function main() {
         log({ type: TLog.info, text: "🏫 Hostname seeded" });
     } catch (e) {
         errorCode = 6;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     try {
@@ -160,7 +152,7 @@ async function main() {
         log({ type: TLog.info, text: "😉 User seeded" });
     } catch (e) {
         errorCode = 7;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     try {
@@ -185,7 +177,7 @@ async function main() {
         });
     } catch (e) {
         errorCode = 8;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     try {
@@ -201,7 +193,7 @@ async function main() {
         }
     } catch (e) {
         errorCode = 9;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     const userRights: string[] = [];
@@ -237,7 +229,7 @@ async function main() {
         tabFeatures = await db.feature.findMany();
     } catch (e) {
         errorCode = 10;
-        handleCatch(e);
+        LogCatch(e);
     }
 
     if (!tabFeatures) throw new Error("No features found");
@@ -254,7 +246,7 @@ async function main() {
                 });
             } catch (e) {
                 errorCode = 11;
-                handleCatch(e);
+                LogCatch(e);
             }
 
             if (!roleAllRights)
@@ -271,7 +263,7 @@ async function main() {
                 });
             } catch (e) {
                 errorCode = 12;
-                handleCatch(e);
+                LogCatch(e);
             }
 
             if (!resAsignAllRightsToAdmin)
@@ -286,7 +278,7 @@ async function main() {
                 });
             } catch (e) {
                 errorCode = 13;
-                handleCatch(e);
+                LogCatch(e);
             }
 
             if (!roleSpecificRights)
@@ -306,7 +298,7 @@ async function main() {
                 });
             } catch (e) {
                 errorCode = 14;
-                handleCatch(e);
+                LogCatch(e);
             }
 
             if (!resAsignSpecificRights)
