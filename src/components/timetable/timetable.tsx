@@ -52,25 +52,28 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
         dateFrom: Date,
         dateTo: Date,
     ) => {
-        let max: Date = dateFrom;
-        let min: Date = dateTo;
+        let max = dateFrom.getTime();
+        let min = dateTo.getTime();
         let reload = false;
         let d = dateFrom;
 
-        for (; d.getTime() < dateTo.getTime(); d = addDays(d, 1)) {
+        const dateToTime = dateTo.getTime();
+        let dTime = d.getTime();
+        for (; dTime < dateToTime; d = addDays(d, 1)) {
+            dTime = d.getTime();
             if (!events.has(format(d, DATE_KEY_FORMAT))) {
-                if (d.getTime() < min.getTime()) {
-                    min = d;
+                if (d.getTime() < min) {
+                    min = dTime;
                     reload = true;
                 }
-                if (d.getTime() > max.getTime()) {
-                    max = d;
+                if (d.getTime() > max) {
+                    max = dTime;
                     reload = true;
                 }
             }
         }
 
-        return { reload: reload, min: min, max: max };
+        return { reload: reload, min: new Date(min), max: new Date(max) };
     };
 
     const reloadData = async (dateFrom: Date, dateTo: Date) => {
