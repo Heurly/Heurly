@@ -62,11 +62,11 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
         for (; dTime < dateToTime; d = addDays(d, 1)) {
             dTime = d.getTime();
             if (!events.has(format(d, DATE_KEY_FORMAT))) {
-                if (d.getTime() < min) {
+                if (dTime < min) {
                     min = dTime;
                     reload = true;
                 }
-                if (d.getTime() > max) {
+                if (dTime > max) {
                     max = dTime;
                     reload = true;
                 }
