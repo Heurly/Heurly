@@ -33,9 +33,7 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
                     autofocus="end"
                     extensions={[...defaultExtensions, slashCommand]}
                     initialContent={initialContent}
-                    onUpdate={({ editor, transaction }) =>
-                        debouncedUpdates(editor)
-                    }
+                    onUpdate={({ editor }) => debouncedUpdates(editor)}
                 >
                     {children}
                     <EditorCommand className="z-50 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">

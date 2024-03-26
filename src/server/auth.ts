@@ -56,7 +56,7 @@ export const authOptions: NextAuthOptions = {
         }) {
             if (account && user) {
                 if (account.provider === "google" && user.email) {
-                    const allowedEmail = await db.betaWhitelist.findFirst({
+                    const allowedEmail = await db.betaList.findFirst({
                         where: {
                             email: user.email,
                         },
