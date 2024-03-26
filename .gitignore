@@ -50,3 +50,5 @@ secrets.env
 
 # jetbrains
 .idea/
+
+.npmrc
