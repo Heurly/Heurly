@@ -4,7 +4,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import frLocale from "@fullcalendar/core/locales/fr";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DatePicker } from "@/components/ui/datepicker";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, LoaderCircle } from "lucide-react";
@@ -17,72 +17,112 @@ import {
 import { TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
-import { addDays, addYears, parseISO, subYears } from "date-fns";
+import { addDays, endOfWeek, format, parseISO, startOfWeek } from "date-fns";
 import type { User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useDebouncedCallback } from "use-debounce";
 import { DatesSetArg } from "@fullcalendar/core/index.js";
 
 const SMALL_EVENT_THRESHOLD = 1.5 * 60 * 60 * 1000;
+const DATE_KEY_FORMAT = "yyyy-MM-dd";
 
 export default function Timetable({ userId }: { userId: User["id"] }) {
     const session = useSession();
     const calendarRef = useRef<FullCalendar>(null);
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
-    const [events, setEvents] = useState<TEventTimetable[]>([]);
-    const [max, setMax] = useState<number | undefined>(undefined);
-    const [min, setMin] = useState<number | undefined>(undefined);
+    const [events, setEvents] = useState<Map<string, TEventTimetable[]>>(
+        new Map(),
+    );
     const nbPxPhone = 768;
     const startTime = "08:00:00";
     const endTime = "20:00:00";
 
-    const shouldReload = (dateFrom: Date, dateTo: Date) => {
-        let res = false;
+    const shouldReload: (
+        dateFrom: Date,
+        dateTo: Date,
+    ) => { reload: boolean; min: Date; max: Date } = (
+        dateFrom: Date,
+        dateTo: Date,
+    ) => {
+        let max: Date = dateFrom;
+        let min: Date = dateTo;
+        let reload = false;
+        let d = dateFrom;
+        d.setHours(0, 0, 0, 0);
 
-        if (min === undefined || dateFrom.getTime() < min) {
-            setMin(dateFrom.getTime());
-            res = true;
-        }
-        if (max === undefined || dateTo.getTime() > max) {
-            setMax(dateTo.getTime());
-            res = true;
+        for (; d.getTime() < dateTo.getTime(); d = addDays(d, 1)) {
+            if (!events.has(format(d, DATE_KEY_FORMAT))) {
+                if (d.getTime() < min.getTime()) {
+                    min = d;
+                    reload = true;
+                }
+                if (d.getTime() > max.getTime()) {
+                    max = d;
+                    reload = true;
+                }
+            }
         }
 
-        return res;
+        return { reload: reload, min: min, max: max };
     };
 
     const reloadData = async (dateFrom: Date, dateTo: Date) => {
-        if (!userId || !shouldReload(dateFrom, dateTo)) return;
+        if (!userId) return;
+
+        const reloadContext = shouldReload(dateFrom, dateTo);
+        if (!reloadContext.reload) return;
 
         const ical = await getTimetableData(
-            dateFrom.getTime(),
-            dateTo.getTime(),
+            reloadContext.min.getTime(),
+            reloadContext.max.getTime(),
             userId,
         );
         if (ical?.VCALENDAR === undefined) return;
 
-        const events =
-            ical?.VCALENDAR[0]?.VEVENT?.map((event) => {
-                const start = parseISO(event.DTSTART);
-                const end = parseISO(event.DTEND);
-                const small =
-                    end.getTime() - start.getTime() < SMALL_EVENT_THRESHOLD;
+        const newEvents = new Map<string, TEventTimetable[]>();
+        ical?.VCALENDAR[0]?.VEVENT?.map((e) => {
+            const start = parseISO(e.DTSTART);
+            const end = parseISO(e.DTEND);
+            const small =
+                end.getTime() - start.getTime() < SMALL_EVENT_THRESHOLD;
 
-                return {
-                    title: event.SUMMARY,
-                    start: event.DTSTART,
-                    end: event.DTEND,
-                    room: event.LOCATION,
-                    description: event.DESCRIPTION,
-                    small: small,
-                };
-            }) ?? [];
-        setEvents(events ?? []);
+            const key = format(parseISO(e.DTSTART), DATE_KEY_FORMAT);
+            const known = newEvents.get(key);
+            known?.push({
+                title: e.SUMMARY,
+                start: e.DTSTART,
+                end: e.DTEND,
+                room: e.LOCATION,
+                description: e.DESCRIPTION,
+                small: small,
+            });
+
+            newEvents.set(key, known ?? []);
+        });
+
+        const completed = events;
+
+        for (
+            let d = reloadContext.min;
+            d.getTime() < reloadContext.max.getTime();
+            d = addDays(d, 1)
+        ) {
+            const key = format(d, DATE_KEY_FORMAT);
+            if (newEvents.has(key)) {
+                completed.set(key, newEvents?.get(key) ?? []);
+            } else if (events.has(key)) {
+                completed.set(key, events?.get(key) ?? []);
+            } else {
+                completed.set(key, []);
+            }
+        }
+
+        setEvents(completed ?? []);
     };
 
     const handleDateChange = async (date: Date) => {
-        const from = subYears(date, 1);
-        const to = addYears(date, 1);
+        const from = addDays(startOfWeek(date), 1);
+        const to = addDays(endOfWeek(date), 1);
 
         await reloadData(from, to);
         const newDate = addDays(date, 1).toISOString().slice(0, 10);
@@ -110,6 +150,20 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
     const refeshCallback = useDebouncedCallback(async (arg: DatesSetArg) => {
         await reloadData(arg.start, arg.end);
     }, 1000);
+
+    const getEventValues = useCallback(
+        (events: Map<string, TEventTimetable[]>) => {
+            let res: TEventTimetable[] = [];
+
+            console.log(Array.from(events?.values() ?? []));
+            Array.from(events?.values() ?? [])?.forEach((e) => {
+                res = res.concat(e);
+            });
+
+            return res;
+        },
+        [],
+    );
 
     return (
         <Card className="h-[100svh] py-2 md:flex md:h-full md:flex-col md:p-10">
@@ -169,7 +223,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
                     initialView={TView.timeGridWeek}
                     headerToolbar={false}
-                    events={events ?? []}
+                    events={getEventValues(events)}
                     eventContent={EventContent}
                     locale={frLocale}
                     weekends={true}

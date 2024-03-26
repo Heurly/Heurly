@@ -38,4 +38,6 @@ export type TEventTimetable = {
     start: string;
     end: string;
     room: string;
+    description?: string;
+    small?: boolean;
 };
