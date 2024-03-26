@@ -15,6 +15,8 @@ import { getURLsByUser } from "@/server/url-timetable";
 import { Separator } from "@/components/ui/separator";
 import ListUserFile from "@/components/profile/list-user-file";
 import nameToInitials from "@/utils/nameToInitials";
+import MultipleUrlForm from "@/components/profile/multi-url-form";
+import { url } from "inspector";
 
 export const metadata = {
     title: "Mon profil",
@@ -59,7 +61,7 @@ export default async function PageUserProfile() {
                 <CardContent>
                     {userUrl.length > 0 ? (
                         <>
-                            <ul className="flex gap-5">
+                            {/* <ul className="flex gap-5">
                                 {userUrl.map(({ url }) => (
                                     <li
                                         key={ID()}
@@ -68,7 +70,10 @@ export default async function PageUserProfile() {
                                         <p>{url}</p>
                                     </li>
                                 ))}
-                            </ul>
+                            </ul> */}
+                            <MultipleUrlForm
+                                initialUrls={userUrl.map((item) => item.url)}
+                            ></MultipleUrlForm>
                             <Separator />
                         </>
                     ) : (
@@ -97,7 +102,7 @@ export default async function PageUserProfile() {
                     <h2 className="text-xl font-bold">Mes documents</h2>
                 </CardHeader>
                 <CardContent>
-                    {userDocs.length == 0 ? (
+                    {userDocs.length === 0 ? (
                         <p>Vous n&apos;avez pas encore de documents.</p>
                     ) : (
                         <div className="flex gap-5">

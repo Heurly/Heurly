@@ -119,36 +119,77 @@ export async function updateProfileUnitUrl(
 }
 
 /**
- * Retrieves the current profile unit URL for a specific user.
- * @param userId The ID of the user whose profile unit URL is being requested.
- * @returns A promise that resolves to the URL string or null if not found.
+ * Retrieves all profile unit URLs for a specific user.
+ * @param userId The ID of the user whose profile unit URLs are being requested.
+ * @returns A promise that resolves to an array of URL strings. The array is empty if no URLs are found.
  */
-export async function getCurrentProfileUnitUrl(
+export async function getCurrentProfileUnitUrls(
     userId: string, // Adjust according to your User model's ID type
-): Promise<string | null> {
+): Promise<string[]> {
     log({
         type: TLog.info,
-        text: `Fetching current profile URL for user ${userId}`,
+        text: `Fetching current profile URLs for user ${userId}`,
     });
 
     try {
-        const userUrl = await db.userTimetableURL.findFirst({
+        const userUrls = await db.userTimetableURL.findMany({
             where: { userId: userId },
             select: { url: true }, // Only fetch the url field
         });
 
-        if (userUrl === null) {
-            log({ type: TLog.info, text: `No URL found for user ${userId}` });
-            return null;
+        if (userUrls.length === 0) {
+            log({ type: TLog.info, text: `No URLs found for user ${userId}` });
+            return [];
         }
 
-        return userUrl.url;
+        // Extract URLs from the result and return them
+        return userUrls.map((entry) => entry.url);
     } catch (e) {
         console.error(e);
         log({
             type: TLog.error,
-            text: `Error fetching profile URL for user ${userId}: ${e.message}`,
+            text: `Error fetching profile URLs for user ${userId}: ${e.message}`,
         });
-        return null;
+        return [];
+    }
+}
+
+/**
+ * Deletes a profile unit URL for a specific user.
+ * @param userId The ID of the user whose profile unit URL needs deletion.
+ * @param url The URL to delete from the user's profile.
+ * @returns A promise that resolves to a boolean indicating the operation's success.
+ */
+export async function deleteProfileUnitUrl(
+    userId: User["id"],
+    url: string,
+): Promise<boolean> {
+    log({ type: TLog.info, text: `Deleting profile URL for user ${userId}` });
+
+    try {
+        // Check if the URL exists for the user
+        const urlExists = await db.userTimetableURL.findFirst({
+            where: { userId: userId, url: url },
+        });
+
+        if (!urlExists) throw new Error("URL does not exist for this user");
+
+        // Delete the URL from the database
+        await db.userTimetableURL.delete({
+            where: { id: urlExists.id },
+        });
+
+        log({
+            type: TLog.info,
+            text: `Profile URL deleted for user ${userId}`,
+        });
+        return true;
+    } catch (e) {
+        console.error(e);
+        log({
+            type: TLog.error,
+            text: `Error deleting profile URL for user ${userId}: ${e.message}`,
+        });
+        return false;
     }
 }
