@@ -3,12 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSession } from "next-auth/react";
-import {
-    addProfileUnitByUrl,
-    deleteProfileUnitUrl,
-    getCurrentProfileUnitUrls,
-} from "@/server/user";
-import { set } from "date-fns";
+import { addProfileUnitByUrl, deleteProfileUnitUrl } from "@/server/user";
 
 type MultipleUrlFormProps = {
     initialUrls: string[];
@@ -78,7 +73,9 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
     };
 
     return (
-        <div>
+        <div className="max-h-[500px] overflow-y-auto">
+            {" "}
+            {/* Utilisation de Tailwind ici */}
             {urls.map((urlObj) => (
                 <div key={urlObj.id} className="mb-4 flex items-center">
                     <Input
