@@ -8,36 +8,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// why cuid : https://dev.to/harshhhdev/uuidguid-cuid-nanoid-whats-the-difference-5dj1
 model Docs {
   id          String   @id @default(cuid())
   title       String
   description String
-  url         String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
-  uploadedBy  User     @relation(fields: [userId], references: [id])
   userId      String
-}
-
-model BetaList {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  url         String?
+  uploadedBy  User     @relation(fields: [userId], references: [id])
 }
 
 model Course {
   id          Int     @id @default(autoincrement())
+  description String? @default("")
+  schoolId    Int?
   code        String
   name        String  @default("")
   professor   String  @default("")
-  description String? @default("")
-  year        String  @default("")
-  unit        String  @default("")
   small_code  String  @default("")
+  unit        String  @default("")
+  year        String  @default("")
   School      School? @relation(fields: [schoolId], references: [id])
-  schoolId    Int?
 }
 
 model School {
@@ -65,46 +57,46 @@ model Question {
   id               String             @id @default(cuid())
   question         String
   description      String
-  answer           Answer[]
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @default(now())
-  user             User               @relation(fields: [userId], references: [id])
   userId           String
+  answer           Answer[]
+  user             User               @relation(fields: [userId], references: [id])
   UserVoteQuestion UserVoteQuestion[]
 }
 
 model Answer {
   id             String           @id @default(cuid())
   answer         String
-  question       Question         @relation(fields: [questionId], references: [id])
   questionId     String
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @default(now())
-  user           User             @relation(fields: [userId], references: [id])
   userId         String
+  question       Question         @relation(fields: [questionId], references: [id])
+  user           User             @relation(fields: [userId], references: [id])
   UserVoteAnswer UserVoteAnswer[]
 }
 
 model UserVoteAnswer {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
   userId    String
-  answer    Answer   @relation(fields: [answerId], references: [id])
   answerId  String
   vote      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  answer    Answer   @relation(fields: [answerId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model UserVoteQuestion {
   id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id])
   userId     String
-  question   Question @relation(fields: [questionId], references: [id])
   questionId String
   vote       Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
+  question   Question @relation(fields: [questionId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model Account {
@@ -157,13 +149,12 @@ model User {
   UserRole         UserRole[]
 }
 
-model Feature {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  Right       Right[]
+model UserRole {
+  id     Int    @id @default(autoincrement())
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
 }
 
 model Role {
@@ -176,14 +167,6 @@ model Role {
   UserRole    UserRole[]
 }
 
-model UserRole {
-  id     Int    @id @default(autoincrement())
-  userId String
-  roleId String
-  user   User   @relation(fields: [userId], references: [id])
-  role   Role   @relation(fields: [roleId], references: [id])
-}
-
 model Right {
   id        Int      @id @default(autoincrement())
   featureId Int
@@ -194,12 +177,28 @@ model Right {
   updatedAt DateTime @default(now())
 }
 
+model Feature {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  Right       Right[]
+}
+
 model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model BetaList {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 model Notes {
