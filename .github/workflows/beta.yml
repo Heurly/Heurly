@@ -1,4 +1,4 @@
-name: ci-push
+name: Beta Workflow
 
 on:
     push:
