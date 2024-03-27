@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSession } from "next-auth/react";
 import { addProfileUnitByUrl, deleteProfileUnitUrl } from "@/server/user";
+import { log, TLog } from "@/logger/logger";
 
 type MultipleUrlFormProps = {
     initialUrls: string[];
@@ -32,7 +33,7 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
         const urlToRemove = urls.find((url) => url.id === id);
 
         if (!urlToRemove) {
-            console.error("URL not found");
+            log({ type: TLog.error, text: "URL not found" });
             return;
         }
         try {
@@ -43,10 +44,10 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
             if (success) {
                 setUrls((prevUrls) => prevUrls.filter((url) => url.id !== id));
             } else {
-                console.error("Failed to delete the URL");
+                log({ type: TLog.error, text: "Failed to delete the URL" });
             }
         } catch (error) {
-            console.error("Error deleting URL:", error);
+            log({ type: TLog.error, text: "Error deleting URL" });
         }
     };
 
@@ -67,10 +68,13 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
                         url,
                     );
                     if (!success) {
-                        console.error("Failed to add URL:", url);
+                        log({
+                            type: TLog.error,
+                            text: `Failed to add URL ${url}`,
+                        });
                     }
                 } catch (error) {
-                    console.error("Error adding URL:", url, error);
+                    log({ type: TLog.error, text: `Error adding URL ${url}` });
                 }
             }
         }
