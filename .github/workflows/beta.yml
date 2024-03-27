@@ -11,7 +11,7 @@ jobs:
 
     deploy:
         needs: build
-        runs-on: ubuntu-latest
+        runs-on: self-hosted
         steps:
             - name: Inject slug/short variables
               uses: rlespinasse/github-slug-action@v4.x

@@ -7,11 +7,14 @@ on:
 
 jobs:
     build:
-        uses: ./.github/workflows/build.yml
+        runs-on: self-hosted
+        steps:
+            - name: Build and push Docker image
+              uses: ./.github/workflows/build.yml
 
     deploy:
         needs: build
-        runs-on: ubuntu-latest
+        runs-on: self-hosted
         steps:
             - name: Inject slug/short variables
               uses: rlespinasse/github-slug-action@v4.x
