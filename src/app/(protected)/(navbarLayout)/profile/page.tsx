@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import ListUserFile from "@/components/profile/list-user-file";
 import nameToInitials from "@/utils/nameToInitials";
 import MultipleUrlForm from "@/components/profile/multi-url-form";
+import isAllowedTo from "@/components/utils/is-allowed-to";
 
 export const metadata = {
     title: "Mon profil",
@@ -24,6 +25,10 @@ export const metadata = {
 export default async function PageUserProfile() {
     const session = await getServerAuthSession();
     if (!session) redirect("/login");
+
+    // verify if the user is allowed to see the page
+    const isAllowed = await isAllowedTo("show_profile", session.user.id);
+    if (!isAllowed.result) return null;
 
     const [userDocs, userUrl] = await Promise.all([
         getDocsByUser(session?.user.id),

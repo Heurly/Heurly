@@ -27,6 +27,7 @@ export type TEventInfo = {
         title: string;
         extendedProps: {
             room: string;
+            small?: boolean;
         };
     };
     timeText: string;
@@ -37,4 +38,6 @@ export type TEventTimetable = {
     start: string;
     end: string;
     room: string;
+    description?: string;
+    small?: boolean;
 };

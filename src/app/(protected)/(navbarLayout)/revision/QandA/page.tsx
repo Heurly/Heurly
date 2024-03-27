@@ -1,10 +1,11 @@
-import QandACard from "@/components/Q&A/QandA-card";
+import QandACard from "@/components/QandA/QandA-card";
 import { getQuestions } from "@/server/question";
 import ID from "@/utils/id";
 import Link from "next/link";
 
 import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";
+import isAllowedTo from "@/components/utils/is-allowed-to";
 
 export const metadata = {
     title: "Heuly - Questions",
@@ -15,6 +16,11 @@ export const metadata = {
 export default async function ListQuestionsPage() {
     const session = await getServerAuthSession();
     if (!session) redirect("/login");
+
+    // verify if the user is allowed to see the page
+    const isAllowed = await isAllowedTo("show_qanda", session.user.id);
+    if (!isAllowed.result) return null;
+
     const questions = await getQuestions(10, session.user.id);
 
     return (

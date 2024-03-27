@@ -13,13 +13,12 @@ import { Input } from "@/components/ui/input";
 // import {  handleFormUploadDocs } from "@/server/docs";
 import { formUploadDocsSchema } from "@/types/schema/file-upload";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSession } from "next-auth/react";
+import type { User } from "@prisma/client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-export default function FormUploadDocs() {
-    const session = useSession();
+export default function FormUploadDocs({ userId }: { userId: User["id"] }) {
     const form = useForm<z.infer<typeof formUploadDocsSchema>>({
         resolver: zodResolver(formUploadDocsSchema),
     });
@@ -50,10 +49,6 @@ export default function FormUploadDocs() {
             }
         }
 
-        // if(!session.data) return;
-
-        const userId = session.data!.user.id;
-
         sendForm.append("userId", userId);
 
         type error = { error: string };
@@ -81,7 +76,7 @@ export default function FormUploadDocs() {
 
     return (
         <>
-            {!session.data?.user?.id ? (
+            {!userId ? (
                 <p>
                     Vous devez être connecté pour pouvoir uploader un document
                 </p>
