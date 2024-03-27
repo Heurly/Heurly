@@ -51,9 +51,9 @@ jobs:
             - name: SSH and Docker Pull
               uses: appleboy/ssh-action@v1.0.0
               with:
-                  host: ${{ secrets.PI_HOST }}
-                  username: ${{ secrets.PI_USERNAME }}
-                  password: ${{ secrets.PI_PASSWORD }}
+                  host: ${{ secrets.VPS_HOST }}
+                  username: ${{ secrets.VPS_USERNAME }}
+                  password: ${{ secrets.VPS_PASSWORD }}
                   script: |
                       echo ${{secrets.DOCKER_TOKEN}} | docker login --username ${{secrets.DOCKER_USERNAME}} --password-stdin 2> /dev/null
                       docker service update --image domesday/heurly:main prod_pheurly
