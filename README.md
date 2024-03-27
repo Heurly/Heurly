@@ -9,8 +9,9 @@ To contribute to this project, you need to install a few items:
 - [docker](https://docs.docker.com/engine/install/)
 - [nodejs](https://nodejs.org/en)
 - [pnpm](https://pnpm.io/installation)(I recommend npm i -g pnpm)
-- [wsl](https://learn.microsoft.com/en-us/windows/wsl/install)
-  To install the project and contribute, you need to take a few steps:
+- [wsl](https://learn.microsoft.com/en-us/windows/wsl/install)  
+
+To install the project and contribute, you need to take a few steps:
 - git clone the `git@github.com:Heurly/Heurly.git` repo
 - install the `pnpm i` dependencies
 - add .env and .env.development.local to the project root (change the end-of-line sequence type to "LF")
