@@ -1,9 +1,9 @@
-name: ci-push
+name: Prod Workflow
 
 on:
     push:
         branches:
-            - beta
+            - main
 
 jobs:
     build:
@@ -51,18 +51,17 @@ jobs:
             - name: SSH and Docker Pull
               uses: appleboy/ssh-action@v1.0.0
               with:
-                  host: ${{ secrets.PI_HOST }}
-                  username: ${{ secrets.PI_USERNAME }}
-                  password: ${{ secrets.PI_PASSWORD }}
+                  host: ${{ secrets.VPS_HOST }}
+                  username: ${{ secrets.VPS_USERNAME }}
+                  password: ${{ secrets.VPS_PASSWORD }}
                   script: |
-                      cd /home/heurly/Heurly-OPS
                       echo ${{secrets.DOCKER_TOKEN}} | docker login --username ${{secrets.DOCKER_USERNAME}} --password-stdin 2> /dev/null
-                      ./scripts/add-container.sh ${{ env.GITHUB_REF_NAME_SLUG_URL }}
+                      docker service update --image domesday/heurly:main prod_pheurly
 
             - name: Discord notification
               env:
                   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                  DISCORD_EMBEDS: '[{"title": "Deployment - Link of ${{ env.GITHUB_REF_SLUG }}", "description": "[${{ github.repository }}] Branch ${{ env.GITHUB_REF_SLUG }} has been deployed.", "url": "https://${{ env.GITHUB_REF_SLUG }}.heurly.fr", "color": 14847590}]'
+                  DISCORD_EMBEDS: '[{"title": "Deployment - Link of ${{ env.GITHUB_REF_SLUG }} (Prod)", "description": "[${{ github.repository }}] Branch ${{ env.GITHUB_REF_SLUG }} has been deployed.", "url": "https://heurly.fr", "color": 14847590}]'
               uses: Ilshidur/action-discord@master
               with:
                   args: ""
