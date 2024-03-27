@@ -1,3 +1,4 @@
+import type { Feature } from "@prisma/client";
 import { TLog, log } from "@/logger/logger";
 import { db } from "@/server/db";
 import { createInterface } from "readline";
@@ -42,7 +43,7 @@ async function main() {
         // delete all data
         await db.course.deleteMany({});
         log({ type: TLog.info, text: "🪣  courses deleted" });
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 1;
         LogCatch(e);
     }
@@ -65,7 +66,7 @@ async function main() {
         });
 
         log({ type: TLog.info, text: "🎒 Courses seeded" });
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 2;
         LogCatch(e);
     }
@@ -74,7 +75,7 @@ async function main() {
         // delete all data
         await db.unit.deleteMany({});
         log({ type: TLog.info, text: "🪣  Units deleted" });
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 3;
         LogCatch(e);
     }
@@ -96,7 +97,7 @@ async function main() {
             data: resUnits,
         });
         log({ type: TLog.info, text: "📚 Units seeded" });
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 4;
         LogCatch(e);
     }
@@ -121,7 +122,7 @@ async function main() {
             });
             log({ type: TLog.info, text: "🏫 School seeded" });
         }
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 5;
         LogCatch(e);
     }
@@ -135,7 +136,7 @@ async function main() {
             },
         });
         log({ type: TLog.info, text: "🏫 Hostname seeded" });
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 6;
         LogCatch(e);
     }
@@ -150,7 +151,7 @@ async function main() {
         });
 
         log({ type: TLog.info, text: "😉 User seeded" });
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 7;
         LogCatch(e);
     }
@@ -175,7 +176,7 @@ async function main() {
         await db.role.createMany({
             data: roles,
         });
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 8;
         LogCatch(e);
     }
@@ -191,7 +192,7 @@ async function main() {
                 text: "🎉 Features seeded",
             });
         }
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 9;
         LogCatch(e);
     }
@@ -227,7 +228,7 @@ async function main() {
     try {
         // get all the features
         tabFeatures = await db.feature.findMany();
-    } catch (e) {
+    } catch (e: any) {
         errorCode = 10;
         LogCatch(e);
     }
@@ -244,7 +245,7 @@ async function main() {
                         name: role,
                     },
                 });
-            } catch (e) {
+            } catch (e: any) {
                 errorCode = 11;
                 LogCatch(e);
             }
@@ -252,7 +253,7 @@ async function main() {
             if (!roleAllRights)
                 throw new Error("No role found to assign all rights");
 
-            const tabAdminRights = tabFeatures.map((feature) => ({
+            const tabAdminRights = tabFeatures.map((feature: Feature) => ({
                 featureId: feature.id,
                 roleId: roleAllRights.id,
             }));
@@ -261,7 +262,7 @@ async function main() {
                 resAsignAllRightsToAdmin = await db.right.createMany({
                     data: tabAdminRights,
                 });
-            } catch (e) {
+            } catch (e: any) {
                 errorCode = 12;
                 LogCatch(e);
             }
@@ -276,7 +277,7 @@ async function main() {
                         name: role,
                     },
                 });
-            } catch (e) {
+            } catch (e: any) {
                 errorCode = 13;
                 LogCatch(e);
             }
@@ -296,7 +297,7 @@ async function main() {
                         roleId: roleSpecificRights.id,
                     })),
                 });
-            } catch (e) {
+            } catch (e: any) {
                 errorCode = 14;
                 LogCatch(e);
             }
