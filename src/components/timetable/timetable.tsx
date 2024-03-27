@@ -4,7 +4,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import frLocale from "@fullcalendar/core/locales/fr";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DatePicker } from "@/components/ui/datepicker";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, LoaderCircle } from "lucide-react";

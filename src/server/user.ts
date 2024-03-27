@@ -4,6 +4,59 @@ import { db } from "./db";
 import * as z from "zod";
 import { convert } from "ical2json";
 import { TLog, log } from "@/logger/logger";
+import { TUserTable } from "@/components/right-table/right-column";
+
+export async function getUsers(nbUser = 10) {
+    let users: User[] = [];
+
+    try {
+        users = await db.user.findMany({
+            take: nbUser,
+        });
+    } catch (e) {
+        if (e instanceof Error) {
+            log({
+                type: TLog.error,
+                text: `Error fetching users: ${e.message}`,
+            });
+        }
+    }
+    return users;
+}
+
+export async function getUsersWithRole(nbUsers = 10) {
+    let users: TUserTable[] = [];
+
+    try {
+        users = await db.user.findMany({
+            take: nbUsers,
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+                UserRole: {
+                    select: {
+                        role: {
+                            select: {
+                                id: true,
+                                name: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    } catch (e) {
+        if (e instanceof Error) {
+            log({
+                type: TLog.error,
+                text: `Error fetching users with role: ${e.message}`,
+            });
+        }
+    }
+    return users;
+}
 
 /**
  * This function adds a profile unit by URL
@@ -109,11 +162,12 @@ export async function updateProfileUnitUrl(
 
         return true;
     } catch (e) {
-        console.error(e);
-        log({
-            type: TLog.error,
-            text: `Error updating profile URL for user ${userId}: ${e.message}`,
-        });
+        if (e instanceof Error) {
+            log({
+                type: TLog.error,
+                text: `Error updating profile URL for user ${userId}: ${e.message}`,
+            });
+        }
         return false;
     }
 }
@@ -145,11 +199,12 @@ export async function getCurrentProfileUnitUrls(
         // Extract URLs from the result and return them
         return userUrls.map((entry) => entry.url);
     } catch (e) {
-        console.error(e);
-        log({
-            type: TLog.error,
-            text: `Error fetching profile URLs for user ${userId}: ${e.message}`,
-        });
+        if (e instanceof Error) {
+            log({
+                type: TLog.error,
+                text: `Error fetching profile URLs for user ${userId}: ${e.message}`,
+            });
+        }
         return [];
     }
 }
@@ -185,11 +240,12 @@ export async function deleteProfileUnitUrl(
         });
         return true;
     } catch (e) {
-        console.error(e);
-        log({
-            type: TLog.error,
-            text: `Error deleting profile URL for user ${userId}: ${e.message}`,
-        });
+        if (e instanceof Error) {
+            log({
+                type: TLog.error,
+                text: `Error deleting profile URL for user ${userId}: ${e.message}`,
+            });
+        }
         return false;
     }
 }

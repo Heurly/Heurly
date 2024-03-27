@@ -9,7 +9,6 @@ type MultipleUrlFormProps = {
     initialUrls: string[];
 };
 export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
-    const { data: session } = useSession();
     const [urls, setUrls] = useState([{ id: Date.now(), url: "" }]);
     useEffect(() => {
         // Transformer les URLs initiales en un format adapté à votre composant
@@ -19,6 +18,11 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
         }));
         setUrls(formattedUrls);
     }, [initialUrls]);
+
+    const session = useSession();
+
+    if (!session.data)
+        return <p>Vous devez être connecté pour ce formulaire.</p>;
 
     const addUrl = () =>
         setUrls((prevUrls) => [...prevUrls, { id: Date.now(), url: "" }]);
@@ -33,7 +37,7 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
         }
         try {
             const success = await deleteProfileUnitUrl(
-                session?.user?.id,
+                session.data.user?.id,
                 urlToRemove.url,
             );
             if (success) {
@@ -59,7 +63,7 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
             if (url) {
                 try {
                     const success = await addProfileUnitByUrl(
-                        session?.user?.id,
+                        session.data.user?.id,
                         url,
                     );
                     if (!success) {

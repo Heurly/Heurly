@@ -13,7 +13,9 @@ type TRightName =
     | "show_event"
     | "show_qanda"
     | "edit_qanda"
-    | "show_profile";
+    | "show_profile"
+    | "edit_profile"
+    | "show_admin";
 
 export default async function isAllowedTo(
     rightName: TRightName,

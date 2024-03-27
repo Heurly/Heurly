@@ -42,5 +42,13 @@
     {
         "name": "show_profile",
         "description": "Display the profile section"
+    },
+    {
+        "name": "edit_profile",
+        "description": "Edit the profile section"
+    },
+    {
+        "name": "show_admin",
+        "description": "Display the admin section"
     }
 ]
