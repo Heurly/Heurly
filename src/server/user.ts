@@ -57,3 +57,139 @@ export async function addProfileUnitByUrl(
         return false;
     }
 }
+
+/**
+ * Updates a profile unit URL for a specific user.
+ * @param userId The ID of the user whose profile unit URL needs updating.
+ * @param newUrl The new URL to update in the user's profile.
+ * @returns A promise that resolves to a boolean indicating the operation's success.
+ */
+export async function updateProfileUnitUrl(
+    userId: string, // Assuming user ID is a string; adjust according to your User model
+    newUrl: string,
+): Promise<boolean> {
+    log({ type: TLog.info, text: `Updating profile URL for user ${userId}` });
+
+    try {
+        const urlSchema = z.string().url();
+        // Validate the URL
+        urlSchema.parse(newUrl);
+
+        // Extract hostname to ensure it matches a known school's hostname
+        const urlHostName = new URL(newUrl).hostname;
+        const res = await db.schoolHostname.findFirst({
+            where: { hostname: urlHostName },
+        });
+
+        if (res === null) throw new Error("Hostname not found in db");
+
+        // Fetching and converting the iCal to verify the URL is valid and accessible
+        const resIcal = await fetch(newUrl);
+        if (!resIcal.ok)
+            throw new Error("Failed to fetch ical from the new URL");
+
+        const rawIcal = await resIcal.text();
+        convert(rawIcal);
+
+        // Check if the new URL is already associated with another timetable to prevent duplicates
+        const urlExists = await db.userTimetableURL.findFirst({
+            where: { url: newUrl, NOT: { userId: userId } },
+        });
+
+        if (urlExists) throw new Error("URL already used by another timetable");
+
+        // Update the URL in the database
+        const updateResult = await db.userTimetableURL.updateMany({
+            where: { userId: userId },
+            data: { url: newUrl },
+        });
+
+        if (updateResult.count === 0)
+            throw new Error("Failed to update the URL in the database");
+
+        return true;
+    } catch (e) {
+        console.error(e);
+        log({
+            type: TLog.error,
+            text: `Error updating profile URL for user ${userId}: ${e.message}`,
+        });
+        return false;
+    }
+}
+
+/**
+ * Retrieves all profile unit URLs for a specific user.
+ * @param userId The ID of the user whose profile unit URLs are being requested.
+ * @returns A promise that resolves to an array of URL strings. The array is empty if no URLs are found.
+ */
+export async function getCurrentProfileUnitUrls(
+    userId: string, // Adjust according to your User model's ID type
+): Promise<string[]> {
+    log({
+        type: TLog.info,
+        text: `Fetching current profile URLs for user ${userId}`,
+    });
+
+    try {
+        const userUrls = await db.userTimetableURL.findMany({
+            where: { userId: userId },
+            select: { url: true }, // Only fetch the url field
+        });
+
+        if (userUrls.length === 0) {
+            log({ type: TLog.info, text: `No URLs found for user ${userId}` });
+            return [];
+        }
+
+        // Extract URLs from the result and return them
+        return userUrls.map((entry) => entry.url);
+    } catch (e) {
+        console.error(e);
+        log({
+            type: TLog.error,
+            text: `Error fetching profile URLs for user ${userId}: ${e.message}`,
+        });
+        return [];
+    }
+}
+
+/**
+ * Deletes a profile unit URL for a specific user.
+ * @param userId The ID of the user whose profile unit URL needs deletion.
+ * @param url The URL to delete from the user's profile.
+ * @returns A promise that resolves to a boolean indicating the operation's success.
+ */
+export async function deleteProfileUnitUrl(
+    userId: User["id"],
+    url: string,
+): Promise<boolean> {
+    log({ type: TLog.info, text: `Deleting profile URL for user ${userId}` });
+
+    try {
+        // Check if the URL exists for the user
+        const urlExists = await db.userTimetableURL.findFirst({
+            where: { userId: userId, url: url },
+        });
+
+        if (!urlExists) throw new Error("URL does not exist for this user");
+
+        // Delete the URL from the database
+        await db.userTimetableURL.delete({
+            where: { id: urlExists.id },
+        });
+
+        log({
+            type: TLog.info,
+            text: `Profile URL deleted for user ${userId}`,
+        });
+        return true;
+    } catch (e) {
+        console.error(e);
+        log({
+            type: TLog.error,
+            text: `Error deleting profile URL for user ${userId}: ${e.message}`,
+        });
+        return false;
+    }
+}

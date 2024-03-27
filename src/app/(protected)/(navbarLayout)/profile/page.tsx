@@ -10,11 +10,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { getDocsByUser } from "@/server/docs";
-import ID from "@/utils/id";
 import { getURLsByUser } from "@/server/url-timetable";
 import { Separator } from "@/components/ui/separator";
 import ListUserFile from "@/components/profile/list-user-file";
 import nameToInitials from "@/utils/nameToInitials";
+import MultipleUrlForm from "@/components/profile/multi-url-form";
 import isAllowedTo from "@/components/utils/is-allowed-to";
 
 export const metadata = {
@@ -55,7 +55,7 @@ export default async function PageUserProfile() {
                 </CardContent>
             </Card>
 
-            <Card className="md:col-span-2 md:col-start-2 md:row-span-1">
+            <Card className="overflow-y-auto md:col-span-2 md:col-start-2 md:row-span-1">
                 <CardHeader>
                     <h2 className="text-xl font-bold">
                         Mes url d&apos;emplois du temps
@@ -64,17 +64,9 @@ export default async function PageUserProfile() {
                 <CardContent>
                     {userUrl.length > 0 ? (
                         <>
-                            <ul className="flex gap-5">
-                                {userUrl.map(({ url }) => (
-                                    <li
-                                        key={ID()}
-                                        className=" w-full cursor-pointer p-10"
-                                    >
-                                        <p>{url}</p>
-                                    </li>
-                                ))}
-                            </ul>
-                            <Separator />
+                            <MultipleUrlForm
+                                initialUrls={userUrl.map((item) => item.url)}
+                            ></MultipleUrlForm>
                         </>
                     ) : (
                         <p>
@@ -82,6 +74,7 @@ export default async function PageUserProfile() {
                             d&apos;emplois du temps.
                         </p>
                     )}
+                    {/* <Separator /> */}
                 </CardContent>
                 <CardFooter>
                     <p className="text-xs">
@@ -102,7 +95,7 @@ export default async function PageUserProfile() {
                     <h2 className="text-xl font-bold">Mes documents</h2>
                 </CardHeader>
                 <CardContent>
-                    {userDocs.length == 0 ? (
+                    {userDocs.length === 0 ? (
                         <p>Vous n&apos;avez pas encore de documents.</p>
                     ) : (
                         <div className="flex gap-5">
