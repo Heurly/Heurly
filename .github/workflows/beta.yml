@@ -1,4 +1,4 @@
-name: Beta Workflow
+name: Pre-prod Workflow
 
 on:
     push:
