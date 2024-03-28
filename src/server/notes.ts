@@ -3,8 +3,9 @@
 import { db } from "@/server/db";
 import { Notes, Prisma } from "@prisma/client";
 import { getServerAuthSession } from "./auth";
+import { CourseDate } from "@/types/courses";
 
-export async function createNotes(title: string) {
+export async function createNotes(title: string, courseDate?: CourseDate) {
     const session = await getServerAuthSession();
     if (session?.user?.id === undefined) return null;
 
@@ -13,6 +14,8 @@ export async function createNotes(title: string) {
             userId: session.user.id,
             title: title,
             content: Prisma.JsonNull,
+            courseCode: courseDate?.courseCode ?? undefined,
+            courseDate: courseDate?.courseDate ?? undefined,
         },
     });
 }
@@ -40,6 +43,20 @@ export async function updateNotes(notes: Notes) {
             content: notes.content ?? Prisma.JsonNull,
         },
     });
+}
+
+export async function getCourseDateNotes(
+    courseDate: CourseDate,
+): Promise<Notes[] | null> {
+    const notes = await db.notes.findMany({
+        where: {
+            courseCode: courseDate.courseCode,
+            courseDate: courseDate.courseDate,
+            public: true,
+        },
+    });
+
+    return notes ?? null;
 }
 
 export async function getNotes(noteId: number): Promise<Notes | null> {
@@ -91,4 +108,19 @@ export async function deleteNotes(id: number) {
     });
 
     return deletion ?? null;
+}
+
+export async function setNoteVisibility(notesId: number, value: boolean) {
+    const session = await getServerAuthSession();
+    if (session?.user?.id === undefined) return null;
+
+    return await db.notes.update({
+        where: {
+            id: notesId,
+            userId: session.user.id,
+        },
+        data: {
+            public: value,
+        },
+    });
 }

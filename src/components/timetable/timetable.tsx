@@ -14,7 +14,12 @@ import {
     goToPreviousPeriod,
     updatePeriodDisplay,
 } from "@/utils/fullCalendarHelper";
-import { TEventTimetable, TView } from "@/types/timetable";
+import {
+    TEventClickArg,
+    TEventInfo,
+    TEventTimetable,
+    TView,
+} from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
 import {
@@ -28,6 +33,7 @@ import {
 import type { User } from "@prisma/client";
 import { useDebouncedCallback } from "use-debounce";
 import { DatesSetArg } from "@fullcalendar/core/index.js";
+import TimetableDrawer from "./TimetableDrawer";
 
 const SMALL_EVENT_THRESHOLD = 1.5 * 60 * 60 * 1000;
 const DATE_KEY_FORMAT = "yyyy-MM-dd";
@@ -44,6 +50,10 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
     const [loading, setLoading] = useState<boolean>(true);
     // Apparently, Fullcalendar doesn't update the display if we put the map events directly to the component.
     const [calendarEvents, setCalendarEvents] = useState<TEventTimetable[]>([]);
+    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+    const [drawerInfos, setDrawerInfos] = useState<TEventClickArg | undefined>(
+        undefined,
+    );
 
     const shouldReload: (
         dateFrom: Date,
@@ -99,6 +109,8 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
             const key = format(parseISO(e.DTSTART), DATE_KEY_FORMAT);
             const known = newEvents.get(key);
             const newEntry = {
+                code: e.CODE,
+                name: e.NAME,
                 title: e.SUMMARY,
                 start: e.DTSTART,
                 end: e.DTEND,
@@ -106,7 +118,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                 description: e.DESCRIPTION,
                 small: small,
             };
-
+            console.log(newEntry);
             known?.push(newEntry);
 
             newEvents.set(key, known ?? [newEntry]);
@@ -222,7 +234,13 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     </div>
                 </div>
             </CardHeader>
-
+            {drawerInfos && (
+                <TimetableDrawer
+                    eventInfo={drawerInfos}
+                    open={isDrawerOpen}
+                    setOpen={setIsDrawerOpen}
+                ></TimetableDrawer>
+            )}
             <CardContent className="h-5/6 overflow-scroll">
                 <FullCalendar
                     ref={calendarRef}
@@ -240,6 +258,10 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     // contentHeight="1rem"
                     // aspectRatio={1.5}
                     nowIndicator={true}
+                    eventClick={(eventClickArgs) => {
+                        setDrawerInfos(eventClickArgs ?? undefined);
+                        setIsDrawerOpen(true);
+                    }}
                     datesSet={async (arg) => {
                         setPeriodDisplay(updatePeriodDisplay(arg));
                         void (await refeshCallback(arg));
