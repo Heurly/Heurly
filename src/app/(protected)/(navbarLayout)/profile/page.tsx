@@ -11,7 +11,6 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { getDocsByUser } from "@/server/docs";
 import { getURLsByUser } from "@/server/url-timetable";
-import { Separator } from "@/components/ui/separator";
 import ListUserFile from "@/components/profile/list-user-file";
 import nameToInitials from "@/utils/nameToInitials";
 import MultipleUrlForm from "@/components/profile/multi-url-form";

@@ -1,12 +1,11 @@
 import { createNotes, getCourseDateNotes } from "@/server/notes";
 import { TEventClickArg } from "@/types/timetable";
-import { Notes } from "@prisma/client";
+import { Notes, Question } from "@prisma/client";
 import { format } from "date-fns";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
     Drawer,
     DrawerContent,
-    DrawerDescription,
     DrawerFooter,
     DrawerHeader,
 } from "../ui/drawer";
@@ -19,6 +18,7 @@ import {
     Pencil,
     SquareArrowOutUpRight,
 } from "lucide-react";
+import { getCourseDataQuestions } from "@/server/question";
 
 const DATE_FORMAT = "HH:mm";
 
@@ -47,6 +47,7 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 }) => {
     const router = useRouter();
     const [notes, setNotes] = useState<Notes[]>([]);
+    const [questions, setQuestions] = useState<Question[]>([]);
 
     const createNotesAndRedirect = async () => {
         if (
@@ -78,6 +79,11 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
             courseCode: eventInfo.event._def.extendedProps.code,
             courseDate: eventInfo.event._instance.range.start,
         }).then((r) => setNotes(r ?? []));
+
+        void getCourseDataQuestions({
+            courseCode: eventInfo.event._def.extendedProps.code,
+            courseDate: eventInfo.event._instance.range.start,
+        }).then((r) => setQuestions(r ?? []));
     }, [eventInfo]);
 
     return (
@@ -134,9 +140,14 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                     <Separator className="my-5 border-b" />
                     <div className="flex w-full flex-col">
                         <p className="text-xl font-bold">Ils en discutent : </p>
-                        <Link href="">
-                            M. Andriamiraho - But where the f**k is Brian?
-                        </Link>
+                        {questions?.length > 0 &&
+                            questions.map((q, i) => (
+                                <ItemsLink
+                                    key={i}
+                                    title={q.question}
+                                    link={`/revision/QandA/question/${q.id}`}
+                                />
+                            ))}
                         <Button className="mt-4">
                             <MessageCircleQuestion className="mr-2" />
                             <p>En discuter</p>

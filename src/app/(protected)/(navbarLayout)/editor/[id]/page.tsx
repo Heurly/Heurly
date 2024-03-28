@@ -3,12 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import {
-    createNotes,
-    getNotes,
-    setNoteVisibility,
-    updateNotes,
-} from "@/server/notes";
+import { createNotes, getNotes, updateNotes } from "@/server/notes";
 import { Notes } from "@prisma/client";
 import HeurlyEditor from "@/components/editor/HeurlyEditor";
 import { EditorInstance, JSONContent } from "novel";

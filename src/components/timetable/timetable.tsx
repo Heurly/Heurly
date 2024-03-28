@@ -14,12 +14,7 @@ import {
     goToPreviousPeriod,
     updatePeriodDisplay,
 } from "@/utils/fullCalendarHelper";
-import {
-    TEventClickArg,
-    TEventInfo,
-    TEventTimetable,
-    TView,
-} from "@/types/timetable";
+import { TEventClickArg, TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
 import {

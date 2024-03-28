@@ -32,10 +32,13 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
             return;
         }
         try {
-            const success = await deleteProfileUnitUrl(
-                session?.user?.id,
-                urlToRemove.url,
-            );
+            const success =
+                session?.user?.id !== undefined
+                    ? await deleteProfileUnitUrl(
+                          session?.user?.id,
+                          urlToRemove.url,
+                      )
+                    : false;
             if (success) {
                 setUrls((prevUrls) => prevUrls.filter((url) => url.id !== id));
             } else {
@@ -58,10 +61,9 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
         for (const { url } of urls) {
             if (url) {
                 try {
-                    const success = await addProfileUnitByUrl(
-                        session?.user?.id,
-                        url,
-                    );
+                    const success = session?.user?.id
+                        ? await addProfileUnitByUrl(session?.user?.id, url)
+                        : false;
                     if (!success) {
                         console.error("Failed to add URL:", url);
                     }
