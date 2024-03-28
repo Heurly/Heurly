@@ -28,7 +28,7 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
     if (!session.data)
         return <p>Vous devez être connecté pour accéder à ce forumulaire</p>;
 
-    const handleDeleteURL = async (url: TCustomURL) => {
+    const handleDeleteURL = async (url: TCustomURL, index: number) => {
         // Check if the URL is valid
         const checkUrl = schemaUrl.safeParse(url);
         if (!checkUrl.success) throw new Error("invalid URL");
@@ -38,7 +38,8 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
                 url,
             );
             if (!isDelete) throw new Error("Error while deleting the URL");
-            setUrls(urls.splice(urls.indexOf(url), 1));
+            const newUrls = urls.filter((_, i) => i !== index);
+            setUrls(newUrls);
         } catch (e) {
             if (e instanceof Error)
                 log({ type: TLog.error, text: `${e.message}` });
@@ -74,8 +75,8 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
 
     return (
         <div className="flex flex-col gap-y-5">
-            <div className="flex flex-col gap-y-2">
-                {urls.map((url: string) => (
+            <div className="flex h-28 flex-col gap-y-2 overflow-auto">
+                {urls.map((url: string, index) => (
                     <div className="flex gap-x-4" key={ID()}>
                         <InputCopy
                             type="text"
@@ -88,7 +89,9 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
                                     <Button
                                         size={"icon"}
                                         className="!rounded-md"
-                                        onClick={() => handleDeleteURL(url)}
+                                        onClick={() =>
+                                            handleDeleteURL(url, index)
+                                        }
                                     >
                                         <Trash2 />
                                     </Button>
