@@ -14,7 +14,11 @@ import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SquareArrowOutUpRight } from "lucide-react";
+import {
+    MessageCircleQuestion,
+    Pencil,
+    SquareArrowOutUpRight,
+} from "lucide-react";
 
 const DATE_FORMAT = "HH:mm";
 
@@ -123,7 +127,8 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                             onClick={createNotesAndRedirect}
                             className="mt-4"
                         >
-                            Prendre des notes
+                            <Pencil className="mr-2" />
+                            <p>Prendre des notes</p>
                         </Button>
                     </div>
                     <Separator className="my-5 border-b" />
@@ -132,7 +137,10 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                         <Link href="">
                             M. Andriamiraho - But where the f**k is Brian?
                         </Link>
-                        <Button className="mt-4">En discuster</Button>
+                        <Button className="mt-4">
+                            <MessageCircleQuestion className="mr-2" />
+                            <p>En discuter</p>
+                        </Button>
                     </div>
                 </div>
                 <DrawerFooter>
