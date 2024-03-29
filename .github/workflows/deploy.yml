@@ -5,7 +5,6 @@ on:
         branches:
             - beta
             - main
-            - fix/pipeline
 
 jobs:
     Build:
@@ -49,21 +48,7 @@ jobs:
         steps:
             - name: Inject slug/short variables
               uses: rlespinasse/github-slug-action@v4.x
-
-            - name: Deploy to Staging
-              if: ${{ github.ref != 'refs/heads/main' }}
-              uses: appleboy/ssh-action@v1.0.0
-              with:
-                  host: ${{ secrets.VPS_HOST }}
-                  username: ${{ secrets.VPS_USERNAME }}
-                  password: ${{ secrets.VPS_PASSWORD }}
-                  script: |
-                      cd /home/heurly/Heurly-OPS
-                      echo ${{secrets.DOCKER_TOKEN}} | docker login --username ${{secrets.DOCKER_USERNAME}} --password-stdin 2> /dev/null
-                      ./scripts/add-container.sh ${{ env.GITHUB_REF_NAME_SLUG_URL }}
-
-            - name: Deploy to Production
-              if: ${{ github.ref == 'refs/heads/main' }}
+            - name: Deploy on VPS
               uses: appleboy/ssh-action@v1.0.0
               with:
                   host: ${{ secrets.VPS_HOST }}
@@ -71,27 +56,26 @@ jobs:
                   password: ${{ secrets.VPS_PASSWORD }}
                   script: |
                       echo ${{secrets.DOCKER_TOKEN}} | docker login --username ${{secrets.DOCKER_USERNAME}} --password-stdin 2> /dev/null
-                      docker service update --image domesday/heurly:main prod_pheurly
+                      docker service update --force ${{ env.GITHUB_REF_NAME_SLUG_URL }}_heurly
 
     Discord:
         needs: Deploy
         runs-on: self-hosted
         steps:
+            - name: Inject slug/short variables
+              uses: rlespinasse/github-slug-action@v4
             - name: Get deployment info
               id: info
               run: |
                   if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-                    NAME=Production
-                    LINK="https://heurly.fr"
-                    BRANCH=main
+                    echo "NAME=Production"  >> "$GITHUB_OUTPUT"
+                    echo "LINK=https://heurly.fr"  >> "$GITHUB_OUTPUT"
+                    echo "BRANCH=main"  >> "$GITHUB_OUTPUT"
                   else
-                    NAME=Staging
-                    LINK="https://${{ env.GITHUB_REF_SLUG }}.heurly.fr"
-                    BRANCH=${{ env.GITHUB_REF_SLUG }}
+                    echo "NAME=Staging"  >> "$GITHUB_OUTPUT"
+                    echo "LINK=https://${{ env.GITHUB_REF_SLUG }}.heurly.fr"  >> "$GITHUB_OUTPUT"
+                    echo "BRANCH=${{ env.GITHUB_REF_SLUG }}"  >> "$GITHUB_OUTPUT"
                   fi
-                  echo "::set-output name=name::$NAME"
-                  echo "::set-output name=link::$LINK"
-                  echo "::set-output branch=branch::$BRANCH"
 
             - name: Discord notification
               env:
