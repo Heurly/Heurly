@@ -1,100 +1,123 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useSession } from "next-auth/react";
+import { Input } from "../ui/input";
+import ID from "@/utils/id";
+import { useRef, useState } from "react";
+import { Plus, Trash2 } from "lucide-react";
+import { Button } from "../ui/button";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "../ui/tooltip";
+import InputCopy from "../ui/input-copy";
+import { log, TLog } from "@/logger/logger";
 import { addProfileUnitByUrl, deleteProfileUnitUrl } from "@/server/user";
+import { FormEvent } from "react";
+import { schemaUrl, TCustomURL } from "@/types/schema/url";
 
 type MultipleUrlFormProps = {
     initialUrls: string[];
 };
 export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
-    const { data: session } = useSession();
-    const [urls, setUrls] = useState([{ id: Date.now(), url: "" }]);
-    useEffect(() => {
-        // Transformer les URLs initiales en un format adapté à votre composant
-        const formattedUrls = initialUrls.map((url) => ({
-            id: Date.now() + Math.random(), // Générer un ID unique. À ajuster selon vos besoins.
-            url: url,
-        }));
-        setUrls(formattedUrls);
-    }, [initialUrls]);
+    const [urls, setUrls] = useState<TCustomURL[]>(initialUrls);
+    const refInputUrl = useRef<HTMLInputElement>(null);
+    const session = useSession();
 
-    const addUrl = () =>
-        setUrls((prevUrls) => [...prevUrls, { id: Date.now(), url: "" }]);
+    if (!session.data)
+        return <p>Vous devez être connecté pour accéder à ce forumulaire</p>;
 
-    const removeUrl = async (id: number) => {
-        setUrls((prevUrls) => prevUrls.filter((url) => url.id !== id));
-        const urlToRemove = urls.find((url) => url.id === id);
-
-        if (!urlToRemove) {
-            console.error("URL not found");
-            return;
-        }
+    const handleDeleteURL = async (url: TCustomURL, index: number) => {
+        // Check if the URL is valid
+        const checkUrl = schemaUrl.safeParse(url);
+        if (!checkUrl.success) throw new Error("invalid URL");
         try {
-            const success =
-                session?.user?.id !== undefined
-                    ? await deleteProfileUnitUrl(
-                          session?.user?.id,
-                          urlToRemove.url,
-                      )
-                    : false;
-            if (success) {
-                setUrls((prevUrls) => prevUrls.filter((url) => url.id !== id));
-            } else {
-                console.error("Failed to delete the URL");
-            }
-        } catch (error) {
-            console.error("Error deleting URL:", error);
+            const isDelete = await deleteProfileUnitUrl(
+                session.data.user.id,
+                url,
+            );
+            if (!isDelete) throw new Error("Error while deleting the URL");
+            const newUrls = urls.filter((_, i) => i !== index);
+            setUrls(newUrls);
+        } catch (e) {
+            if (e instanceof Error)
+                log({ type: TLog.error, text: `${e.message}` });
         }
     };
 
-    const updateUrl = (id: number, newUrl: string) => {
-        setUrls((prevUrls) =>
-            prevUrls.map((url) =>
-                url.id === id ? { ...url, url: newUrl } : url,
-            ),
-        );
-    };
+    const handleAddURL = async (event: FormEvent<HTMLFormElement>) => {
+        // Prevent the form from submitting
+        event.preventDefault();
 
-    const submitAll = async () => {
-        for (const { url } of urls) {
-            if (url) {
-                try {
-                    const success = session?.user?.id
-                        ? await addProfileUnitByUrl(session?.user?.id, url)
-                        : false;
-                    if (!success) {
-                        console.error("Failed to add URL:", url);
-                    }
-                } catch (error) {
-                    console.error("Error adding URL:", url, error);
-                }
-            }
+        const formData = new FormData(event.currentTarget);
+
+
+        const urlToAdd = formData.get("url");
+
+        // Check if the URL is valid
+        const checkUrl = schemaUrl.safeParse(urlToAdd);
+        if (!checkUrl.success) throw new Error("invalid URL");
+        const safeUrlToAdd = urlToAdd as TCustomURL;
+
+        try {
+            // Add the URL to the database
+            const isAdd = await addProfileUnitByUrl(
+                session.data.user.id,
+                safeUrlToAdd,
+            );
+            if (!isAdd) throw new Error("Error while adding the URL");
+            setUrls([...urls, safeUrlToAdd]);
+        } catch (e) {
+            if (e instanceof Error)
+                log({ type: TLog.error, text: `${e.message}` });
+
         }
     };
 
     return (
-        <div className="max-h-[500px] overflow-y-auto">
-            {" "}
-            {/* Utilisation de Tailwind ici */}
-            {urls.map((urlObj) => (
-                <div key={urlObj.id} className="mb-4 flex items-center">
-                    <Input
-                        value={urlObj.url}
-                        onChange={(e) => updateUrl(urlObj.id, e.target.value)}
-                        className=""
-                    />
-                    <Button
-                        onClick={() => removeUrl(urlObj.id)}
-                        className="ml-2"
-                    >
-                        Delete
-                    </Button>
-                </div>
-            ))}
-            <Button onClick={addUrl}>Ajouter une URL</Button>
-            <Button onClick={submitAll}>Soumettre toutes les URLs</Button>
+        <div className="flex flex-col gap-y-5">
+            <div className="flex h-28 flex-col gap-y-2 overflow-auto">
+                {urls.map((url: string, index) => (
+                    <div className="flex gap-x-4" key={ID()}>
+                        <InputCopy
+                            type="text"
+                            placeholder="votre URL"
+                            value={url}
+                        />
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        size={"icon"}
+                                        className="!rounded-md"
+                                        onClick={() =>
+                                            handleDeleteURL(url, index)
+                                        }
+                                    >
+                                        <Trash2 />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>Supprimer</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </div>
+                ))}
+            </div>
+            <form className="flex gap-x-5" onSubmit={handleAddURL}>
+                <Input
+                    type="text"
+                    placeholder="Une nouvelle URL ?"
+                    name="url"
+                    ref={refInputUrl}
+                />
+                <Button className="!rounded-md">
+                    Ajouter
+                    <Plus className="ml-3 size-5" />
+                </Button>
+            </form>
         </div>
     );
 }

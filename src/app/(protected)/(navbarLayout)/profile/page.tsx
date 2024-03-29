@@ -1,14 +1,7 @@
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { getDocsByUser } from "@/server/docs";
 import { getURLsByUser } from "@/server/url-timetable";
 import ListUserFile from "@/components/profile/list-user-file";
@@ -75,18 +68,6 @@ export default async function PageUserProfile() {
                     )}
                     {/* <Separator /> */}
                 </CardContent>
-                <CardFooter>
-                    <p className="text-xs">
-                        Ces URL seront utilisé pour généré votre emplois du
-                        temps disponible{" "}
-                        <Link
-                            href="/timetable"
-                            className={buttonVariants({ variant: "link" })}
-                        >
-                            ici
-                        </Link>
-                    </p>
-                </CardFooter>
             </Card>
 
             <Card className="md:col-span-3 md:row-span-2">

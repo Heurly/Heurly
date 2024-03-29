@@ -10,7 +10,7 @@ import {
     Calendar,
     CalendarCheck,
     FileStack,
-    Settings,
+    // Settings,
     User,
 } from "lucide-react";
 import InstallPwaButton from "../PWA/install-pwa-button";
@@ -116,11 +116,11 @@ export default async function NavBar() {
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                <NavBarItems
+                {/* <NavBarItems
                     href="/settings"
                     name="Paramètres"
                     icon={<Settings />}
-                />
+                /> */}
             </div>
         </nav>
     );
