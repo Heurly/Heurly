@@ -1,28 +1,41 @@
-import { trustFile, trustFileList } from "@/types/schema/fileUpload";
-import { uploadFile } from "@/server/b2";
+import { trustFile, trustFileList } from "@/types/schema/file-upload";
 import { db } from "@/server/db";
 import type { User } from "next-auth";
-import * as z from "zod";
 import slugify from "slugify";
-// import tf from "@tensorflow/tfjs-node";
-import * as toxicity from "@tensorflow-models/toxicity";
 import { getDocument } from "pdfjs-dist";
-// Dynamically set the worker source
-const pdfjs = await import("pdfjs-dist");
+import { log, TLog } from "@/logger/logger";
+
+import * as pdfjs from "pdfjs-dist";
+import { bucket } from "@/server/bucket";
+import { UserModel } from "prisma/zod";
 pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
+let apiURL: string;
 
 export async function POST(request: Request): Promise<Response> {
+    log({ type: TLog.info, text: "Handling POST request" });
+    apiURL = request.headers.get("origin") ?? "";
+
     // handle the form data
     const res = await handleFormUploadDocs(await request.formData());
     return Response.json(res);
 }
 
 function isDocsTypeSafe(file: File) {
+    log({ type: TLog.info, text: "Checking if the file is valid" });
     return trustFile.safeParse(file).success;
 }
 
-async function extractTextFromPDF(pdfData: Uint8Array): Promise<string> {
-    const loadingTask = getDocument({ data: pdfData });
+type ToxicityResponse = {
+    isToxic: boolean;
+};
+
+async function extractTextFromPDF(pdfFile: File): Promise<string> {
+    log({ type: TLog.info, text: "Extracting text from PDF" });
+    const fileContentArrayBuffer = await pdfFile.arrayBuffer();
+    // Convert ArrayBuffer to Uint8Array
+    const fileContent = new Uint8Array(fileContentArrayBuffer);
+
+    const loadingTask = getDocument({ data: fileContent });
     const pdf = await loadingTask.promise;
 
     let textContent = "";
@@ -42,40 +55,8 @@ async function extractTextFromPDF(pdfData: Uint8Array): Promise<string> {
     return textContent;
 }
 
-async function isDocsToxic(file: File) {
-    const fileContentArrayBuffer = await file.arrayBuffer();
-    // Convert ArrayBuffer to Uint8Array
-    const fileContent = new Uint8Array(fileContentArrayBuffer);
-
-    let textContent = "";
-
-    // Extract the PDF content
-    try {
-        textContent = await extractTextFromPDF(fileContent);
-    } catch (e) {
-        throw new Error("Error extracting text from PDF", e as Error);
-    }
-
-    const threshold = 0.9;
-
-    const toxicityLabels = [
-        "identity_attack",
-        "insult",
-        "obscene",
-        "severe_toxicity",
-        "sexual_explicit",
-        "threat",
-        "toxicity",
-    ];
-    const model = await toxicity.load(threshold, toxicityLabels);
-    const predictions = await model.classify(textContent);
-    const isTextNotToxic = predictions.every(
-        (prediction) => prediction.results[0]?.match === false,
-    );
-    return !isTextNotToxic;
-}
-
 async function handleFormUploadDocs(data: FormData) {
+    log({ type: TLog.info, text: "Handling form upload" });
     const fileEntry = data.get("file") as unknown as FileList;
 
     const userId = data.get("userId") as User["id"];
@@ -95,9 +76,25 @@ async function handleFormUploadDocs(data: FormData) {
                 error: "This file is not valid",
             };
         }
+        const pdfText = await extractTextFromPDF(file);
 
-        // check if the file is toxic
-        const isToxic = await isDocsToxic(file);
+        let isToxic: boolean;
+
+        try {
+            const resIsToxic = await fetch(`${apiURL}/api/toxicity`, {
+                method: "POST",
+                body: JSON.stringify({ text: pdfText }),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((res) => res.json())
+                .then((res) => res as ToxicityResponse);
+
+            isToxic = resIsToxic.isToxic ?? true;
+        } catch (e) {
+            throw new Error(`Error while checking toxicity`);
+        }
 
         if (isToxic) {
             return {
@@ -105,16 +102,26 @@ async function handleFormUploadDocs(data: FormData) {
             };
         }
 
+        let fileIdOneFile;
         // upload the file to the cloud
-        const res = await uploadFile(file);
-        if (res?.error) {
-            return {
-                error: res.error,
-            };
+        try {
+            const resUploadOneFile = await bucket.uploadFile(file);
+            if (!resUploadOneFile.success) {
+                return {
+                    error: "Error uploading the file",
+                };
+            }
+            fileIdOneFile = resUploadOneFile?.data?.VersionId ?? "";
+        } catch (e) {
+            log({
+                type: TLog.error,
+                text: `Error uploading the file ${file.name}`,
+            });
         }
 
+        if (!fileIdOneFile) return;
         // post the file to the database
-        const resPostFile = await postFile(file, userId);
+        const resPostFile = await postFile(file, userId, fileIdOneFile);
         if (resPostFile?.error) {
             return {
                 error: resPostFile.error,
@@ -138,13 +145,20 @@ async function handleFormUploadDocs(data: FormData) {
         // Handle multiple file uploads
         for (const file of fileEntry) {
             // upload the file to the cloud
+            let fileId = "";
             try {
-                const res = await uploadFile(file);
-                if (res?.error) {
+                const res = await bucket.uploadFile(file);
+                if (!res.success) {
                     return {
-                        error: res.error,
+                        error: "Error uploading the file",
                     };
                 }
+
+                fileId = res?.data?.VersionId ?? "";
+                log({
+                    type: TLog.info,
+                    text: `File uploaded with id ${fileId}`,
+                });
             } catch (e) {
                 return {
                     error: `Error uploading the file ${file.name}`,
@@ -153,7 +167,11 @@ async function handleFormUploadDocs(data: FormData) {
 
             // post the file to the database
             try {
-                const resPostFileMultiple = await postFile(file, userId);
+                const resPostFileMultiple = await postFile(
+                    file,
+                    userId,
+                    fileId,
+                );
                 if (resPostFileMultiple?.error) {
                     return {
                         error: resPostFileMultiple.error,
@@ -172,7 +190,8 @@ async function handleFormUploadDocs(data: FormData) {
     };
 }
 
-async function postFile(file: File, userId: User["id"]) {
+async function postFile(file: File, userId: User["id"], fileId: string) {
+    log({ type: TLog.info, text: "Posting file to the database" });
     // validate the file
     const res = trustFile.safeParse(file);
     if (!res.success) {
@@ -182,10 +201,9 @@ async function postFile(file: File, userId: User["id"]) {
     }
 
     // validate the user ID
-    const userIdSchema = z.string().cuid();
+    const userIdCheck = UserModel.shape.id.safeParse(userId);
 
-    const checkUserId = userIdSchema.safeParse(userId);
-    if (!checkUserId.success) {
+    if (!userIdCheck.success) {
         return {
             error: "Invalid user ID",
         };
@@ -208,6 +226,7 @@ async function postFile(file: File, userId: User["id"]) {
             title: slugify(file.name, "_"),
             description: "A file",
             userId: userId,
+            url: fileId,
         },
     });
     console.log(resDb);

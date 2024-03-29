@@ -1,22 +1,43 @@
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import isAllowedTo from "@/components/utils/is-allowed-to";
+import { getServerAuthSession } from "@/server/auth";
 import ID from "@/utils/id";
-import { Archive, Zap } from "lucide-react";
+import { Archive, MessageCircleQuestion } from "lucide-react";
 import Link from "next/link";
 
-export default function ChoosePlugInPage() {
+export default async function ChoosePlugInPage() {
     const plugIns = [
-        {
+        // {
+        //     name: "Flashcards",
+        //     icon: <Zap />,
+        //     href: "/flashcards",
+        // },
+    ];
+
+    const session = await getServerAuthSession();
+    if (!session) return null;
+    const userId = session.user.id;
+
+    const [isAllowedToSeeDocs, isAllowedToSeeQandA] = await Promise.all([
+        isAllowedTo("show_docs", userId),
+        isAllowedTo("show_qanda", userId),
+    ]);
+
+    if (isAllowedToSeeDocs.result)
+        plugIns.push({
             name: "Documents",
             icon: <Archive />,
             href: "/docs",
-        },
-        {
-            name: "Flashcards",
-            icon: <Zap />,
-            href: "/flashcards",
-        },
-    ];
+        });
+    if (isAllowedToSeeQandA.result)
+        plugIns.push({
+            name: "Q & A",
+            icon: <MessageCircleQuestion />,
+            href: "/QandA",
+        });
+
+    if (plugIns.length === 0) return null;
 
     return (
         <Card className="flex h-full w-full flex-col items-center justify-center gap-5 p-10">

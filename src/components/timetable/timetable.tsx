@@ -7,81 +7,152 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef, useState } from "react";
 import { DatePicker } from "@/components/ui/datepicker";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, LoaderCircle } from "lucide-react";
 import iCalendarPlugin from "@fullcalendar/icalendar";
 import {
     goToNextPeriod,
     goToPreviousPeriod,
     updatePeriodDisplay,
 } from "@/utils/fullCalendarHelper";
-import { TEventTimetable, TView } from "@/types/timetable";
+import { TEventClickArg, TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import { getTimetableData } from "@/server/timetable";
-import { addWeeks, startOfWeek } from "date-fns";
-import { IcalObject } from "ical2json";
+import {
+    addDays,
+    endOfWeek,
+    format,
+    parseISO,
+    startOfWeek,
+    subDays,
+} from "date-fns";
 import type { User } from "@prisma/client";
-import { useSession } from "next-auth/react";
 import { useDebouncedCallback } from "use-debounce";
 import { DatesSetArg } from "@fullcalendar/core/index.js";
+import TimetableDrawer from "./TimetableDrawer";
 
-interface VEvent {
-    DTSTART: string;
-    DTEND: string;
-    SUMMARY: string;
-    LOCATION: string;
-    DESCRIPTION: string;
-}
-
-interface VCalendar {
-    VEVENT?: VEvent[];
-}
-
-interface CustomIcalObject {
-    VCALENDAR?: VCalendar[];
-}
+const SMALL_EVENT_THRESHOLD = 1.5 * 60 * 60 * 1000;
+const DATE_KEY_FORMAT = "yyyy-MM-dd";
+const nbPxPhone = 768;
+const startTime = "08:00:00";
+const endTime = "20:00:00";
 
 export default function Timetable({ userId }: { userId: User["id"] }) {
     const calendarRef = useRef<FullCalendar>(null);
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
-    const nbPxPhone = 768;
-    const startTime = "08:00:00";
-    const endTime = "20:00:00";
-    const [events, setEvents] = useState<TEventTimetable[] | IcalObject>([]);
-    const session = useSession();
+    const [events, setEvents] = useState<Map<string, TEventTimetable[]>>(
+        new Map(),
+    );
+    const [loading, setLoading] = useState<boolean>(true);
+    // Apparently, Fullcalendar doesn't update the display if we put the map events directly to the component.
+    const [calendarEvents, setCalendarEvents] = useState<TEventTimetable[]>([]);
+    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+    const [drawerInfos, setDrawerInfos] = useState<TEventClickArg | undefined>(
+        undefined,
+    );
 
-    const reloadData = async (
-        greater: DatesSetArg["start"],
-        lower: DatesSetArg["end"],
+    const shouldReload: (
+        dateFrom: Date,
+        dateTo: Date,
+    ) => { reload: boolean; min: Date; max: Date } = (
+        dateFrom: Date,
+        dateTo: Date,
     ) => {
+        let max = dateFrom.getTime();
+        let min = dateTo.getTime();
+        let reload = false;
+        let d = dateFrom;
+
+        const dateToTime = dateTo.getTime();
+        let dTime = d.getTime();
+        for (; dTime < dateToTime; d = addDays(d, 1)) {
+            dTime = d.getTime();
+            if (!events.has(format(d, DATE_KEY_FORMAT))) {
+                if (dTime < min) {
+                    min = dTime;
+                    reload = true;
+                }
+                if (dTime > max) {
+                    max = dTime;
+                    reload = true;
+                }
+            }
+        }
+
+        return { reload: reload, min: new Date(min), max: new Date(max) };
+    };
+
+    const reloadData = async (dateFrom: Date, dateTo: Date) => {
         if (!userId) return;
-        const dateFilter = {
-            greater: greater.getTime(),
-            lower: lower.getTime(),
-        };
 
-        const data = await getTimetableData(dateFilter, userId);
-        if (data === null) return;
-        const ical = data as CustomIcalObject;
+        const reloadContext = shouldReload(dateFrom, dateTo);
+        if (!reloadContext.reload) return;
 
-        if (ical.VCALENDAR === undefined) return;
+        const ical = await getTimetableData(
+            reloadContext.min.getTime(),
+            reloadContext.max.getTime(),
+            userId,
+        );
+        if (ical?.VCALENDAR === undefined) return;
 
-        const events =
-            ical?.VCALENDAR[0]?.VEVENT?.map((event) => {
-                return {
-                    title: event.SUMMARY,
-                    start: event.DTSTART,
-                    end: event.DTEND,
-                    room: event.LOCATION,
-                    description: event.DESCRIPTION,
-                };
-            }) ?? [];
-        setEvents(events ?? []);
+        const newEvents = new Map<string, TEventTimetable[]>();
+        ical?.VCALENDAR[0]?.VEVENT?.map((e) => {
+            const start = parseISO(e.DTSTART);
+            const end = parseISO(e.DTEND);
+            const small =
+                end.getTime() - start.getTime() < SMALL_EVENT_THRESHOLD;
+
+            const key = format(parseISO(e.DTSTART), DATE_KEY_FORMAT);
+            const known = newEvents.get(key);
+            const newEntry = {
+                code: e.CODE,
+                name: e.NAME,
+                title: e.SUMMARY,
+                start: e.DTSTART,
+                end: e.DTEND,
+                room: e.LOCATION,
+                description: e.DESCRIPTION,
+                small: small,
+            };
+            known?.push(newEntry);
+
+            newEvents.set(key, known ?? [newEntry]);
+        });
+
+        const completed = events;
+
+        for (
+            let d = reloadContext.min;
+            d.getTime() <= reloadContext.max.getTime();
+            d = addDays(d, 1)
+        ) {
+            const key = format(d, DATE_KEY_FORMAT);
+            if (newEvents?.has(key)) {
+                completed.set(key, newEvents.get(key) ?? []);
+            } else if (events?.has(key)) {
+                completed.set(key, events?.get(key) ?? []);
+            } else {
+                completed.set(key, []);
+            }
+        }
+
+        let newCalendarEvents: TEventTimetable[] = [];
+        Array.from(events?.values() ?? [])?.forEach((e) => {
+            newCalendarEvents = newCalendarEvents.concat(e);
+        });
+
+        setEvents(completed ?? []);
+        setCalendarEvents(newCalendarEvents);
     };
 
     const handleDateChange = async (date: Date) => {
-        await reloadData(startOfWeek(date), addWeeks(date, 2));
+        setLoading(true);
+        const from = subDays(startOfWeek(date, { weekStartsOn: 1 }), 7);
+        const to = addDays(endOfWeek(date, { weekStartsOn: 1 }), 7);
+
+        await reloadData(from, to);
         const newDate = date.toISOString().slice(0, 10);
         if (calendarRef.current) calendarRef.current.getApi().gotoDate(newDate);
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -95,18 +166,24 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
             }
         };
 
+        checkScreenSize();
         window.addEventListener("resize", checkScreenSize);
-
         return () => {
             window.removeEventListener("resize", checkScreenSize);
         };
     }, []);
 
+    const refeshCallback = useDebouncedCallback(async (arg: DatesSetArg) => {
+        setLoading(true);
+        await reloadData(arg.start, arg.end);
+        setLoading(false);
+    }, 1000);
+
     return (
-        <Card className="h-[100svh] py-2 md:flex md:h-full md:flex-col md:p-10">
-            <CardHeader>
+        <Card className="h-full py-2 md:flex md:h-full md:flex-col md:p-10">
+            <CardHeader className="h-1/6">
                 <div className="flex flex-col items-center justify-between md:flex-row">
-                    <div className="mb-3 flex flex-col-reverse items-center justify-center gap-5 md:flex-row">
+                    <div className="flex flex-col-reverse items-center justify-center gap-5 md:flex-row">
                         <DatePicker
                             onChange={handleDateChange}
                             className="hidden md:flex"
@@ -119,13 +196,8 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                             Aujourd&apos;hui
                         </Button>
                     </div>
+                    {loading && <LoaderCircle className="ml-6 animate-spin" />}
                     <div className="flex w-full items-center justify-center gap-x-5 md:justify-end">
-                        {!session.data && (
-                            <p>
-                                Votre emplois du temps ne peut plus être mis à
-                                jour
-                            </p>
-                        )}
                         <Button
                             className="aspect-square rounded-full bg-sky-50 p-3 md:order-2"
                             onClick={() => goToPreviousPeriod(calendarRef)}
@@ -156,27 +228,38 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     </div>
                 </div>
             </CardHeader>
-
-            <CardContent className="h-full">
+            {drawerInfos && (
+                <TimetableDrawer
+                    eventInfo={drawerInfos}
+                    open={isDrawerOpen}
+                    setOpen={setIsDrawerOpen}
+                ></TimetableDrawer>
+            )}
+            <CardContent className="h-5/6 overflow-scroll">
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
                     initialView={TView.timeGridWeek}
                     headerToolbar={false}
-                    events={events ?? []}
+                    events={calendarEvents}
                     eventContent={EventContent}
                     locale={frLocale}
                     weekends={true}
                     allDaySlot={false}
                     slotMinTime={startTime}
                     slotMaxTime={endTime}
-                    height={"auto"}
+                    height={"100%"}
                     // contentHeight="1rem"
-                    aspectRatio={1.5}
-                    datesSet={useDebouncedCallback(async (arg: DatesSetArg) => {
-                        await reloadData(arg.start, arg.end);
+                    // aspectRatio={1.5}
+                    nowIndicator={true}
+                    eventClick={(eventClickArgs) => {
+                        setDrawerInfos(eventClickArgs ?? undefined);
+                        setIsDrawerOpen(true);
+                    }}
+                    datesSet={async (arg) => {
                         setPeriodDisplay(updatePeriodDisplay(arg));
-                    }, 1000)}
+                        void (await refeshCallback(arg));
+                    }}
                 />
             </CardContent>
         </Card>
