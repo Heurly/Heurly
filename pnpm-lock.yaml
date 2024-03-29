@@ -1,9 +1,5 @@
 lockfileVersion: "6.0"
 
-settings:
-    autoInstallPeers: true
-    excludeLinksFromLockfile: false
-
 dependencies:
     "@aws-sdk/client-s3":
         specifier: ^3.529.1
@@ -176,6 +172,9 @@ dependencies:
     uuid:
         specifier: ^9.0.1
         version: 9.0.1
+    vaul:
+        specifier: ^0.9.0
+        version: 0.9.0(@types/react-dom@18.2.22)(@types/react@18.2.72)(react-dom@18.2.0)(react@18.2.0)
     zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -224,7 +223,7 @@ devDependencies:
         specifier: ^0.5.7
         version: 0.5.12(prettier@3.2.5)
     prisma:
-        specifier: ^5.10.2
+        specifier: ^5.11.0
         version: 5.11.0
     tailwindcss:
         specifier: ^3.3.5
@@ -233,7 +232,7 @@ devDependencies:
         specifier: ^4.7.1
         version: 4.7.1
     typescript:
-        specifier: ^5.1.6
+        specifier: ^5.4.3
         version: 5.4.3
 
 packages:
@@ -10904,14 +10903,14 @@ packages:
             jest-worker: 27.5.1
             schema-utils: 3.3.0
             serialize-javascript: 6.0.2
-            terser: 5.29.2
+            terser: 5.30.0
             webpack: 5.91.0
         dev: false
 
-    /terser@5.29.2:
+    /terser@5.30.0:
         resolution:
             {
-                integrity: sha512-ZiGkhUBIM+7LwkNjXYJq8svgkd+QK3UUr0wJqY4MieaezBSAIPgbSPZyIx0idM6XWK5CMzSWa8MJIzmRcB8Caw==,
+                integrity: sha512-Y/SblUl5kEyEFzhMAQdsxVHh+utAxd4IuRNJzKywY/4uzSogh3G219jqbDDxYu4MXO9CzY3tSEqmZvW6AoEDJw==,
             }
         engines: { node: ">=10" }
         hasBin: true
@@ -11391,6 +11390,23 @@ packages:
             sade: 1.8.1
         dev: false
 
+    /vaul@0.9.0(@types/react-dom@18.2.22)(@types/react@18.2.72)(react-dom@18.2.0)(react@18.2.0):
+        resolution:
+            {
+                integrity: sha512-bZSySGbAHiTXmZychprnX/dE0EsSige88xtyyL3/MCRbrFotRPQZo7UdydGXZWw+CKbNOw5Ow8gwAo93/nB/Cg==,
+            }
+        peerDependencies:
+            react: ^16.8 || ^17.0 || ^18.0
+            react-dom: ^16.8 || ^17.0 || ^18.0
+        dependencies:
+            "@radix-ui/react-dialog": 1.0.5(@types/react-dom@18.2.22)(@types/react@18.2.72)(react-dom@18.2.0)(react@18.2.0)
+            react: 18.2.0
+            react-dom: 18.2.0(react@18.2.0)
+        transitivePeerDependencies:
+            - "@types/react"
+            - "@types/react-dom"
+        dev: false
+
     /vfile-message@3.1.4:
         resolution:
             {
@@ -11711,3 +11727,7 @@ packages:
             react: 18.2.0
             use-sync-external-store: 1.2.0(react@18.2.0)
         dev: false
+
+settings:
+    autoInstallPeers: true
+    excludeLinksFromLockfile: false
