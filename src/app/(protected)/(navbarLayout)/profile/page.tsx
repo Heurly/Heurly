@@ -8,6 +8,8 @@ import ListUserFile from "@/components/profile/list-user-file";
 import nameToInitials from "@/utils/nameToInitials";
 import MultipleUrlForm from "@/components/profile/multi-url-form";
 import isAllowedTo from "@/components/utils/is-allowed-to";
+import NotesTable from "@/components/profile/NotesTable";
+import { getAllUserNotes } from "@/server/notes";
 
 export const metadata = {
     title: "Mon profil",
@@ -31,19 +33,23 @@ export default async function PageUserProfile() {
 
     if (!name) return null;
 
+    const notes = await getAllUserNotes(session.user.id);
+
     return (
-        <div className="mt-16 grid h-full grid-cols-1 gap-5 md:mt-0 md:grid-cols-3 md:grid-rows-3">
-            <Card className="p-7 md:col-span-1 md:row-span-1">
-                <CardContent className="flex flex-col items-center justify-center gap-5">
-                    <Avatar>
+        <div className="grid h-full grid-cols-1 gap-5 md:grid-cols-3 md:grid-rows-3">
+            <Card className="p-6 md:col-span-1 md:row-span-1">
+                <CardContent className="flex h-full w-full items-center justify-center gap-5">
+                    <Avatar className="h-16 w-16">
                         <AvatarImage
                             src={session.user.image ?? ""}
                             alt={name ?? "image de profil"}
                         />
                         <AvatarFallback>{nameToInitials(name)}</AvatarFallback>
                     </Avatar>
-                    <h1>{session?.user.name}</h1>
-                    <p>{session?.user.email}</p>
+                    <div className="flex flex-col">
+                        <h1 className="font-bold">{session?.user.name}</h1>
+                        <p>{session?.user.email}</p>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -70,21 +76,39 @@ export default async function PageUserProfile() {
                 </CardContent>
             </Card>
 
-            <Card className="md:col-span-3 md:row-span-2">
-                <CardHeader>
-                    <h2 className="text-xl font-bold">Mes documents</h2>
+            <Card className="col-span-1 row-span-2">
+                <CardHeader className="text-xl font-bold">
+                    Mon Activité
                 </CardHeader>
-                <CardContent>
-                    {userDocs.length === 0 ? (
-                        <p>Vous n&apos;avez pas encore de documents.</p>
-                    ) : (
-                        <div className="flex gap-5">
-                            <ListUserFile
-                                userId={session?.user.id}
-                                userDocs={userDocs}
-                            />
-                        </div>
-                    )}
+                <CardContent className="w-full">
+                    Aucune activité récente.
+                </CardContent>
+            </Card>
+            <Card className="col-span-1 row-span-2">
+                <CardHeader className="text-xl font-bold">
+                    Mes Documents
+                </CardHeader>
+                <CardContent className="w-full">
+                    <div className="h-full w-full">
+                        {userDocs.length === 0 ? (
+                            <p>Vous n&apos;avez pas encore de documents.</p>
+                        ) : (
+                            <div className="flex gap-5">
+                                <ListUserFile
+                                    userId={session?.user.id}
+                                    userDocs={userDocs}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
+            <Card className="col-span-1 row-span-2">
+                <CardHeader className="text-xl font-bold">
+                    Mes Documents
+                </CardHeader>
+                <CardContent className="w-full">
+                    <NotesTable data={notes ?? []} />
                 </CardContent>
             </Card>
         </div>

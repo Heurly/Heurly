@@ -196,3 +196,15 @@ export async function deleteProfileUnitUrl(
         return false;
     }
 }
+
+export async function getUserPublicInfo(userId: string) {
+    return await db.user.findFirst({
+        where: {
+            id: userId,
+        },
+        select: {
+            image: true,
+            name: true,
+        },
+    });
+}

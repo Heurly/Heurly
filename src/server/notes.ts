@@ -59,7 +59,7 @@ export async function getCourseDateNotes(
     return notes ?? null;
 }
 
-export async function getNotes(noteId: number): Promise<Notes | null> {
+export async function getNotes(noteId: string): Promise<Notes | null> {
     const session = await getServerAuthSession();
     if (session?.user?.id === undefined) return null;
 
@@ -73,7 +73,7 @@ export async function getNotes(noteId: number): Promise<Notes | null> {
     return notes ?? null;
 }
 
-export async function getNoteContent(noteId: number): Promise<Notes | null> {
+export async function getNoteContent(noteId: string): Promise<Notes | null> {
     const notes = await db.notes.findUnique({
         where: {
             id: noteId,
@@ -84,19 +84,16 @@ export async function getNoteContent(noteId: number): Promise<Notes | null> {
 }
 
 export async function getAllNotes(): Promise<Notes[] | null> {
-    const session = await getServerAuthSession();
-    if (session?.user?.id === undefined) return null;
-
     const notes = await db.notes.findMany({
         where: {
-            userId: session.user.id,
+            public: true,
         },
     });
 
     return notes ?? null;
 }
 
-export async function deleteNotes(id: number) {
+export async function deleteNotes(id: string) {
     const session = await getServerAuthSession();
     if (session?.user?.id === undefined) return null;
 
@@ -110,7 +107,7 @@ export async function deleteNotes(id: number) {
     return deletion ?? null;
 }
 
-export async function setNoteVisibility(notesId: number, value: boolean) {
+export async function setNoteVisibility(notesId: string, value: boolean) {
     const session = await getServerAuthSession();
     if (session?.user?.id === undefined) return null;
 
@@ -121,6 +118,17 @@ export async function setNoteVisibility(notesId: number, value: boolean) {
         },
         data: {
             public: value,
+        },
+    });
+}
+
+export async function getAllUserNotes(userId: string) {
+    const session = await getServerAuthSession();
+    if (session?.user?.id === undefined) return null;
+
+    return await db.notes.findMany({
+        where: {
+            userId: userId,
         },
     });
 }
