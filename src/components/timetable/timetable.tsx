@@ -113,7 +113,6 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                 description: e.DESCRIPTION,
                 small: small,
             };
-            console.log(newEntry);
             known?.push(newEntry);
 
             newEvents.set(key, known ?? [newEntry]);
