@@ -52,3 +52,5 @@ secrets.env
 .idea/
 
 .npmrc
+
+.env.preprod

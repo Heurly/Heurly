@@ -18,16 +18,19 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
             select: {
                 name: true,
                 year: true,
+                small_code: true,
             },
             where: {
                 small_code: course.SUMMARY.split(":")[0],
             },
         });
 
-        course.SUMMARY =
-            dbRef.sort(
-                (a, b) => parseInt(b.year ?? "0") - parseInt(a.year ?? "0"),
-            )[0]?.name ?? course.SUMMARY;
+        const found = dbRef.sort(
+            (a, b) => parseInt(b.year ?? "0") - parseInt(a.year ?? "0"),
+        )[0];
+        course.CODE =
+            found?.small_code ?? course.SUMMARY.split(":")[0] ?? course.SUMMARY;
+        course.NAME = found?.name;
     }
 }
 

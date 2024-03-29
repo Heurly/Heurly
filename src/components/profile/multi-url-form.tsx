@@ -52,6 +52,7 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
 
         const formData = new FormData(event.currentTarget);
 
+
         const urlToAdd = formData.get("url");
 
         // Check if the URL is valid
@@ -70,6 +71,7 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
         } catch (e) {
             if (e instanceof Error)
                 log({ type: TLog.error, text: `${e.message}` });
+
         }
     };
 
