@@ -44,7 +44,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
             return;
         }
 
-        void getNotes(parseInt(params.id)).then((r) => {
+        void getNotes(params.id).then((r) => {
             if (r === null) {
                 void createNewNotes();
             } else {
