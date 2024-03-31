@@ -1,4 +1,4 @@
- # Heurly
+# Heurly
 
 ## Installation
 
