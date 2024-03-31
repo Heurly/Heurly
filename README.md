@@ -8,7 +8,7 @@ To contribute to this project, you need to install a few items:
 
 - [docker](https://docs.docker.com/engine/install/)
 - [nodejs](https://nodejs.org/en)
-- [pnpm](https://pnpm.io/installation) (I recommend npm i -g pnpm)
+- [pnpm](https://pnpm.io/installation) (I recommend `npm i -g pnpm`)
 - [wsl](https://learn.microsoft.com/en-us/windows/wsl/install)
 
 To install the project and contribute, you need to take a few steps:
