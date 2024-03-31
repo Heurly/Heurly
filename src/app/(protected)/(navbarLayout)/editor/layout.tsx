@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import "@/styles/globals.css";
-import { Card } from "@/components/ui/card";
 import { SessionProvider } from "next-auth/react";
 
 export default function NavBarLayout({
@@ -11,7 +10,7 @@ export default function NavBarLayout({
 }) {
     return (
         <SessionProvider>
-            <Card className="h-full w-full p-6">{children}</Card>
+            <div className="h-full w-full px-5">{children}</div>
         </SessionProvider>
     );
 }

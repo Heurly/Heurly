@@ -4,22 +4,26 @@ import React from "react";
 
 interface Props {
     isPublic: boolean;
+    className?: string;
 }
 
-const NotesVisibility: React.FunctionComponent<Props> = ({ isPublic }) => (
-    <>
+const NotesVisibility: React.FunctionComponent<Props> = ({
+    isPublic,
+    className,
+}) => (
+    <div className={className}>
         {isPublic ? (
-            <div className="flex items-center gap-2 text-green-400">
-                <LockOpen size={15} />
+            <div className="flex items-center gap-2 font-bold text-green-400">
+                <LockOpen size={20} />
                 <p>Public</p>
             </div>
         ) : (
-            <div className="flex items-center gap-2 text-red-400">
-                <Lock size={15} />
+            <div className="flex items-center gap-2 font-bold text-red-400">
+                <Lock size={20} />
                 <p>Privé</p>
             </div>
         )}
-    </>
+    </div>
 );
 
 export default NotesVisibility;
