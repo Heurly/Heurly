@@ -1,5 +1,5 @@
-"use client";
 import Timetable from "@/components/timetable/timetable";
+import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 import {
     AlertDialog,
@@ -11,15 +11,14 @@ import {
 import FormUrlTimetable from "@/components/form/form-url-timetable";
 import { redirect } from "next/navigation";
 import isAllowedTo from "@/components/utils/is-allowed-to";
-import { SessionProvider, useSession } from "next-auth/react";
 
-async function ContentPageTimetable() {
-    const session = useSession();
+export default async function PageTimetable() {
+    const session = await getServerAuthSession();
 
     // if the user is not authenticated, we redirect him to the login page
-    if (!session.data) redirect("/login");
+    if (session === null) redirect("/login");
 
-    const userId = session.data.user.id;
+    const userId = session.user.id;
 
     const isAllowed = await isAllowedTo("show_timetable", userId);
 
@@ -58,13 +57,5 @@ async function ContentPageTimetable() {
                 <Timetable userId={userId} />
             </main>
         </AlertDialog>
-    );
-}
-
-export default function PageTimetable() {
-    return (
-        <SessionProvider>
-            <ContentPageTimetable />
-        </SessionProvider>
     );
 }
