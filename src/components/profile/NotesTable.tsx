@@ -16,7 +16,8 @@ import {
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import { setNoteVisibility } from "@/server/notes";
+import { deleteNotes, setNoteVisibility } from "@/server/notes";
+import ConfirmationDialog from "../ui/confirmation-dialog";
 
 const columns: ColumnDef<Notes>[] = [
     {
@@ -95,7 +96,15 @@ const columns: ColumnDef<Notes>[] = [
                             </DropdownMenuItem>
                         )}
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Supprimer</DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.preventDefault()}>
+                            <ConfirmationDialog
+                                onConfirm={() => deleteNotes(id)}
+                                title={`Suppression de ${row.getValue("title")?.toString() ?? "votre note"}`}
+                                text={`Êtes-vous sûr de vouloir supprimer la note "${row.getValue("title")?.toString() ?? ""}" ?`}
+                            >
+                                <p>Supprimer</p>
+                            </ConfirmationDialog>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

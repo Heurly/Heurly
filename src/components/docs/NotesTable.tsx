@@ -84,7 +84,6 @@ const columns: ColumnDef<Notes>[] = [
                             </DropdownMenuItem>
                         </Link>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Supprimer</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
