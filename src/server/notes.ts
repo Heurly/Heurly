@@ -66,7 +66,6 @@ export async function getNotes(noteId: string): Promise<Notes | null> {
     const notes = await db.notes.findUnique({
         where: {
             id: noteId,
-            userId: session.user.id,
         },
     });
 
