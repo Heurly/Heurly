@@ -9,12 +9,14 @@ import {
     EditorCommandEmpty,
     EditorCommandItem,
     EditorBubble,
+    EditorCommandList,
 } from "novel";
 import { DebouncedState } from "use-debounce";
 import { slashCommand, suggestionItems } from "./EditorCommands";
 import { defaultExtensions } from "./EditorExtensions";
 import { ColorSelector, LinkSelector, NodeSelector, TextButtons } from ".";
 import { useState } from "react";
+import { handleCommandNavigation } from "novel/extensions";
 
 interface Props {
     canEdit?: boolean;
@@ -39,6 +41,12 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
         <div className={className ?? ""}>
             <EditorRoot>
                 <EditorContent
+                    editorProps={{
+                        handleDOMEvents: {
+                            keydown: (_view, event) =>
+                                handleCommandNavigation(event),
+                        },
+                    }}
                     editable={canEdit ?? false}
                     className="h-full w-full"
                     extensions={[...defaultExtensions, slashCommand]}
@@ -70,26 +78,30 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
                         <EditorCommandEmpty className="px-2 text-muted-foreground">
                             Aucun résultat
                         </EditorCommandEmpty>
-                        {suggestionItems.map((item) => (
-                            <EditorCommandItem
-                                value={item.title}
-                                onCommand={(val) =>
-                                    item?.command && item.command(val)
-                                }
-                                className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent `}
-                                key={item.title}
-                            >
-                                <div className="flex h-10 w-10 items-center justify-center rounded-md border border-muted bg-background">
-                                    {item.icon}
-                                </div>
-                                <div>
-                                    <p className="font-medium">{item.title}</p>
-                                    <p className="text-xs text-muted-foreground">
-                                        {item.description}
-                                    </p>
-                                </div>
-                            </EditorCommandItem>
-                        ))}
+                        <EditorCommandList>
+                            {suggestionItems.map((item) => (
+                                <EditorCommandItem
+                                    value={item.title}
+                                    onCommand={(val) =>
+                                        item?.command && item.command(val)
+                                    }
+                                    className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent `}
+                                    key={item.title}
+                                >
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-md border border-muted bg-background">
+                                        {item.icon}
+                                    </div>
+                                    <div>
+                                        <p className="font-medium">
+                                            {item.title}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {item.description}
+                                        </p>
+                                    </div>
+                                </EditorCommandItem>
+                            ))}
+                        </EditorCommandList>
                     </EditorCommand>
                 </EditorContent>
             </EditorRoot>
