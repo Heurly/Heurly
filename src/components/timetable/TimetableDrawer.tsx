@@ -8,7 +8,6 @@ import {
     DrawerContent,
     DrawerFooter,
     DrawerHeader,
-    DrawerOverlay,
 } from "../ui/drawer";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
