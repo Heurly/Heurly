@@ -16,6 +16,7 @@ export interface CourseEvent {
     LOCATION: string;
     DESCRIPTION: string;
     NAME?: string;
+    TYPE?: string;
 }
 
 export type CalendarData = {
@@ -31,6 +32,7 @@ export type TEventExtendedProps = {
     room?: string;
     small?: boolean;
     name?: string;
+    type?: string;
 };
 
 export type TEventInstance = {
@@ -58,6 +60,7 @@ export type TEventTimetable = {
     description?: string;
     small?: boolean;
     name?: string;
+    type?: string;
 };
 
 export interface TEventClickArg {

@@ -8,6 +8,7 @@ import {
     DrawerContent,
     DrawerFooter,
     DrawerHeader,
+    DrawerOverlay,
 } from "../ui/drawer";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
@@ -21,6 +22,7 @@ import {
 import { getCourseDataQuestions } from "@/server/question";
 
 const DATE_FORMAT = "HH:mm";
+const nbPxPhone = 768;
 
 interface Props {
     eventInfo: TEventClickArg;
@@ -48,6 +50,9 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
     const router = useRouter();
     const [notes, setNotes] = useState<Notes[]>([]);
     const [questions, setQuestions] = useState<Question[]>([]);
+    const [isMobile, setIsMobile] = useState<boolean>(
+        window.innerWidth < nbPxPhone,
+    );
 
     const createNotesAndRedirect = async () => {
         if (
@@ -86,85 +91,112 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
         }).then((r) => setQuestions(r ?? []));
     }, [eventInfo]);
 
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsMobile(window.innerWidth < nbPxPhone);
+        };
+
+        checkScreenSize();
+        window.addEventListener("resize", checkScreenSize);
+        return () => {
+            window.removeEventListener("resize", checkScreenSize);
+        };
+    }, []);
+
     return (
-        <Drawer open={open} direction="right">
-            <DrawerContent className="left-[unset] right-0 flex h-full w-full flex-col p-6 md:w-1/4">
-                <DrawerHeader>
-                    <h1 className="my-5 flex w-full justify-center align-middle text-3xl font-bold">
-                        <p>
-                            {eventInfo.event._def.extendedProps.name ??
-                                eventInfo.event._def.title}
-                        </p>
-                    </h1>
-                </DrawerHeader>
-                <div className="h-full w-full p-2">
-                    <Separator className="my-5 border-b" />
-                    <div className="flex">
-                        <div className="flex w-1/2 flex-col items-start">
-                            <p className="text-xl font-bold">Lieu</p>
-                            <p>{eventInfo.event._def.extendedProps.room}</p>
-                        </div>
-                        <div className="flex w-1/2 flex-col items-end">
-                            <p className="text-xl font-bold">Horaire</p>
-                            <p>
-                                {eventInfo.event._instance?.range?.start !==
-                                    undefined &&
-                                eventInfo.event._instance?.range?.end !==
-                                    undefined
-                                    ? `${format(eventInfo.event._instance?.range?.start, DATE_FORMAT)} - ${format(eventInfo.event._instance?.range?.end, DATE_FORMAT)}`
-                                    : "---"}
+        <div onClick={() => setOpen(false)}>
+            <Drawer
+                open={open}
+                direction={isMobile ? "bottom" : "right"}
+                onClose={() => setOpen(false)}
+            >
+                <DrawerContent
+                    className="left-[unset] right-0 flex h-full w-full flex-col p-6 md:w-[500px]"
+                    onEscapeKeyDown={() => setOpen(false)}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <DrawerHeader>
+                        <h1 className="my-5 flex w-full flex-col justify-center">
+                            <p className="align-middle text-3xl font-bold">
+                                {eventInfo.event._def.extendedProps.name ??
+                                    eventInfo.event._def.title}
                             </p>
+                            <p className="align-middle text-xl">
+                                {eventInfo.event._def.extendedProps.type ?? ""}
+                            </p>
+                        </h1>
+                    </DrawerHeader>
+                    <div className="h-full w-full p-2">
+                        <Separator className="my-5 border-b" />
+                        <div className="flex">
+                            <div className="flex w-1/2 flex-col items-start">
+                                <p className="text-xl font-bold">Lieu</p>
+                                <p>{eventInfo.event._def.extendedProps.room}</p>
+                            </div>
+                            <div className="flex w-1/2 flex-col items-end">
+                                <p className="text-xl font-bold">Horaire</p>
+                                <p>
+                                    {eventInfo.event._instance?.range?.start !==
+                                        undefined &&
+                                    eventInfo.event._instance?.range?.end !==
+                                        undefined
+                                        ? `${format(eventInfo.event._instance?.range?.start, DATE_FORMAT)} - ${format(eventInfo.event._instance?.range?.end, DATE_FORMAT)}`
+                                        : "---"}
+                                </p>
+                            </div>
+                        </div>
+                        <Separator className="my-5 border-b" />
+                        <div className="flex w-full flex-col">
+                            <p className="text-xl font-bold">
+                                Ils ont pris des notes :{" "}
+                            </p>
+                            {notes?.length > 0 &&
+                                notes.map((n, i) => (
+                                    <ItemsLink
+                                        key={i}
+                                        title={n.title}
+                                        link={`/editor/${n.id}`}
+                                    />
+                                ))}
+                            <Button
+                                onClick={createNotesAndRedirect}
+                                className="mt-4"
+                            >
+                                <Pencil className="mr-2" />
+                                <p>Prendre des notes</p>
+                            </Button>
+                        </div>
+                        <Separator className="my-5 border-b" />
+                        <div className="flex w-full flex-col">
+                            <p className="text-xl font-bold">
+                                Ils en discutent :{" "}
+                            </p>
+                            {questions?.length > 0 &&
+                                questions.map((q, i) => (
+                                    <ItemsLink
+                                        key={i}
+                                        title={q.question}
+                                        link={`/revision/QandA/question/${q.id}`}
+                                    />
+                                ))}
+                            <Button className="mt-4">
+                                <MessageCircleQuestion className="mr-2" />
+                                <p>En discuter</p>
+                            </Button>
                         </div>
                     </div>
-                    <Separator className="my-5 border-b" />
-                    <div className="flex w-full flex-col">
-                        <p className="text-xl font-bold">
-                            Ils ont pris des notes :{" "}
-                        </p>
-                        {notes?.length > 0 &&
-                            notes.map((n, i) => (
-                                <ItemsLink
-                                    key={i}
-                                    title={n.title}
-                                    link={`/editor/${n.id}`}
-                                />
-                            ))}
+                    <DrawerFooter>
                         <Button
-                            onClick={createNotesAndRedirect}
-                            className="mt-4"
+                            onClick={() => setOpen(false)}
+                            variant="outline"
+                            className="w-full"
                         >
-                            <Pencil className="mr-2" />
-                            <p>Prendre des notes</p>
+                            Fermer
                         </Button>
-                    </div>
-                    <Separator className="my-5 border-b" />
-                    <div className="flex w-full flex-col">
-                        <p className="text-xl font-bold">Ils en discutent : </p>
-                        {questions?.length > 0 &&
-                            questions.map((q, i) => (
-                                <ItemsLink
-                                    key={i}
-                                    title={q.question}
-                                    link={`/revision/QandA/question/${q.id}`}
-                                />
-                            ))}
-                        <Button className="mt-4">
-                            <MessageCircleQuestion className="mr-2" />
-                            <p>En discuter</p>
-                        </Button>
-                    </div>
-                </div>
-                <DrawerFooter>
-                    <Button
-                        onClick={() => setOpen(false)}
-                        variant="outline"
-                        className="w-full"
-                    >
-                        Fermer
-                    </Button>
-                </DrawerFooter>
-            </DrawerContent>
-        </Drawer>
+                    </DrawerFooter>
+                </DrawerContent>
+            </Drawer>
+        </div>
     );
 };
 

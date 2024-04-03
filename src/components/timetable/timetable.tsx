@@ -112,6 +112,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                 room: e.LOCATION,
                 description: e.DESCRIPTION,
                 small: small,
+                type: e.TYPE,
             };
             known?.push(newEntry);
 

@@ -31,6 +31,7 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
         course.CODE =
             found?.small_code ?? course.SUMMARY.split(":")[0] ?? course.SUMMARY;
         course.NAME = found?.name;
+        course.TYPE = course.SUMMARY.split(":")[1];
     }
 }
 
