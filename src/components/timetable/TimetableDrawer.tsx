@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { getCourseDataQuestions } from "@/server/question";
 
-const DATE_FORMAT = "HH:mm";
 const nbPxPhone = 768;
 
 interface Props {
@@ -135,12 +134,26 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                             <div className="flex w-1/2 flex-col items-end">
                                 <p className="text-xl font-bold">Horaire</p>
                                 <p>
-                                    {eventInfo.event._instance?.range?.start !==
-                                        undefined &&
-                                    eventInfo.event._instance?.range?.end !==
-                                        undefined
-                                        ? `${format(eventInfo.event._instance?.range?.start, DATE_FORMAT)} - ${format(eventInfo.event._instance?.range?.end, DATE_FORMAT)}`
-                                        : "---"}
+                                    {`${
+                                        eventInfo.event._instance?.range
+                                            ?.start !== undefined
+                                            ? eventInfo.event._instance?.range?.start
+                                                  ?.toISOString()
+                                                  .split("T")[1]
+                                                  ?.split(".")[0]
+                                                  ?.slice(0, 5) ?? ""
+                                            : ""
+                                    } - 
+                                    ${
+                                        eventInfo.event._instance?.range
+                                            ?.end !== undefined
+                                            ? eventInfo.event._instance?.range?.end
+                                                  ?.toISOString()
+                                                  .split("T")[1]
+                                                  ?.split(".")[0]
+                                                  ?.slice(0, 5) ?? ""
+                                            : ""
+                                    }`}{" "}
                                 </p>
                             </div>
                         </div>
