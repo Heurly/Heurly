@@ -23,6 +23,7 @@ const useLocalStorage = <T>(
     }, [key]);
 
     const setValue = (value: T) => {
+        log({ type: TLog.info, text: "Saved editor content to cache." });
         // Save state
         setStoredValue(value);
         // Save to localStorage

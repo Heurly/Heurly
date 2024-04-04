@@ -1,13 +1,13 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { createNotes, getNotes, updateNotes } from "@/server/notes";
+import { getNotes, updateNotes } from "@/server/notes";
 import { Notes } from "@prisma/client";
 import HeurlyEditor from "@/components/editor/HeurlyEditor";
 import { EditorInstance, JSONContent } from "novel";
 import { useDebouncedCallback } from "use-debounce";
-import { LoaderCircle, Pen } from "lucide-react";
+import { Pen } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Switch } from "@/components/ui/switch";
 import NotesVisibility from "@/components/docs/NotesVisibility";
@@ -30,7 +30,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
     const updates = useDebouncedCallback(async (editor?: EditorInstance) => {
         if (notes === undefined) return;
 
-        log({ type: TLog.info, text: "Saved editor content" });
+        log({ type: TLog.info, text: "Saved editor content to db." });
         const newNotes = notes;
         if (editor !== undefined) {
             const json = editor.getJSON();
@@ -43,48 +43,22 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
     }, 500);
 
     useEffect(() => {
-        const createNewNotes = async () => {
-            try {
-                const newNotes = await createNotes("");
-                setNotes(newNotes ?? undefined);
-                void updates();
-            } catch (e) {
-                log({
-                    type: TLog.error,
-                    text:
-                        (e as string) ??
-                        "An error occured when trying to create the notes.",
-                });
-            }
+        const getNotesData = async () => {
+            const dbNotes = await getNotes(params.id);
+            if (dbNotes == null) return;
+            setNotes(dbNotes);
         };
 
-        const retrieveNotes = async (id: string) => {
-            try {
-                const r = await getNotes(id);
-                setNotes(r ?? undefined);
-                void updates();
-            } catch (e) {
-                log({
-                    type: TLog.error,
-                    text:
-                        (e as string) ??
-                        "An error occured when trying to retrieve the notes.",
-                });
-            }
-        };
-
-        if (params.id === undefined) {
-            void createNewNotes();
-            return;
+        if (notes === undefined) {
+            void getNotesData();
         }
-
-        void retrieveNotes(params.id);
-    }, [updates, notes, setNotes, params.id]);
+    }, [params.id, notes, setNotes]);
 
     return (
         <div className="h-full w-full">
             {notes !== undefined &&
-                (notes?.userId === session.data?.user.id || notes.public) && (
+                session?.data?.user?.id !== undefined &&
+                (notes.userId === session.data.user.id || notes.public) && (
                     <ScrollArea className="flex h-full w-full flex-col rounded-l">
                         <Card className="flex flex-col items-center justify-between gap-2 p-4 md:h-[80px] md:flex-row">
                             <div className="flex items-center gap-5 md:w-5/6">
@@ -108,7 +82,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
                                 />
                             </div>
                             <div className="flex w-1/6 items-center justify-center gap-4 md:justify-end">
-                                {session.data?.user.id === notes.userId ? (
+                                {session.data.user.id === notes.userId ? (
                                     <>
                                         <NotesVisibility
                                             isPublic={notes.public}
@@ -133,17 +107,13 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
                                 )}
                             </div>
                         </Card>
-                        {notes === undefined && (
-                            <LoaderCircle className="animate-spin" />
-                        )}
-                        {notes !== undefined && (
-                            <HeurlyEditor
-                                canEdit={session.data?.user.id === notes.userId}
-                                className="h-full w-full"
-                                debouncedUpdates={updates}
-                                initialContent={notes?.content as JSONContent}
-                            />
-                        )}
+
+                        <HeurlyEditor
+                            canEdit={session.data.user.id === notes.userId}
+                            className="h-full w-full"
+                            debouncedUpdates={updates}
+                            initialContent={notes?.content as JSONContent}
+                        />
                     </ScrollArea>
                 )}
         </div>
