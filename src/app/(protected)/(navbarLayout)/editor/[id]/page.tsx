@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import NotesVisibility from "@/components/docs/NotesVisibility";
 import { Card } from "@/components/ui/card";
 import UserProfile from "@/components/profile/UserProfile";
+import { TLog, log } from "@/logger/logger";
 
 interface Props {
     params: { id: string };
@@ -24,7 +25,8 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 
     const updates = useDebouncedCallback(async (editor?: EditorInstance) => {
         if (notes === undefined) return;
-        console.log("update");
+
+        log({ type: TLog.info, text: "Saved editor content" });
         const newNotes = notes;
         if (editor !== undefined) {
             const json = editor.getJSON();
