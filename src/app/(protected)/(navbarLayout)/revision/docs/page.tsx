@@ -1,3 +1,4 @@
+import DocsTable from "@/components/docs/DocsTable";
 import NotesTable from "@/components/docs/NotesTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -19,12 +20,12 @@ export default async function PageDocsList() {
     // if the user is not allowed to see the page, we return null
     if (!isAllowed.result) return null;
 
-    const docs: Docs[] = await getDocs();
+    const docs: Docs[] | null = await getDocs();
     const notes: Notes[] | null = await getAllNotes();
 
     return (
         <div className="flex h-full w-full flex-col gap-5 md:flex-row">
-            <Card className="flex flex-col p-10 md:h-full md:w-1/2">
+            {/* <Card className="flex flex-col p-10 md:h-full md:w-1/2">
                 <CardHeader className="text-3xl font-bold">
                     Documents
                 </CardHeader>
@@ -32,6 +33,21 @@ export default async function PageDocsList() {
                 {docs.map((doc) => (
                     <FileCard file={doc} key={doc.id} />
                 ))}
+            </Card> */}
+            <Card className="flex flex-col p-10 md:h-full md:w-1/2">
+                <CardHeader>
+                    <div className="flex w-full flex-col items-center justify-between gap-5 pb-8 text-center text-3xl font-bold md:flex-row md:text-left">
+                        <p>Documents</p>
+                        <Link href="/revision/docs/upload">
+                            <Button className="flex gap-2">
+                                <CirclePlus />
+                                <p>Télécharger des fichiers</p>
+                            </Button>
+                        </Link>
+                    </div>
+                </CardHeader>
+                <Separator className="mb-6" />
+                <DocsTable data={docs ?? []} />
             </Card>
             <Card className="flex flex-col p-10 md:h-full md:w-1/2">
                 <CardHeader>
