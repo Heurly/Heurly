@@ -24,7 +24,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 
     const updates = useDebouncedCallback(async (editor?: EditorInstance) => {
         if (notes === undefined) return;
-
+        console.log("update");
         const newNotes = notes;
         if (editor !== undefined) {
             const json = editor.getJSON();
@@ -33,7 +33,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 
         void updateNotes(newNotes);
         setNotes(newNotes);
-    }, 1500);
+    }, 500);
 
     useEffect(() => {
         const createNewNotes = async () => {
