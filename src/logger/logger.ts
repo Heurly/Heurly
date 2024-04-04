@@ -15,3 +15,7 @@ export function log({ type, text }: { type: TLog; text: string }) {
     logSchema.parse({ type: TLog[type], text });
     console.log(`${TLog[type]}: ${text}`);
 }
+
+export function loginfo(text: string) {
+    log({ type: TLog.info, text: text });
+}
