@@ -1,36 +1,53 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
-// import { db } from "@/server/db";
-// import { env } from "@/env";
+import React from "react";
+import ReactPDF from "@react-pdf/renderer";
+import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
+import dynamic from "next/dynamic";
 
-// async function getDoc(id: string) {
-//     // api call to get the docs
-//     const doc = db.docs.findUnique({
-//         where: {
-//             id: id,
-//         },
-//     });
-//     return doc;
-// }
+const PDFViewer = dynamic(
+    () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
+    {
+        ssr: false,
+        loading: () => <p>Loading...</p>,
+    },
+);
 
-export default async function PageDocs() {
-    // const doc = await getDoc(params.id);
-    // if (!doc) return <p>Document not found</p>;
-    // // Title
-    // // Description
-    // // File viewer with pdf js
-    // // File authorization
-    // if (doc.url === null) return;
-    // const fileP =
-    // const blob = new Blob([fileP.data], { type: "application/pdf" });
-    // const blobURL = URL.createObjectURL(blob);
-    // // pdf type
-    // // Create File variable
+// Create styles
+const styles = StyleSheet.create({
+    page: {
+        flexDirection: "row",
+        backgroundColor: "#E4E4E4",
+    },
+    section: {
+        margin: 10,
+        padding: 10,
+        flexGrow: 1,
+    },
+});
+
+// Create Document Component
+const MyDocument = () => (
+    <Document>
+        <Page size="A4" style={styles.page}>
+            <View style={styles.section}>
+                <Text>Section #1</Text>
+            </View>
+            <View style={styles.section}>
+                <Text>Section #2</Text>
+            </View>
+        </Page>
+    </Document>
+);
+
+export default function PageDocs() {
     return (
         <>
             <Card className="flex h-full w-full flex-col gap-5 p-10">
-                {/* <h1 className=" text-3xl font-bold">{doc.title}</h1>
-                <p className=" font-light text-gray-500">{doc.description}</p>
-                <p>{blobURL}</p> */}
+                <PDFViewer className="h-full w-full">
+                    <MyDocument />
+                </PDFViewer>
             </Card>
         </>
     );
