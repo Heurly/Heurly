@@ -4,6 +4,7 @@ import { db } from "@/server/db";
 import { Notes, Prisma } from "@prisma/client";
 import { getServerAuthSession } from "./auth";
 import { CourseDate } from "@/types/courses";
+import { TLog, log } from "@/logger/logger";
 
 export async function createNotes(title: string, courseDate?: CourseDate) {
     const session = await getServerAuthSession();
@@ -60,16 +61,24 @@ export async function getCourseDateNotes(
 }
 
 export async function getNotes(noteId: string): Promise<Notes | null> {
-    const session = await getServerAuthSession();
-    if (session?.user?.id === undefined) return null;
+    try {
+        const session = await getServerAuthSession();
+        if (session?.user?.id === undefined) return null;
 
-    const notes = await db.notes.findUnique({
-        where: {
-            id: noteId,
-        },
-    });
+        const notes = await db.notes.findUnique({
+            where: {
+                id: noteId,
+            },
+        });
 
-    return notes ?? null;
+        return notes ?? null;
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "An error occured while trying to get notes from the db.",
+        });
+        return null;
+    }
 }
 
 export async function getNoteContent(noteId: string): Promise<Notes | null> {
