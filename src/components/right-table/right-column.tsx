@@ -10,8 +10,9 @@ import {
 } from "../ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import nameToInitials from "@/utils/nameToInitials";
-import InputModifyRole from "../input-select-role";
+import InputSelectMultiple from "../input-select-multiple";
 import { Role, User, UserRole } from "@prisma/client";
+import CellInputSelectMultiple from "../cell-input-select-multiple";
 
 export type TUserTable = {
     id: string;
@@ -29,23 +30,6 @@ const handleUserRoleChange = async (
     // await updateRole()
     // console.log(role, userId);
 };
-
-const dummyRoles: Role[] = [
-    {
-        id: "1",
-        name: "Admin",
-        description: "Admin role",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    },
-    {
-        id: "2",
-        name: "User",
-        description: "User role",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    },
-];
 
 export const rightColumns: ColumnDef<TUserTable>[] = [
     {
@@ -80,6 +64,6 @@ export const rightColumns: ColumnDef<TUserTable>[] = [
     {
         header: "Rôle",
         accessorKey: "role",
-        cell: ({ row }) => <InputModifyRole initialRoles={dummyRoles} />,
+        cell: ({ row }) => <CellInputSelectMultiple />,
     },
 ];
