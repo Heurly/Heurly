@@ -1,10 +1,9 @@
 "use server";
-import type { User } from "@prisma/client";
+import type { Role, User } from "@prisma/client";
 import { db } from "./db";
 import * as z from "zod";
 import { convert } from "ical2json";
 import { TLog, log } from "@/logger/logger";
-import { TUserTable } from "@/components/right-table/right-column";
 
 export async function getUsers(nbUser = 10) {
     let users: User[] = [];
@@ -24,29 +23,30 @@ export async function getUsers(nbUser = 10) {
     return users;
 }
 
-export async function getUsersWithRole(nbUsers = 10) {
-    let users: TUserTable[] = [];
+export type UserWithRole = User & {
+    UserRole: [
+        {
+            role: Role;
+        },
+    ];
+};
+
+export async function getUsersWithRole(
+    nbUsers = 10,
+): Promise<UserWithRole[] | null> {
+    let users: UserWithRole[] | null = null;
 
     try {
-        users = await db.user.findMany({
+        users = (await db.user.findMany({
             take: nbUsers,
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
+            include: {
                 UserRole: {
                     select: {
-                        role: {
-                            select: {
-                                id: true,
-                                name: true,
-                            },
-                        },
+                        role: true,
                     },
                 },
             },
-        });
+        })) as UserWithRole[];
     } catch (e) {
         if (e instanceof Error) {
             log({
