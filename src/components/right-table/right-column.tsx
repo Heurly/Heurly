@@ -10,6 +10,8 @@ import {
 } from "../ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import nameToInitials from "@/utils/nameToInitials";
+import InputModifyRole from "../input-select-role";
+import { Role, User, UserRole } from "@prisma/client";
 
 export type TUserTable = {
     id: string;
@@ -18,6 +20,32 @@ export type TUserTable = {
     image: string | null;
     UserRole: { role: { id: string; name: string } }[];
 };
+
+const handleUserRoleChange = async (
+    newRole: Role | null,
+    userId: User["id"],
+    previousRoleId: Role["id"],
+) => {
+    // await updateRole()
+    // console.log(role, userId);
+};
+
+const dummyRoles: Role[] = [
+    {
+        id: "1",
+        name: "Admin",
+        description: "Admin role",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        id: "2",
+        name: "User",
+        description: "User role",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+];
 
 export const rightColumns: ColumnDef<TUserTable>[] = [
     {
@@ -52,19 +80,6 @@ export const rightColumns: ColumnDef<TUserTable>[] = [
     {
         header: "Rôle",
         accessorKey: "role",
-        cell: () => {
-            return (
-                <Select>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Theme" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
-                    </SelectContent>
-                </Select>
-            );
-        },
+        cell: ({ row }) => <InputModifyRole initialRoles={dummyRoles} />,
     },
 ];

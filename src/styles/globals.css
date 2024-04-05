@@ -83,7 +83,8 @@
 /* for scrollbar */
 /* width */
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 7px !important;
+    height: 7px !important;
 }
 
 /* Track */

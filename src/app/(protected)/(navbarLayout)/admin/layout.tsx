@@ -1,4 +1,4 @@
-import isAllowedTo from "@/components/utils/is-allowed-to";
+// import isAllowedTo from "@/components/utils/is-allowed-to";
 import { getServerAuthSession } from "@/server/auth";
 
 export default async function LayoutAdmin({
@@ -11,14 +11,14 @@ export default async function LayoutAdmin({
         return null;
     }
 
-    const isAllowedToSeeAdmin = await isAllowedTo(
-        "show_admin",
-        session.user.id,
-    );
+    // const isAllowedToSeeAdmin = await isAllowedTo(
+    //     "show_admin",
+    //     session.user.id,
+    // );
 
-    if (!isAllowedToSeeAdmin.result) {
-        return null;
-    }
+    // if (!isAllowedToSeeAdmin.result) {
+    //     return null;
+    // }
 
     return <>{children}</>;
 }
