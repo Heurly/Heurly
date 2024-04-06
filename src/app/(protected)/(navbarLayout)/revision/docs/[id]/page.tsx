@@ -1,53 +1,57 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import React from "react";
-import ReactPDF from "@react-pdf/renderer";
-import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
-import dynamic from "next/dynamic";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { getDocById, getFile } from "@/server/docs";
+import type { Docs } from "@prisma/client";
 
-const PDFViewer = dynamic(
-    () => import("@react-pdf/renderer").then((mod) => mod.PDFViewer),
-    {
-        ssr: false,
-        loading: () => <p>Loading...</p>,
-    },
-);
+export default function PageDocs({ params }: { params: { id: string } }) {
+    const docId = params.id;
+    const [doc, setDoc] = useState<Docs>();
+    const [pdfUrl, setPdfUrl] = useState<string>("");
 
-// Create styles
-const styles = StyleSheet.create({
-    page: {
-        flexDirection: "row",
-        backgroundColor: "#E4E4E4",
-    },
-    section: {
-        margin: 10,
-        padding: 10,
-        flexGrow: 1,
-    },
-});
+    useEffect(() => {
+        let isMounted = true; // Track whether the component is mounted
 
-// Create Document Component
-const MyDocument = () => (
-    <Document>
-        <Page size="A4" style={styles.page}>
-            <View style={styles.section}>
-                <Text>Section #1</Text>
-            </View>
-            <View style={styles.section}>
-                <Text>Section #2</Text>
-            </View>
-        </Page>
-    </Document>
-);
+        const fetchDocs = async () => {
+            try {
+                const fetchedDoc: Docs = await getDocById(docId); // Assuming getDocs is defined elsewhere
+                if (isMounted) {
+                    setDoc(fetchedDoc);
+                    console.log(fetchedDoc);
+                    const testdoc = fetchedDoc;
+                    const json = await getFile(testdoc);
+                    const parsed = JSON.parse(json) as { blob: string };
+                    const buffer = Buffer.from(parsed.blob, "base64");
+                    const blob = new Blob([buffer], {
+                        type: "application/pdf",
+                    });
+                    const url = URL.createObjectURL(blob);
+                    setPdfUrl(url);
+                }
+            } catch (error) {
+                console.error("Failed to fetch docs:", error);
+            }
+        };
 
-export default function PageDocs() {
+        void fetchDocs();
+
+        return () => {
+            isMounted = false; // Cleanup function to set isMounted to false when the component unmounts
+        };
+    }, [docId, setDoc, setPdfUrl]);
+
     return (
         <>
             <Card className="flex h-full w-full flex-col gap-5 p-10">
-                <PDFViewer className="h-full w-full">
-                    <MyDocument />
-                </PDFViewer>
+                <h1 className="text-3xl font-bold">Document {doc?.title}</h1>
+                <iframe
+                    src={pdfUrl}
+                    width="100%"
+                    title={doc?.title}
+                    height="100%"
+                ></iframe>
             </Card>
         </>
     );

@@ -4,11 +4,13 @@ import {
     PutObjectCommand,
     DeleteObjectCommand,
     PutObjectCommandOutput,
+    GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { env } from "@/env";
 import { trustFile } from "@/types/schema/file-upload";
 import { z } from "zod";
 import { TLog, log } from "@/logger/logger";
+import { Docs } from "@prisma/client";
 
 type BucketUploadOutputData = PutObjectCommandOutput;
 
@@ -64,13 +66,13 @@ export class Bucket {
 
         const fileName = this.prefix + file.name;
         const fileBuffer = Buffer.from(await file.arrayBuffer());
-
         try {
             const response = await this.client.send(
                 new PutObjectCommand({
                     Bucket: env.BUCKET_NAME,
                     Key: fileName,
                     Body: fileBuffer,
+                    ContentType: file.type,
                 }),
             );
             return {
@@ -149,6 +151,31 @@ export class Bucket {
 
     public async getFileUrlById(fileId: string): Promise<string> {
         return `https://${env.BUCKET_NAME}.${env.BUCKET_ENDPOINT}/${fileId}`;
+    }
+
+    public async getFile(doc: Docs): Promise<string> {
+        const command = new GetObjectCommand({
+            Bucket: env.BUCKET_NAME,
+            Key: this.prefix + doc.title,
+        });
+        try {
+            // const url = await getSignedUrl(this.client, command, { expiresIn: 3600 });
+            // console.log(url);
+            const response = await this.client.send(command);
+            if (response.Body) {
+                const buffer = Buffer.from(
+                    new Uint8Array(await response.Body.transformToByteArray()),
+                );
+                const json = JSON.stringify({
+                    blob: buffer.toString("base64"),
+                });
+                return json;
+            } else {
+                throw new Error("Response body is undefined.");
+            }
+        } catch (err) {
+            throw new Error("File not found.");
+        }
     }
 
     /**

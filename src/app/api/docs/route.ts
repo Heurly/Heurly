@@ -1,7 +1,6 @@
 import { trustFile, trustFileList } from "@/types/schema/file-upload";
 import { db } from "@/server/db";
 import type { User } from "next-auth";
-import slugify from "slugify";
 import { getDocument } from "pdfjs-dist";
 import { log, TLog } from "@/logger/logger";
 
@@ -223,7 +222,7 @@ async function postFile(file: File, userId: User["id"], fileId: string) {
 
     const resDb = await db.docs.create({
         data: {
-            title: slugify(file.name, "_"),
+            title: file.name,
             description: "A file",
             userId: userId,
             url: fileId,

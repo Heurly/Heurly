@@ -18,6 +18,23 @@ export async function getDocs(): Promise<Docs[]> {
     }
 }
 
+export async function getDocById(docId: string): Promise<Docs> {
+    try {
+        const resDBDoc = await db.docs.findUnique({
+            where: {
+                id: docId,
+            },
+        });
+        return resDBDoc!;
+    } catch (e) {
+        throw new Error("Error: Could not get docs.");
+    }
+}
+
+export async function getFile(doc: Docs) {
+    return bucket.getFile(doc);
+}
+
 /**
  *
  * @param userId The id of the user to get docs for
