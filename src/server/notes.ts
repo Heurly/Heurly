@@ -4,6 +4,7 @@ import { db } from "@/server/db";
 import { Notes, Prisma } from "@prisma/client";
 import { getServerAuthSession } from "./auth";
 import { CourseDate } from "@/types/courses";
+import { revalidatePath } from "next/cache";
 
 export async function createNotes(title: string, courseDate?: CourseDate) {
     const session = await getServerAuthSession();
@@ -102,6 +103,7 @@ export async function deleteNotes(id: string) {
             userId: session.user.id,
         },
     });
+    revalidatePath("/");
 
     return deletion ?? null;
 }
@@ -109,7 +111,7 @@ export async function deleteNotes(id: string) {
 export async function setNoteVisibility(notesId: string, value: boolean) {
     const session = await getServerAuthSession();
     if (session?.user?.id === undefined) return null;
-
+    revalidatePath("/");
     return await db.notes.update({
         where: {
             id: notesId,

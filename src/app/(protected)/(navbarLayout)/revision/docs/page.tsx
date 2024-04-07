@@ -8,7 +8,7 @@ import { getServerAuthSession } from "@/server/auth";
 import { getDocs } from "@/server/docs";
 import { getAllNotes } from "@/server/notes";
 import type { Docs, Notes } from "@prisma/client";
-import { FileText, CirclePlus } from "lucide-react";
+import { CirclePlus } from "lucide-react";
 import Link from "next/link";
 
 export default async function PageDocsList() {
