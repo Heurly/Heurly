@@ -5,9 +5,21 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { getDocById, getFile } from "@/server/docs";
 import type { Docs } from "@prisma/client";
+import { SessionProvider, useSession } from "next-auth/react";
+import NotesVisibility from "@/components/docs/NotesVisibility";
+import { Switch } from "@/components/ui/switch";
+import UserProfile from "@/components/profile/UserProfile";
 
-export default function PageDocs({ params }: { params: { id: string } }) {
-    const docId = params.id;
+export default function Page({ params }: { params: { id: string } }) {
+    return (
+        <SessionProvider>
+            <ContentDocs docId={params.id} />
+        </SessionProvider>
+    );
+}
+
+export function ContentDocs({ docId }: { docId: string }) {
+    const session = useSession();
     const [doc, setDoc] = useState<Docs>();
     const [pdfUrl, setPdfUrl] = useState<string>("");
 
@@ -16,7 +28,9 @@ export default function PageDocs({ params }: { params: { id: string } }) {
 
         const fetchDocs = async () => {
             try {
-                const fetchedDoc: Docs = await getDocById(docId); // Assuming getDocs is defined elsewhere
+                const fetchedDoc: Docs = await getDocById(docId);
+                if (!fetchedDoc) return;
+                // Assuming getDocs is defined elsewhere
                 if (isMounted) {
                     setDoc(fetchedDoc);
                     console.log(fetchedDoc);
@@ -44,16 +58,44 @@ export default function PageDocs({ params }: { params: { id: string } }) {
 
     return (
         <>
-            <Card className="flex h-full w-full flex-col gap-5 p-10">
-                <h1 className="text-3xl font-bold">Document {doc?.title}</h1>
-                <iframe
-                    src={pdfUrl}
-                    width="100%"
-                    title={doc?.title}
-                    height="100%"
-                    className="aspect-auto"
-                ></iframe>
-            </Card>
+            {doc && doc.public && doc.userId && (
+                <div className="">
+                    {/* // <Card className="flex h-full w-full flex-col gap-5 p-10"> */}
+                    <Card className="flex flex-col items-center justify-between gap-2 p-4 md:h-[80px] md:flex-row">
+                        <div className="flex items-center gap-5 md:w-5/6">
+                            {/* <Pen className="hidden md:visible" /> */}
+                            <h1 className="text-2xl font-bold">
+                                Document {doc?.title}
+                            </h1>
+                        </div>
+                        <div className="flex min-h-min w-1/6 items-center justify-center gap-4 md:justify-end">
+                            {session.data?.user.id === doc?.userId ? (
+                                <>
+                                    <NotesVisibility isPublic={doc?.public} />
+                                    <Switch
+                                        disabled={
+                                            session.data?.user.id !==
+                                            doc?.userId
+                                        }
+                                        checked={doc?.public}
+                                    />
+                                </>
+                            ) : (
+                                <UserProfile userId={doc?.userId} />
+                            )}
+                        </div>
+                    </Card>
+                    <Card className="flex h-svh flex-col gap-5 p-10">
+                        <iframe
+                            src={pdfUrl}
+                            width="100%"
+                            title={doc?.title}
+                            height="100%"
+                            className="aspect-auto h-full"
+                        ></iframe>
+                    </Card>
+                </div>
+            )}
         </>
     );
 }
