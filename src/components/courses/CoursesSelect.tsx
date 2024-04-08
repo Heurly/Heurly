@@ -1,16 +1,11 @@
 "use client";
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandItem,
-} from "@/components/ui/command";
+import { Command, CommandEmpty, CommandItem } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { Check, LoaderCircle, Search } from "lucide-react";
 import { getCoursesForSelect } from "@/server/courses";
