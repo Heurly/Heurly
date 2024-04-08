@@ -30,6 +30,8 @@ model Course {
   unit        String     @default("")
   year        String     @default("")
   School      School?    @relation(fields: [schoolId], references: [id])
+  Notes       Notes[]
+  Question    Question[]
 }
 
 model School {
@@ -60,7 +62,8 @@ model Question {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @default(now())
   userId           String
-  courseCode       String?
+  course           Course?            @relation(fields: [courseId], references: [id])
+  courseId         Int?
   courseDate       DateTime?
   answer           Answer[]
   user             User               @relation(fields: [userId], references: [id])
@@ -204,13 +207,14 @@ model BetaList {
 }
 
 model Notes {
-  id         String       @id @default(cuid())
+  id         String    @id @default(cuid())
   userId     String
   title      String
   content    Json
   public     Boolean   @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @default(now())
-  courseCode String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now())
+  course     Course?   @relation(fields: [courseId], references: [id])
+  courseId   Int?
   courseDate DateTime?
 }

@@ -113,6 +113,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                 description: e.DESCRIPTION,
                 small: small,
                 type: e.TYPE,
+                courseId: e.COURSE_ID,
             };
             known?.push(newEntry);
 

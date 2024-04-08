@@ -17,6 +17,7 @@ import { defaultExtensions } from "./EditorExtensions";
 import { ColorSelector, LinkSelector, NodeSelector, TextButtons } from ".";
 import { useState } from "react";
 import { handleCommandNavigation } from "novel/extensions";
+import { SaveState } from "@/types/notes";
 
 interface Props {
     canEdit?: boolean;
@@ -24,6 +25,7 @@ interface Props {
     children?: React.ReactNode;
     initialContent?: JSONContent;
     debouncedUpdates: DebouncedState<(editor: EditorInstance) => Promise<void>>;
+    setSaveState?: (state: SaveState) => void;
 }
 
 const HeurlyEditor: React.FunctionComponent<Props> = ({
@@ -32,6 +34,7 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
     initialContent,
     debouncedUpdates,
     canEdit,
+    setSaveState,
 }) => {
     const [openNode, setOpenNode] = useState<boolean>(false);
     const [openLink, setOpenLink] = useState<boolean>(false);
@@ -51,7 +54,10 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
                     className="h-full w-full"
                     extensions={[...defaultExtensions, slashCommand]}
                     initialContent={initialContent ?? undefined}
-                    onUpdate={({ editor }) => debouncedUpdates(editor)}
+                    onUpdate={({ editor }) => {
+                        setSaveState?.(SaveState.Saving);
+                        void debouncedUpdates(editor);
+                    }}
                 >
                     {children}
                     <EditorBubble

@@ -54,7 +54,7 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 
     const createNotesAndRedirect = async () => {
         if (
-            eventInfo?.event?._def?.extendedProps?.code === undefined ||
+            eventInfo?.event?._def?.extendedProps?.courseId === undefined ||
             eventInfo?.event?._instance?.range?.start === undefined
         )
             return;
@@ -62,7 +62,7 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
         const notes = await createNotes(
             `${eventInfo.event?._def?.title} - ${format(eventInfo.event._instance.range.start, "dd/MM/yyyy")}`,
             {
-                courseCode: eventInfo.event._def.extendedProps.code,
+                courseId: eventInfo.event._def.extendedProps.courseId,
                 courseDate: eventInfo.event._instance.range.start,
             },
         );
@@ -73,18 +73,18 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 
     useEffect(() => {
         if (
-            eventInfo?.event?._def?.extendedProps?.code === undefined ||
+            eventInfo?.event?._def?.extendedProps?.courseId === undefined ||
             eventInfo?.event?._instance?.range?.start === undefined
         )
             return;
 
         void getCourseDateNotes({
-            courseCode: eventInfo.event._def.extendedProps.code,
+            courseId: eventInfo.event._def.extendedProps.courseId,
             courseDate: eventInfo.event._instance.range.start,
         }).then((r) => setNotes(r ?? []));
 
         void getCourseDataQuestions({
-            courseCode: eventInfo.event._def.extendedProps.code,
+            courseId: eventInfo.event._def.extendedProps.courseId,
             courseDate: eventInfo.event._instance.range.start,
         }).then((r) => setQuestions(r ?? []));
     }, [eventInfo]);

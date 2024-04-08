@@ -15,7 +15,7 @@ export async function createNotes(title: string, courseDate?: CourseDate) {
             userId: session.user.id,
             title: title,
             content: Prisma.JsonNull,
-            courseCode: courseDate?.courseCode ?? undefined,
+            courseId: courseDate?.courseId ?? undefined,
             courseDate: courseDate?.courseDate ?? undefined,
         },
     });
@@ -51,7 +51,7 @@ export async function getCourseDateNotes(
 ): Promise<Notes[] | null> {
     const notes = await db.notes.findMany({
         where: {
-            courseCode: courseDate.courseCode,
+            courseId: courseDate.courseId,
             courseDate: courseDate.courseDate,
             public: true,
         },
