@@ -84,11 +84,11 @@ export async function deleteUserDoc(docId: Docs["id"], userId: User["id"]) {
             },
         });
 
-        if (!resDBDoc?.url) return;
+        if (!resDBDoc) return;
 
         // delete the doc in the cloud storage
         const resDeleteFromBucket = await bucket.deleteFileByName(
-            "heurly_" + resDBDoc.title,
+            "heurly_" + resDBDoc.filename,
         );
         if (!resDeleteFromBucket.success)
             throw new Error("Error: Could not delete doc. (bucket error)");
@@ -131,11 +131,14 @@ export async function deleteDoc(docId: Docs["id"]) {
             },
         });
 
-        if (!resDBDoc?.url) return;
+        if (!resDBDoc)
+            throw new Error(
+                "Error: Could not delete doc. (doc not found in db)",
+            );
 
         // delete the doc in the cloud storage
         const resDeleteFromBucket = await bucket.deleteFileByName(
-            "heurly_" + resDBDoc.title,
+            "heurly_" + resDBDoc.filename,
         );
         if (!resDeleteFromBucket.success)
             throw new Error("Error: Could not delete doc. (bucket error)");

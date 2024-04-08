@@ -11,11 +11,12 @@ datasource db {
 model Docs {
   id          String   @id @default(cuid())
   title       String
+  filename    String
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
+  public     Boolean   @default(true)
   userId      String
-  url         String?
   uploadedBy  User     @relation(fields: [userId], references: [id])
 }
 

@@ -52,10 +52,12 @@ export class Bucket {
     /**
      * This function will upload a file to the cloud it will automatically check the file type and size
      * @param file {File} the file to upload
+     * @param filename {string} the filename
      * @returns {Promise<{success: boolean, data: BucketUploadOutputData}>
      */
     public async uploadFile(
         file: File,
+        fileName: string,
     ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
         log({ type: TLog.info, text: "Uploading file to the cloud" });
 
@@ -64,7 +66,6 @@ export class Bucket {
             throw new Error("Invalid file type or size.");
         }
 
-        const fileName = this.prefix + file.name;
         const fileBuffer = Buffer.from(await file.arrayBuffer());
         try {
             const response = await this.client.send(

@@ -51,6 +51,7 @@ export default function PageDocs({ params }: { params: { id: string } }) {
                     width="100%"
                     title={doc?.title}
                     height="100%"
+                    className="aspect-auto"
                 ></iframe>
             </Card>
         </>
