@@ -86,7 +86,6 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                 eventInfo.event._instance.range.start.getTimezoneOffset() *
                     60000,
         );
-        console.log(eventInfo?.event?._instance?.range?.start.toISOString());
 
         void getCourseDateNotes({
             courseId: eventInfo.event._def.extendedProps.courseId,
