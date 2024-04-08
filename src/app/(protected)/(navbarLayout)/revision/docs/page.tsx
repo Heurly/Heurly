@@ -1,6 +1,7 @@
 import NotesTable from "@/components/docs/NotesTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
+import { CourseCard } from "@/components/course-card";
 import { Separator } from "@/components/ui/separator";
 import isAllowedTo from "@/components/utils/is-allowed-to";
 import { getServerAuthSession } from "@/server/auth";
@@ -22,16 +23,24 @@ export default async function PageDocsList() {
     const docs: Docs[] = await getDocs();
     const notes: Notes[] | null = await getAllNotes();
 
+
+    const data = {
+        name : "machin chouette makelele"
+    }
     return (
         <div className="flex h-full w-full flex-col gap-5 md:flex-row">
             <Card className="flex flex-col p-10 md:h-full md:w-1/2">
                 <CardHeader className="text-3xl font-bold">
                     Documents
                 </CardHeader>
-                {docs.length == 0 && <p>Aucun document à afficher</p>}
+                {/* {docs.length == 0 && <p>Aucun document à afficher</p>}
                 {docs.map((doc) => (
                     <FileCard file={doc} key={doc.id} />
-                ))}
+                ))} */}
+                    <p>Matières</p>
+                    <CourseCard data={data} />
+                    <CourseCard data={data} />
+
             </Card>
             <Card className="flex flex-col p-10 md:h-full md:w-1/2">
                 <CardHeader>
