@@ -61,17 +61,18 @@ export class Bucket {
     ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
         log({ type: TLog.info, text: "Uploading file to the cloud" });
 
+        const fileBuffer = Buffer.from(await file.arrayBuffer());
+
         // zod verification for file size and type
         if (!this.isFileTypeSafe(file)) {
             throw new Error("Invalid file type or size.");
         }
 
-        const fileBuffer = Buffer.from(await file.arrayBuffer());
         try {
             const response = await this.client.send(
                 new PutObjectCommand({
                     Bucket: env.BUCKET_NAME,
-                    Key: fileName,
+                    Key: this.prefix + fileName,
                     Body: fileBuffer,
                     ContentType: file.type,
                 }),
@@ -155,9 +156,10 @@ export class Bucket {
     }
 
     public async getFile(doc: Docs): Promise<string> {
+        const key = this.prefix + doc.filename;
         const command = new GetObjectCommand({
             Bucket: env.BUCKET_NAME,
-            Key: this.prefix + doc.title,
+            Key: key,
         });
         try {
             // const url = await getSignedUrl(this.client, command, { expiresIn: 3600 });
