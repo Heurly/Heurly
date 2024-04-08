@@ -6,6 +6,7 @@ export enum TView {
     dayGridMonth = "dayGridMonth",
     dayGridDay = "dayGridDay",
     dayGridWeek = "dayGridWeek",
+    dayGridThreeDays = "dayGridThreeDays",
 }
 
 export interface CourseEvent {

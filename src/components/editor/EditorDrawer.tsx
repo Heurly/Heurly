@@ -1,14 +1,26 @@
 "use client";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useState,
+} from "react";
 import { Drawer, DrawerContent, DrawerTitle } from "../ui/drawer";
 import { Button } from "../ui/button";
-import { Notes } from "@prisma/client";
+import { Course, Notes } from "@prisma/client";
 import NotesVisibility from "../docs/NotesVisibility";
 import { Switch } from "../ui/switch";
 import { useSession } from "next-auth/react";
 import { getCourse } from "@/server/courses";
 import EventSelect from "../courses/EventSelect";
-import { CourseOption } from "../courses/CoursesSelect";
+import { CourseDate } from "@/types/courses";
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "../ui/collapsible";
+import { CalendarSearch } from "lucide-react";
 
 interface Props {
     notes: Notes;
@@ -25,7 +37,23 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
 }) => {
     const session = useSession();
     const [isMobile, setIsMobile] = useState<boolean>(false);
-    const [course, setCourse] = useState<CourseOption | undefined>(undefined);
+    const [course, setCourse] = useState<Course | undefined>(undefined);
+
+    const applyCourse = useCallback(
+        async (courseDate: CourseDate) => {
+            if (
+                courseDate?.courseId == undefined ||
+                courseDate.courseDate == undefined
+            )
+                return;
+            setNotes({
+                ...notes,
+                courseId: courseDate.courseId,
+                courseDate: courseDate.courseDate,
+            });
+        },
+        [notes, setNotes],
+    );
 
     useEffect(() => {
         const checkScreenSize = () => {
@@ -40,17 +68,14 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
     }, []);
 
     useEffect(() => {
-        const getNotesCourse = async (id: number | null) => {
-            if (id == null) return;
-            const c = await getCourse(id);
-            if (c == null) return;
-            setCourse({
-                value: c.id,
-                label: c.name ?? c.small_code ?? c.code,
-            } as CourseOption);
+        const getCourseData = async () => {
+            if (notes?.courseId == undefined) return;
+
+            const r = await getCourse(notes.courseId);
+            if (r != undefined) setCourse(r);
         };
 
-        void getNotesCourse(notes.courseId);
+        void getCourseData();
     }, [notes]);
 
     return (
@@ -72,35 +97,56 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
                             </p>
                             <p className="text-xl">Titre : {notes.title}</p>
                         </DrawerTitle>
-                        <div className="mt-6 flex flex-col gap-4 rounded-xl border p-10">
-                            <div className="flex items-center justify-between align-middle">
-                                <h3 className="text-xl font-bold">
-                                    Visibilité
-                                </h3>
-                                <div className="flex items-center gap-4 align-middle">
-                                    <NotesVisibility isPublic={notes.public} />
-                                    <Switch
-                                        disabled={
-                                            session.data?.user.id !==
-                                            notes.userId
-                                        }
-                                        onCheckedChange={async (v) => {
-                                            setNotes({
-                                                ...notes,
-                                                public: !v,
-                                            });
-                                        }}
-                                        checked={!notes.public}
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between align-middle">
-                                <h3 className="text-xl font-bold">Cours</h3>
-                                <EventSelect
-                                    className="z-60 h-[500px] w-[750px] rounded-xl bg-white p-4"
-                                    userId={session.data?.user.id}
+                        <div className="mt-6 flex size-full flex-col gap-4">
+                            <h3 className="text-xl font-bold">Visibilité</h3>
+                            <div className="flex items-center gap-4 rounded-xl border p-6 align-middle">
+                                <NotesVisibility isPublic={notes.public} />
+                                <Switch
+                                    disabled={
+                                        session.data?.user.id !== notes.userId
+                                    }
+                                    onCheckedChange={async (v) => {
+                                        setNotes({
+                                            ...notes,
+                                            public: !v,
+                                        });
+                                    }}
+                                    checked={!notes.public}
                                 />
                             </div>
+                            <Collapsible className="flex flex-col gap-2">
+                                <h3 className="text-xl font-bold">
+                                    Cours associé
+                                </h3>
+                                <div className=" rounded-xl border p-6">
+                                    <CollapsibleTrigger className="flex w-fit items-center justify-between gap-4 rounded-xl border bg-sky-200 p-1 px-4 text-sm text-slate-600 hover:bg-sky-200/50">
+                                        <CalendarSearch />
+                                        {course !== undefined ? (
+                                            <div>
+                                                <p>
+                                                    {course?.name ??
+                                                        course?.small_code ??
+                                                        course?.small_code ??
+                                                        ""}
+                                                </p>
+                                                <p>
+                                                    {notes.courseDate?.toLocaleString() ??
+                                                        ""}
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <p>Associer un cours</p>
+                                        )}
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent>
+                                        <EventSelect
+                                            className="h-[350px] rounded-xl bg-white p-4"
+                                            setValue={applyCourse}
+                                            userId={session.data?.user.id}
+                                        />
+                                    </CollapsibleContent>
+                                </div>
+                            </Collapsible>
                         </div>
                         <Button
                             onClick={() => setOpen(false)}

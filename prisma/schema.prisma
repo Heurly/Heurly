@@ -25,10 +25,10 @@ model Course {
   schoolId    Int?
   code        String
   name        String     @default("")
-  professor   String     @default("")
-  small_code  String     @default("")
-  unit        String     @default("")
-  year        String     @default("")
+  professor   String?     @default("")
+  small_code  String?     @default("")
+  unit        String?     @default("")
+  year        String?     @default("")
   School      School?    @relation(fields: [schoolId], references: [id])
   Notes       Notes[]
   Question    Question[]

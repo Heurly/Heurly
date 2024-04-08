@@ -5,7 +5,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import frLocale from "@fullcalendar/core/locales/fr";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef, useState } from "react";
-import { LoaderCircle } from "lucide-react";
 import iCalendarPlugin from "@fullcalendar/icalendar";
 import { updatePeriodDisplay } from "@/utils/fullCalendarHelper";
 import { TEventClickArg, TEventTimetable, TView } from "@/types/timetable";
@@ -69,26 +68,25 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
     return (
         <Card className="h-full py-2 md:flex md:h-full md:flex-col md:p-10">
             <CardHeader className="h-1/6">
-                <div className="flex flex-col items-center justify-between md:flex-row">
-                    <TimetableHeader
-                        periodDisplay={periodDisplay}
-                        className="flex flex-col-reverse items-center justify-center gap-5 md:flex-row"
-                        calendarRef={calendarRef}
-                        events={events}
-                        setEvents={setEvents}
-                        setCalendarEvents={setCalendarEvents}
-                        setLoading={setLoading}
-                        userId={userId}
-                    />
-                    {loading && <LoaderCircle className="ml-6 animate-spin" />}
-                </div>
+                <TimetableHeader
+                    periodDisplay={periodDisplay}
+                    className="flex flex-col-reverse items-center justify-center gap-5 md:flex-row"
+                    calendarRef={calendarRef}
+                    events={events}
+                    setEvents={setEvents}
+                    setCalendarEvents={setCalendarEvents}
+                    userId={userId}
+                    loading={loading}
+                    setLoading={setLoading}
+                    expandHeader={true}
+                />
             </CardHeader>
             {drawerInfos && (
                 <TimetableDrawer
                     eventInfo={drawerInfos}
                     open={isDrawerOpen}
                     setOpen={setIsDrawerOpen}
-                ></TimetableDrawer>
+                />
             )}
             <CardContent className="h-5/6 overflow-scroll">
                 <FullCalendar

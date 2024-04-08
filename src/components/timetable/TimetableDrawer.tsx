@@ -78,14 +78,24 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
         )
             return;
 
+        // It seems that Fullcalendar returns a date as it is shown in the timetable (ex. 08/04/2024 08:00)
+        // It raises an issues because the date is not being placed into its timezone.
+        // Then, when we use eventInfo.event._instance.range.start, we get 08/04/2024 08:00 to which a timezone is added, resulting in a wrong date. (ex. 08/04/2024 10:00)
+        const correctedCourseDate = new Date(
+            eventInfo.event._instance.range.start.getTime() +
+                eventInfo.event._instance.range.start.getTimezoneOffset() *
+                    60000,
+        );
+        console.log(eventInfo?.event?._instance?.range?.start.toISOString());
+
         void getCourseDateNotes({
             courseId: eventInfo.event._def.extendedProps.courseId,
-            courseDate: eventInfo.event._instance.range.start,
+            courseDate: correctedCourseDate,
         }).then((r) => setNotes(r ?? []));
 
         void getCourseDataQuestions({
             courseId: eventInfo.event._def.extendedProps.courseId,
-            courseDate: eventInfo.event._instance.range.start,
+            courseDate: correctedCourseDate,
         }).then((r) => setQuestions(r ?? []));
     }, [eventInfo]);
 
