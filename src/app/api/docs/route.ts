@@ -1,10 +1,8 @@
 import { trustFile, trustFileList } from "@/types/schema/file-upload";
 import { db } from "@/server/db";
 import type { User } from "next-auth";
-import slugify from "slugify";
 import { getDocument } from "pdfjs-dist";
 import { log, TLog } from "@/logger/logger";
-
 import * as pdfjs from "pdfjs-dist";
 import { bucket } from "@/server/bucket";
 import { UserModel } from "prisma/zod";
@@ -101,17 +99,15 @@ async function handleFormUploadDocs(data: FormData) {
                 error: "This file is toxic",
             };
         }
-
-        let fileIdOneFile;
+        const filename = crypto.randomUUID() + `.pdf`;
         // upload the file to the cloud
         try {
-            const resUploadOneFile = await bucket.uploadFile(file);
+            const resUploadOneFile = await bucket.uploadFile(file, filename);
             if (!resUploadOneFile.success) {
                 return {
                     error: "Error uploading the file",
                 };
             }
-            fileIdOneFile = resUploadOneFile?.data?.VersionId ?? "";
         } catch (e) {
             log({
                 type: TLog.error,
@@ -119,9 +115,8 @@ async function handleFormUploadDocs(data: FormData) {
             });
         }
 
-        if (!fileIdOneFile) return;
         // post the file to the database
-        const resPostFile = await postFile(file, userId, fileIdOneFile);
+        const resPostFile = await postFile(file, userId, filename);
         if (resPostFile?.error) {
             return {
                 error: resPostFile.error,
@@ -144,20 +139,19 @@ async function handleFormUploadDocs(data: FormData) {
 
         // Handle multiple file uploads
         for (const file of fileEntry) {
+            const filename = crypto.randomUUID() + `.pdf`;
             // upload the file to the cloud
-            let fileId = "";
             try {
-                const res = await bucket.uploadFile(file);
+                const res = await bucket.uploadFile(file, filename);
                 if (!res.success) {
                     return {
                         error: "Error uploading the file",
                     };
                 }
 
-                fileId = res?.data?.VersionId ?? "";
                 log({
                     type: TLog.info,
-                    text: `File uploaded with id ${fileId}`,
+                    text: `File uploaded with filename ${filename}`,
                 });
             } catch (e) {
                 return {
@@ -170,7 +164,7 @@ async function handleFormUploadDocs(data: FormData) {
                 const resPostFileMultiple = await postFile(
                     file,
                     userId,
-                    fileId,
+                    filename,
                 );
                 if (resPostFileMultiple?.error) {
                     return {
@@ -190,7 +184,7 @@ async function handleFormUploadDocs(data: FormData) {
     };
 }
 
-async function postFile(file: File, userId: User["id"], fileId: string) {
+async function postFile(file: File, userId: User["id"], filename: string) {
     log({ type: TLog.info, text: "Posting file to the database" });
     // validate the file
     const res = trustFile.safeParse(file);
@@ -220,13 +214,13 @@ async function postFile(file: File, userId: User["id"], fileId: string) {
             error: "User not found",
         };
     }
-
+    // filename : is a cuid + ".pdf"
     const resDb = await db.docs.create({
         data: {
-            title: slugify(file.name, "_"),
+            title: file.name,
+            filename: filename,
             description: "A file",
             userId: userId,
-            url: fileId,
         },
     });
     console.log(resDb);

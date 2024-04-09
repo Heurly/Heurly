@@ -4,12 +4,12 @@ import { redirect } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getDocsByUser } from "@/server/docs";
 import { getURLsByUser } from "@/server/url-timetable";
-import ListUserFile from "@/components/profile/list-user-file";
 import nameToInitials from "@/utils/nameToInitials";
 import MultipleUrlForm from "@/components/profile/multi-url-form";
 import isAllowedTo from "@/components/utils/is-allowed-to";
 import NotesTable from "@/components/profile/NotesTable";
 import { getAllUserNotes } from "@/server/notes";
+import DocsTable from "@/components/profile/DocsTable";
 
 export const metadata = {
     title: "Mon profil",
@@ -89,24 +89,11 @@ export default async function PageUserProfile() {
                     Mes Documents
                 </CardHeader>
                 <CardContent className="w-full">
-                    <div className="h-full w-full">
-                        {userDocs.length === 0 ? (
-                            <p>Vous n&apos;avez pas encore de documents.</p>
-                        ) : (
-                            <div className="flex gap-5">
-                                <ListUserFile
-                                    userId={session?.user.id}
-                                    userDocs={userDocs}
-                                />
-                            </div>
-                        )}
-                    </div>
+                    <DocsTable data={userDocs ?? []} />
                 </CardContent>
             </Card>
             <Card className="col-span-1 row-span-2">
-                <CardHeader className="text-xl font-bold">
-                    Mes Documents
-                </CardHeader>
+                <CardHeader className="text-xl font-bold">Mes Notes</CardHeader>
                 <CardContent className="w-full">
                     <NotesTable data={notes ?? []} />
                 </CardContent>
