@@ -50,7 +50,7 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
                     editable={canEdit ?? false}
                     className="h-full w-full"
                     extensions={[...defaultExtensions, slashCommand]}
-                    initialContent={initialContent}
+                    initialContent={initialContent ?? undefined}
                     onUpdate={({ editor }) => debouncedUpdates(editor)}
                 >
                     {children}
