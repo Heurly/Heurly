@@ -36,6 +36,9 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+    pages: {
+        error: "/error",
+    },
     callbacks: {
         session: ({ session, user }) => ({
             ...session,
@@ -52,14 +55,15 @@ export const authOptions: NextAuthOptions = {
             user: User;
         }) {
             if (account && user) {
-                if (
-                    account.provider === "google" &&
-                    user.email &&
-                    user.email_verified
-                ) {
-                    return user.email.endsWith("@edu.esiee.fr");
+                if (account.provider === "google" && user.email) {
+                    const allowedEmail = await db.betaList.findFirst({
+                        where: {
+                            email: user.email,
+                        },
+                    });
+                    if (!allowedEmail) return false;
+                    return true;
                 }
-                return true;
             }
             return false;
         },

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import FormUrlTimetable from "@/components/form/form-url-timetable";
 import { redirect } from "next/navigation";
+import isAllowedTo from "@/components/utils/is-allowed-to";
 
 export default async function PageTimetable() {
     const session = await getServerAuthSession();
@@ -18,6 +19,10 @@ export default async function PageTimetable() {
     if (session === null) redirect("/login");
 
     const userId = session.user.id;
+
+    const isAllowed = await isAllowedTo("show_timetable", userId);
+
+    if (!isAllowed.result) return null;
 
     // we verify if the user have an url in the db
     // we count the number of url in the db for the user with prisma query
@@ -31,7 +36,7 @@ export default async function PageTimetable() {
     const isNewUser = userUrlCount <= 0;
 
     return (
-        <AlertDialog open={isNewUser}>
+        <AlertDialog open={true}>
             <main className="h-full w-full">
                 {isNewUser && (
                     <AlertDialogContent>

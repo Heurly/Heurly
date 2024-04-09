@@ -1,9 +1,9 @@
 import { Settings, User } from "lucide-react";
 import Logo from "@/components/icon/Logo";
 
-function TopBar() {
+function TopBar({ className }: { className?: string }) {
     return (
-        <div className="topBar sticky top-0 z-50 flex w-full items-center justify-between bg-sky-200 md:hidden">
+        <div className={className}>
             <Logo className="w-10" />
             <div className="flex items-center gap-x-2">
                 <User />

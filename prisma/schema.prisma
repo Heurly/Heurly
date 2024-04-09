@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -8,23 +9,29 @@ datasource db {
 }
 
 model Docs {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   title       String
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
-  uploadedBy  User     @relation(fields: [userId], references: [id])
   userId      String
+  url         String?
+  uploadedBy  User     @relation(fields: [userId], references: [id])
 }
 
 model Course {
-  id          Int     @id @default(autoincrement())
-  code_cours  String  @default("")
-  nom_cours   String  @default("")
-  professeur  String? @default("")
-  description String? @default("")
-  School      School? @relation(fields: [schoolId], references: [id])
+  id          Int        @id @default(autoincrement())
+  description String?    @default("")
   schoolId    Int?
+  code        String
+  name        String     @default("")
+  professor   String?     @default("")
+  small_code  String?     @default("")
+  unit        String?     @default("")
+  year        String?     @default("")
+  School      School?    @relation(fields: [schoolId], references: [id])
+  Notes       Notes[]
+  Question    Question[]
 }
 
 model School {
@@ -46,6 +53,55 @@ model Unit {
   name     String @default("")
   fullName String @default("")
   code     Int    @unique @db.SmallInt
+}
+
+model Question {
+  id               String             @id @default(cuid())
+  question         String
+  description      String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  userId           String
+  course           Course?            @relation(fields: [courseId], references: [id])
+  courseId         Int?
+  courseDate       DateTime?
+  answer           Answer[]
+  user             User               @relation(fields: [userId], references: [id])
+  UserVoteQuestion UserVoteQuestion[]
+}
+
+model Answer {
+  id             String           @id @default(cuid())
+  answer         String
+  questionId     String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  userId         String
+  question       Question         @relation(fields: [questionId], references: [id])
+  user           User             @relation(fields: [userId], references: [id])
+  UserVoteAnswer UserVoteAnswer[]
+}
+
+model UserVoteAnswer {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  answerId  String
+  vote      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  answer    Answer   @relation(fields: [answerId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model UserVoteQuestion {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  questionId String
+  vote       Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  question   Question @relation(fields: [questionId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model Account {
@@ -91,6 +147,48 @@ model User {
   sessions         Session[]
   UserTimetableURL UserTimetableURL[]
   Docs             Docs[]
+  Question         Question[]
+  Answer           Answer[]
+  UserVoteAnswer   UserVoteAnswer[]
+  UserVoteQuestion UserVoteQuestion[]
+  UserRole         UserRole[]
+}
+
+model UserRole {
+  id     Int    @id @default(autoincrement())
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
+}
+
+model Role {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  description String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+  Right       Right[]
+  UserRole    UserRole[]
+}
+
+model Right {
+  id        Int      @id @default(autoincrement())
+  featureId Int
+  roleId    String
+  feature   Feature  @relation(fields: [featureId], references: [id])
+  role      Role     @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Feature {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  Right       Right[]
 }
 
 model VerificationToken {
@@ -99,4 +197,24 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model BetaList {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Notes {
+  id         String    @id @default(cuid())
+  userId     String
+  title      String
+  content    Json
+  public     Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now())
+  course     Course?   @relation(fields: [courseId], references: [id])
+  courseId   Int?
+  courseDate DateTime?
 }
