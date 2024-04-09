@@ -18,7 +18,7 @@ export default function Page({ params }: { params: { id: string } }) {
     );
 }
 
-export function ContentDocs({ docId }: { docId: string }) {
+function ContentDocs({ docId }: { docId: string }) {
     const session = useSession();
     const [doc, setDoc] = useState<Docs>();
     const [pdfUrl, setPdfUrl] = useState<string>("");
@@ -59,9 +59,9 @@ export function ContentDocs({ docId }: { docId: string }) {
     return (
         <>
             {doc && doc.public && doc.userId && (
-                <div className="">
+                <div className="flex h-full flex-col gap-y-5">
                     {/* // <Card className="flex h-full w-full flex-col gap-5 p-10"> */}
-                    <Card className="flex flex-col items-center justify-between gap-2 p-4 md:h-[80px] md:flex-row">
+                    <Card className="md:h-34 flex flex-col items-center justify-between gap-2 border p-4 md:flex-row">
                         <div className="flex items-center gap-5 md:w-5/6">
                             {/* <Pen className="hidden md:visible" /> */}
                             <h1 className="text-2xl font-bold">
@@ -85,13 +85,13 @@ export function ContentDocs({ docId }: { docId: string }) {
                             )}
                         </div>
                     </Card>
-                    <Card className="flex h-svh flex-col gap-5 p-10">
+                    <Card className="flex h-full flex-col gap-5 p-10">
                         <iframe
                             src={pdfUrl}
                             width="100%"
                             title={doc?.title}
                             height="100%"
-                            className="aspect-auto h-full"
+                            className="aspect-auto"
                         ></iframe>
                     </Card>
                 </div>
