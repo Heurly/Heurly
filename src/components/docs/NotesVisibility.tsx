@@ -13,7 +13,7 @@ const NotesVisibility: React.FunctionComponent<Props> = ({
 }) => (
     <div className={className}>
         {isPublic ? (
-            <div className="flex items-center gap-2 font-bold text-green-400">
+            <div className="flex items-center gap-2 font-bold text-green-500">
                 <LockOpen size={20} />
                 <p>Public</p>
             </div>

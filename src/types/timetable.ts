@@ -6,6 +6,7 @@ export enum TView {
     dayGridMonth = "dayGridMonth",
     dayGridDay = "dayGridDay",
     dayGridWeek = "dayGridWeek",
+    dayGridThreeDays = "dayGridThreeDays",
 }
 
 export interface CourseEvent {
@@ -17,6 +18,7 @@ export interface CourseEvent {
     DESCRIPTION: string;
     NAME?: string;
     TYPE?: string;
+    COURSE_ID?: number;
 }
 
 export type CalendarData = {
@@ -33,6 +35,7 @@ export type TEventExtendedProps = {
     small?: boolean;
     name?: string;
     type?: string;
+    courseId?: number;
 };
 
 export type TEventInstance = {
@@ -61,6 +64,7 @@ export type TEventTimetable = {
     small?: boolean;
     name?: string;
     type?: string;
+    courseId?: number;
 };
 
 export interface TEventClickArg {
