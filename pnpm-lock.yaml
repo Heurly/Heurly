@@ -176,9 +176,6 @@ dependencies:
     use-debounce:
         specifier: ^10.0.0
         version: 10.0.0(react@18.2.0)
-    uuid:
-        specifier: ^9.0.1
-        version: 9.0.1
     vaul:
         specifier: ^0.9.0
         version: 0.9.0(@types/react-dom@18.2.24)(@types/react@18.2.74)(react-dom@18.2.0)(react@18.2.0)

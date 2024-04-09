@@ -3,7 +3,6 @@ import { db } from "@/server/db";
 import type { User } from "next-auth";
 import { getDocument } from "pdfjs-dist";
 import { log, TLog } from "@/logger/logger";
-import { v4 as uuidv4 } from "uuid";
 import * as pdfjs from "pdfjs-dist";
 import { bucket } from "@/server/bucket";
 import { UserModel } from "prisma/zod";
@@ -100,7 +99,7 @@ async function handleFormUploadDocs(data: FormData) {
                 error: "This file is toxic",
             };
         }
-        const filename = uuidv4() + `.pdf`;
+        const filename = crypto.randomUUID() + `.pdf`;
         // upload the file to the cloud
         try {
             const resUploadOneFile = await bucket.uploadFile(file, filename);
@@ -140,7 +139,7 @@ async function handleFormUploadDocs(data: FormData) {
 
         // Handle multiple file uploads
         for (const file of fileEntry) {
-            const filename = uuidv4() + `.pdf`;
+            const filename = crypto.randomUUID() + `.pdf`;
             // upload the file to the cloud
             try {
                 const res = await bucket.uploadFile(file, filename);
