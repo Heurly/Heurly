@@ -213,7 +213,7 @@ export async function handleFormCreateQuestion(
 export async function getCourseDataQuestions(courseDate: CourseDate) {
     return db.question.findMany({
         where: {
-            courseCode: courseDate.courseCode,
+            courseId: courseDate.courseId,
             courseDate: courseDate.courseDate,
         },
     });

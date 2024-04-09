@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { getNotes, updateNotes } from "@/server/notes";
@@ -7,14 +7,14 @@ import { Notes } from "@prisma/client";
 import HeurlyEditor from "@/components/editor/HeurlyEditor";
 import { EditorInstance, JSONContent } from "novel";
 import { useDebouncedCallback } from "use-debounce";
-import { Pen } from "lucide-react";
+import { CircleCheck, EllipsisVertical, LoaderCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { Switch } from "@/components/ui/switch";
-import NotesVisibility from "@/components/docs/NotesVisibility";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import UserProfile from "@/components/profile/UserProfile";
 import { TLog, log } from "@/logger/logger";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { SaveState } from "@/types/notes";
+import EditorDrawer from "@/components/editor/EditorDrawer";
 
 interface Props {
     params: { id: string };
@@ -22,6 +22,9 @@ interface Props {
 
 const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
     const session = useSession();
+    const [shrink, setShrink] = useState<boolean>(false);
+    const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+    const [saveState, setSaveState] = useState<SaveState>(SaveState.Saved);
     const [notes, setNotes] = useLocalStorage<Notes | undefined>(
         "editor",
         undefined,
@@ -40,6 +43,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 
         void updateNotes(newNotes);
         setNotes(newNotes);
+        setSaveState(SaveState.Saved);
     }, 500);
 
     useEffect(() => {
@@ -59,62 +63,118 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
             {notes !== undefined &&
                 session?.data?.user?.id !== undefined &&
                 (notes.userId === session.data.user.id || notes.public) && (
-                    <ScrollArea className="flex h-full w-full flex-col rounded-l">
-                        <Card className="flex flex-col items-center justify-between gap-2 p-4 md:h-[80px] md:flex-row">
-                            <div className="flex items-center gap-5 md:w-5/6">
-                                <Pen className="hidden md:visible" />
-                                <Input
-                                    className="!border-none !text-xl font-bold md:!text-3xl"
-                                    type="text"
-                                    disabled={
-                                        session.data?.user.id !== notes.userId
-                                    }
-                                    value={notes?.title ?? ""}
-                                    placeholder="Nom du document"
-                                    onChange={(event) => {
-                                        if (notes === undefined) return;
-                                        setNotes({
-                                            ...notes,
-                                            title: event.target.value,
-                                        });
-                                        void updates();
-                                    }}
-                                />
-                            </div>
-                            <div className="flex w-1/6 items-center justify-center gap-4 md:justify-end">
-                                {session.data.user.id === notes.userId ? (
-                                    <>
-                                        <NotesVisibility
-                                            isPublic={notes.public}
-                                        />
-                                        <Switch
+                    <Card className="size-full rounded-xl p-2">
+                        <ScrollArea
+                            className="flex size-full flex-col bg-white"
+                            onScroll={(e) => {
+                                setShrink(e.currentTarget.scrollTop > 50);
+                            }}
+                        >
+                            {shrink ? (
+                                <div className="sticky top-0 z-40 mb-2 flex h-10 flex-row items-center gap-2 bg-white p-2 align-middle text-sm text-slate-400">
+                                    <p>{notes.title}</p>
+                                    {session.data.user.id === notes.userId ? (
+                                        <div>
+                                            {saveState === SaveState.Saved && (
+                                                <CircleCheck size={15} />
+                                            )}
+                                            {saveState === SaveState.Saving && (
+                                                <LoaderCircle
+                                                    size={15}
+                                                    className="animate-spin"
+                                                />
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <UserProfile userId={notes.userId} />
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="sticky top-0 flex flex-col items-center justify-between bg-white p-6 md:flex-row">
+                                    <div className="md:w-1/2">
+                                        <Input
+                                            className="!border-none !text-xl font-bold md:!text-3xl"
+                                            type="text"
                                             disabled={
                                                 session.data?.user.id !==
                                                 notes.userId
                                             }
-                                            onCheckedChange={async (v) => {
+                                            value={notes?.title ?? ""}
+                                            placeholder="Nom du document"
+                                            onChange={(event) => {
+                                                if (notes === undefined) return;
                                                 setNotes({
                                                     ...notes,
-                                                    public: v,
+                                                    title: event.target.value,
                                                 });
                                                 void updates();
                                             }}
-                                            checked={notes.public}
                                         />
-                                    </>
-                                ) : (
-                                    <UserProfile userId={notes.userId} />
-                                )}
-                            </div>
-                        </Card>
-
-                        <HeurlyEditor
-                            canEdit={session.data.user.id === notes.userId}
-                            className="h-full w-full"
-                            debouncedUpdates={updates}
-                            initialContent={notes?.content as JSONContent}
-                        />
-                    </ScrollArea>
+                                    </div>
+                                    <div className="flex items-center md:w-1/6">
+                                        {session.data.user.id ===
+                                        notes.userId ? (
+                                            <div className="flex items-center gap-6">
+                                                <div className="flex items-center gap-1 rounded-xl bg-slate-200 p-2 text-sm text-slate-400">
+                                                    {saveState ===
+                                                        SaveState.Saved && (
+                                                        <CircleCheck
+                                                            size={18}
+                                                        />
+                                                    )}
+                                                    {saveState ===
+                                                        SaveState.Saving && (
+                                                        <LoaderCircle
+                                                            size={18}
+                                                            className="animate-spin"
+                                                        />
+                                                    )}
+                                                    <p className="align-middle">
+                                                        {saveState}
+                                                    </p>
+                                                </div>
+                                                <EllipsisVertical
+                                                    size={25}
+                                                    className="cursor-pointer"
+                                                    onClick={() =>
+                                                        setDrawerOpen(true)
+                                                    }
+                                                />
+                                            </div>
+                                        ) : (
+                                            <UserProfile
+                                                userId={notes.userId}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                            {session.data.user.id === notes.userId && (
+                                <EditorDrawer
+                                    open={drawerOpen}
+                                    setOpen={setDrawerOpen}
+                                    notes={notes}
+                                    setNotes={(n) => {
+                                        setNotes(n);
+                                        void updates();
+                                    }}
+                                />
+                            )}
+                            <CardContent className="size-full">
+                                <HeurlyEditor
+                                    canEdit={
+                                        session.data.user.id === notes.userId
+                                    }
+                                    className="size-full"
+                                    debouncedUpdates={updates}
+                                    initialContent={
+                                        notes?.content as JSONContent
+                                    }
+                                    setSaveState={setSaveState}
+                                />
+                            </CardContent>
+                        </ScrollArea>
+                    </Card>
                 )}
         </div>
     );

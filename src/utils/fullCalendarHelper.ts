@@ -22,6 +22,9 @@ export const goToNextPeriod = (calendarRef: RefObject<FullCalendar>): void => {
         case "dayGridDay":
             calendarApi.incrementDate({ days: 1 });
             break;
+        case "dayGridThreeDays":
+            calendarApi.incrementDate({ days: 3 });
+            break;
         default:
             // Handle other cases or do nothing
             break;
@@ -47,6 +50,9 @@ export const goToPreviousPeriod = (
         case "timeGridDay":
         case "dayGridDay":
             calendarApi.incrementDate({ days: -1 });
+            break;
+        case "dayGridThreeDays":
+            calendarApi.incrementDate({ days: -3 });
             break;
         default:
             // Handle other cases or do nothing
@@ -75,6 +81,8 @@ export const updatePeriodDisplay = (arg: DatesSetArg) => {
             // For a month view, show the month in "MMMM yyyy" format.
             formatStr = "MMMM yyyy";
             break;
+        case "dayGridThreeDays":
+            formatStr = "dd/MM/yyyy";
         default:
         // Optionally handle other cases or leave as is for no action.
         // return; // Early return if the view type is not handled.

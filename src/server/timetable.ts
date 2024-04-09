@@ -16,6 +16,7 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
     for (const course of courses) {
         const dbRef = await db.course.findMany({
             select: {
+                id: true,
                 name: true,
                 year: true,
                 small_code: true,
@@ -25,12 +26,24 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
             },
         });
 
-        const found = dbRef.sort(
+        let found = dbRef.sort(
             (a, b) => parseInt(b.year ?? "0") - parseInt(a.year ?? "0"),
         )[0];
+
+        if (found === undefined) {
+            found = await db.course.create({
+                data: {
+                    description: "Cours généré automatiquement.",
+                    name: course.SUMMARY,
+                    code: course.SUMMARY,
+                    small_code: course.SUMMARY.split(":")[0],
+                },
+            });
+        }
+        course.COURSE_ID = found.id;
         course.CODE =
-            found?.small_code ?? course.SUMMARY.split(":")[0] ?? course.SUMMARY;
-        course.NAME = found?.name;
+            found.small_code ?? course.SUMMARY.split(":")[0] ?? course.SUMMARY;
+        course.NAME = found.name;
         course.TYPE = course.SUMMARY.split(":")[1];
     }
 }
