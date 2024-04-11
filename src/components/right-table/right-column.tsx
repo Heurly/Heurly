@@ -3,8 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import nameToInitials from "@/utils/nameToInitials";
-import CellInputSelectMultiple from "../cell-input-select-multiple";
 import { UserWithRole } from "@/server/user";
+import WrapCellInputSelectMultipleRole from "../wrap-cell-input-select-multiple-role";
 
 export const rightColumns: ColumnDef<UserWithRole>[] = [
     {
@@ -39,15 +39,11 @@ export const rightColumns: ColumnDef<UserWithRole>[] = [
     {
         header: "Rôle",
         accessorKey: "role",
-        cell: ({ row }) => {
-            return (
-                <CellInputSelectMultiple
-                    userId={row.getValue("id")}
-                    currentUserRoles={row.original.UserRole.map(
-                        (el) => el.role,
-                    )}
-                />
-            );
-        },
+        cell: ({ row }) => (
+            <WrapCellInputSelectMultipleRole
+                userId={row.getValue("id")}
+                userRole={row.original.UserRole.map((el) => el.role)}
+            />
+        ),
     },
 ];

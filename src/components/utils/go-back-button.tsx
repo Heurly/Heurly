@@ -23,7 +23,7 @@ const GoBackButton = React.forwardRef<HTMLButtonElement, PropsGoBackButton>(
                 <ChevronLeft
                     size={30}
                     strokeWidth={1}
-                    className=" -translate-x-0.5"
+                    className="-translate-x-0.5"
                 />
             </Button>
         );

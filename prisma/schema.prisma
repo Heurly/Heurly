@@ -168,8 +168,8 @@ model Role {
 }
 
 model Right {
-  id        Int      @id @default(autoincrement())
-  featureId Int
+  id        String   @id @default(cuid())
+  featureId String
   roleId    String
   feature   Feature  @relation(fields: [featureId], references: [id])
   role      Role     @relation(fields: [roleId], references: [id])
@@ -178,7 +178,7 @@ model Right {
 }
 
 model Feature {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   name        String
   description String
   createdAt   DateTime @default(now())

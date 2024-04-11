@@ -1,6 +1,6 @@
 "use server";
 import { log, TLog } from "@/logger/logger";
-import type { Role, User } from "@prisma/client";
+import type { Feature, Role, User } from "@prisma/client";
 import { db } from "./db";
 import { UserModel } from "prisma/zod";
 import { z } from "zod";
@@ -158,4 +158,57 @@ export async function deleteUserRole(userId: User["id"], roleId: Role["id"]) {
         result: removedRole,
         message: "Role removed from the user",
     };
+}
+
+export type RoleWithFeatures = {
+    id: string;
+    name: string;
+    description: string;
+    createdAt: Date;
+    updatedAt: Date;
+    features: Feature[];
+};
+
+//
+export async function getRolesFeaturesByRole(
+    nbRole = 10,
+): Promise<RoleWithFeatures[]> {
+    const rolesWithFeatures: RoleWithFeatures[] = [];
+
+    try {
+        const roles = await db.role.findMany({
+            take: nbRole,
+            include: {
+                Right: {
+                    include: {
+                        feature: true,
+                    },
+                },
+            },
+        });
+
+        if (roles.length === 0) throw new Error("No roles found");
+
+        roles.forEach((role) => {
+            const features = role.Right.map((right) => right.feature);
+            rolesWithFeatures.push({
+                id: role.id,
+                name: role.name,
+                description: role.description,
+                createdAt: role.createdAt,
+                updatedAt: role.updatedAt,
+                features: features,
+            });
+        });
+    } catch (e) {
+        if (e instanceof Error) {
+            log({
+                type: TLog.error,
+                text: "Can't retrieve roles and features",
+            });
+        }
+    }
+
+    console.log(rolesWithFeatures);
+    return rolesWithFeatures;
 }
