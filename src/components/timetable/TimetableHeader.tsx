@@ -47,7 +47,6 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
                         userId,
                     )
                 }
-                className="hidden md:flex"
             />
             {expandHeader && (
                 <Button
@@ -69,41 +68,24 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
                 </Button>
             )}
             {loading && <LoaderCircle className="ml-6 animate-spin" />}
-            <Button
-                className="aspect-square rounded-full bg-sky-50 p-3 md:order-2"
-                onClick={() => goToPreviousPeriod(calendarRef)}
-                data-cy="previousPeriodBtn"
-            >
-                <ArrowLeft className=" h-9 w-9 text-black" size={60} />
-            </Button>
             {expandHeader && (
-                <p
-                    data-cy="periodDisplay"
-                    className="hidden md:order-1 md:block"
-                >
+                <p data-cy="periodDisplay" className="ml-auto hidden md:block">
                     {periodDisplay}
                 </p>
             )}
-            <DatePicker
-                onChange={(d: Date) =>
-                    handleDateChange(
-                        calendarRef,
-                        d,
-                        events,
-                        setEvents,
-                        setCalendarEvents,
-                        setLoading,
-                        userId,
-                    )
-                }
-                className="md:hidden"
-            />
             <Button
-                className="aspect-square rounded-full bg-sky-50 p-3 md:order-3"
+                className="-order-1 aspect-square rounded-full bg-sky-50 p-3 md:order-[unset]"
+                onClick={() => goToPreviousPeriod(calendarRef)}
+                data-cy="previousPeriodBtn"
+            >
+                <ArrowLeft className="text-black" size={45} />
+            </Button>
+            <Button
+                className="aspect-square rounded-full bg-sky-50 p-3"
                 onClick={() => goToNextPeriod(calendarRef)}
                 data-cy="nextPeriodBtn"
             >
-                <ArrowRight className="text-black" size={60} />
+                <ArrowRight className="text-black" size={45} />
             </Button>
         </div>
     );
