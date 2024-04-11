@@ -6,7 +6,11 @@ import frLocale from "@fullcalendar/core/locales/fr";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef, useState } from "react";
 import iCalendarPlugin from "@fullcalendar/icalendar";
-import { updatePeriodDisplay } from "@/utils/fullCalendarHelper";
+import {
+    goToNextPeriod,
+    goToPreviousPeriod,
+    updatePeriodDisplay,
+} from "@/utils/fullCalendarHelper";
 import { TEventClickArg, TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
 import type { User } from "@prisma/client";
@@ -15,6 +19,7 @@ import { DatesSetArg } from "@fullcalendar/core/index.js";
 import TimetableDrawer from "./TimetableDrawer";
 import { reloadData } from "@/utils/timetable";
 import TimetableHeader from "./TimetableHeader";
+import useSwipe from "@/hooks/useSwipe";
 
 const nbPxPhone = 768;
 const startTime = "08:00:00";
@@ -22,6 +27,10 @@ const endTime = "20:00:00";
 
 export default function Timetable({ userId }: { userId: User["id"] }) {
     const calendarRef = useRef<FullCalendar>(null);
+    const swipeHandlers = useSwipe({
+        onSwipedLeft: () => goToPreviousPeriod(calendarRef),
+        onSwipedRight: () => goToNextPeriod(calendarRef),
+    });
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
     const [events, setEvents] = useState<Map<string, TEventTimetable[]>>(
         new Map(),
@@ -88,7 +97,10 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     setOpen={setIsDrawerOpen}
                 />
             )}
-            <CardContent className="h-5/6 overflow-scroll">
+            <CardContent
+                className="border-red h-5/6 overflow-scroll border"
+                {...swipeHandlers}
+            >
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
