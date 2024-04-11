@@ -76,7 +76,6 @@ async function handleFormUploadDocs(data: FormData) {
         }
         const pdfText = await extractTextFromPDF(file);
 
-        const isToxic = false;
         // let isToxic: boolean;
         // try {
         //     const resIsToxic = await fetch(`${apiURL}/api/toxicity`, {
@@ -94,11 +93,11 @@ async function handleFormUploadDocs(data: FormData) {
         //     throw new Error(`Error while checking toxicity`);
         // }
 
-        if (isToxic) {
-            return {
-                error: "This file is toxic",
-            };
-        }
+        // if (isToxic) {
+        //     return {
+        //         error: "This file is toxic",
+        //     };
+        // }
         const filename = crypto.randomUUID() + `.pdf`;
         // upload the file to the cloud
         try {
