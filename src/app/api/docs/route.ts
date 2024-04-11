@@ -76,23 +76,23 @@ async function handleFormUploadDocs(data: FormData) {
         }
         const pdfText = await extractTextFromPDF(file);
 
-        let isToxic: boolean;
+        const isToxic = false;
+        // let isToxic: boolean;
+        // try {
+        //     const resIsToxic = await fetch(`${apiURL}/api/toxicity`, {
+        //         method: "POST",
+        //         body: JSON.stringify({ text: pdfText }),
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //         },
+        //     })
+        //         .then((res) => res.json())
+        //         .then((res) => res as ToxicityResponse);
 
-        try {
-            const resIsToxic = await fetch(`${apiURL}/api/toxicity`, {
-                method: "POST",
-                body: JSON.stringify({ text: pdfText }),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-                .then((res) => res.json())
-                .then((res) => res as ToxicityResponse);
-
-            isToxic = resIsToxic.isToxic ?? true;
-        } catch (e) {
-            throw new Error(`Error while checking toxicity`);
-        }
+        //     isToxic = resIsToxic.isToxic ?? true;
+        // } catch (e) {
+        //     throw new Error(`Error while checking toxicity`);
+        // }
 
         if (isToxic) {
             return {

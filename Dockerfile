@@ -22,13 +22,11 @@ RUN pnpm config set "@tiptap-pro:registry" https://registry.tiptap.dev/ && pnpm 
 ##### BUILDER
 
 FROM node:20-alpine AS builder
-# ARG DATABASE_URL
-# ARG NEXT_PUBLIC_CLIENTVAR
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 RUN yarn global add pnpm
 RUN SKIP_ENV_VALIDATION=1 pnpm run build
 
@@ -39,14 +37,13 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-# ENV NEXT_TELEMETRY_DISABLED 1
-
 COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/node_modules/pdfjs-dist ./node_modules/pdfjs-dist
 
 EXPOSE 3000
 ENV PORT 3000
