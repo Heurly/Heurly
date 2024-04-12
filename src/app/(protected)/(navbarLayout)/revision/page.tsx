@@ -26,7 +26,7 @@ export default async function ChoosePlugInPage() {
 
     if (isAllowedToSeeDocs.result)
         plugIns.push({
-            name: "Documents",
+            name: "Ressources",
             icon: <Archive />,
             href: "/docs",
         });

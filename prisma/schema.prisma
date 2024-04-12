@@ -11,25 +11,28 @@ datasource db {
 model Docs {
   id          String   @id @default(cuid())
   title       String
+  filename    String
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
+  public      Boolean   @default(true)
   userId      String
-  url         String?
   uploadedBy  User     @relation(fields: [userId], references: [id])
 }
 
 model Course {
-  id          Int     @id @default(autoincrement())
-  description String? @default("")
+  id          Int        @id @default(autoincrement())
+  description String?    @default("")
   schoolId    Int?
   code        String
-  name        String  @default("")
-  professor   String  @default("")
-  small_code  String  @default("")
-  unit        String  @default("")
-  year        String  @default("")
-  School      School? @relation(fields: [schoolId], references: [id])
+  name        String     @default("")
+  professor   String?     @default("")
+  small_code  String?     @default("")
+  unit        String?     @default("")
+  year        String?     @default("")
+  School      School?    @relation(fields: [schoolId], references: [id])
+  Notes       Notes[]
+  Question    Question[]
 }
 
 model School {
@@ -60,6 +63,9 @@ model Question {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @default(now())
   userId           String
+  course           Course?            @relation(fields: [courseId], references: [id])
+  courseId         Int?
+  courseDate       DateTime?
   answer           Answer[]
   user             User               @relation(fields: [userId], references: [id])
   UserVoteQuestion UserVoteQuestion[]
@@ -202,8 +208,14 @@ model BetaList {
 }
 
 model Notes {
-  id      Int    @id @default(autoincrement())
-  userId  String
-  title   String
-  content Json
+  id         String    @id @default(cuid())
+  userId     String
+  title      String
+  content    Json
+  public     Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now())
+  course     Course?   @relation(fields: [courseId], references: [id])
+  courseId   Int?
+  courseDate DateTime?
 }

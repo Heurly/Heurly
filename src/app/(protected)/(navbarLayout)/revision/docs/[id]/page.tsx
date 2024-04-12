@@ -1,37 +1,101 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
-// import { db } from "@/server/db";
-// import { env } from "@/env";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { getDocById, getFile } from "@/server/docs";
+import type { Docs } from "@prisma/client";
+import { SessionProvider, useSession } from "next-auth/react";
+import NotesVisibility from "@/components/docs/NotesVisibility";
+import { Switch } from "@/components/ui/switch";
+import UserProfile from "@/components/profile/UserProfile";
 
-// async function getDoc(id: string) {
-//     // api call to get the docs
-//     const doc = db.docs.findUnique({
-//         where: {
-//             id: id,
-//         },
-//     });
-//     return doc;
-// }
+export default function Page({ params }: { params: { id: string } }) {
+    return (
+        <SessionProvider>
+            <ContentDocs docId={params.id} />
+        </SessionProvider>
+    );
+}
 
-export default async function PageDocs() {
-    // const doc = await getDoc(params.id);
-    // if (!doc) return <p>Document not found</p>;
-    // // Title
-    // // Description
-    // // File viewer with pdf js
-    // // File authorization
-    // if (doc.url === null) return;
-    // const fileP =
-    // const blob = new Blob([fileP.data], { type: "application/pdf" });
-    // const blobURL = URL.createObjectURL(blob);
-    // // pdf type
-    // // Create File variable
+function ContentDocs({ docId }: { docId: string }) {
+    const session = useSession();
+    const [doc, setDoc] = useState<Docs>();
+    const [pdfUrl, setPdfUrl] = useState<string>("");
+
+    useEffect(() => {
+        let isMounted = true; // Track whether the component is mounted
+
+        const fetchDocs = async () => {
+            try {
+                const fetchedDoc: Docs = await getDocById(docId);
+                if (!fetchedDoc) return;
+                // Assuming getDocs is defined elsewhere
+                if (isMounted) {
+                    setDoc(fetchedDoc);
+                    console.log(fetchedDoc);
+                    const testdoc = fetchedDoc;
+                    const json = await getFile(testdoc);
+                    const parsed = JSON.parse(json) as { blob: string };
+                    const buffer = Buffer.from(parsed.blob, "base64");
+                    const blob = new Blob([buffer], {
+                        type: "application/pdf",
+                    });
+                    const url = URL.createObjectURL(blob);
+                    setPdfUrl(url);
+                }
+            } catch (error) {
+                console.error("Failed to fetch docs:", error);
+            }
+        };
+
+        void fetchDocs();
+
+        return () => {
+            isMounted = false; // Cleanup function to set isMounted to false when the component unmounts
+        };
+    }, [docId, setDoc, setPdfUrl]);
+
     return (
         <>
-            <Card className="flex h-full w-full flex-col gap-5 p-10">
-                {/* <h1 className=" text-3xl font-bold">{doc.title}</h1>
-                <p className=" font-light text-gray-500">{doc.description}</p>
-                <p>{blobURL}</p> */}
-            </Card>
+            {doc && doc.public && doc.userId && (
+                <div className="flex h-full flex-col gap-y-5">
+                    {/* // <Card className="flex h-full w-full flex-col gap-5 p-10"> */}
+                    <Card className="md:h-34 flex flex-col items-center justify-between gap-2 border p-4 md:flex-row">
+                        <div className="flex items-center gap-5 md:w-5/6">
+                            {/* <Pen className="hidden md:visible" /> */}
+                            <h1 className="text-2xl font-bold">
+                                Document {doc?.title}
+                            </h1>
+                        </div>
+                        <div className="flex min-h-min w-1/6 items-center justify-center gap-4 md:justify-end">
+                            {session.data?.user.id === doc?.userId ? (
+                                <>
+                                    <NotesVisibility isPublic={doc?.public} />
+                                    <Switch
+                                        disabled={
+                                            session.data?.user.id !==
+                                            doc?.userId
+                                        }
+                                        checked={doc?.public}
+                                    />
+                                </>
+                            ) : (
+                                <UserProfile userId={doc?.userId} />
+                            )}
+                        </div>
+                    </Card>
+                    <Card className="flex h-full flex-col gap-5 p-10">
+                        <iframe
+                            src={pdfUrl}
+                            width="100%"
+                            title={doc?.title}
+                            height="100%"
+                            className="aspect-auto"
+                        ></iframe>
+                    </Card>
+                </div>
+            )}
         </>
     );
 }

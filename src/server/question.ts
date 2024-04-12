@@ -5,6 +5,7 @@ import * as z from "zod";
 import { dataCreateQuestionSchema } from "@/types/schema/form-create-question";
 import { TLog, log } from "@/logger/logger";
 import { QuestionModel, UserModel } from "prisma/zod";
+import { CourseDate } from "@/types/courses";
 
 /**
  *
@@ -207,4 +208,13 @@ export async function handleFormCreateQuestion(
 
     // return the data
     return { success: true, data: resCreateQuestion };
+}
+
+export async function getCourseDataQuestions(courseDate: CourseDate) {
+    return db.question.findMany({
+        where: {
+            courseId: courseDate.courseId,
+            courseDate: courseDate.courseDate,
+        },
+    });
 }

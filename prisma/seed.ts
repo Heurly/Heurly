@@ -1,3 +1,4 @@
+import type { Feature } from "@prisma/client";
 import { TLog, log } from "@/logger/logger";
 import { db } from "@/server/db";
 import { createInterface } from "readline";
@@ -252,7 +253,7 @@ async function main() {
             if (!roleAllRights)
                 throw new Error("No role found to assign all rights");
 
-            const tabAdminRights = tabFeatures.map((feature) => ({
+            const tabAdminRights = tabFeatures.map((feature: Feature) => ({
                 featureId: feature.id,
                 roleId: roleAllRights.id,
             }));

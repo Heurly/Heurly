@@ -3,8 +3,11 @@
 import { db } from "@/server/db";
 import { Notes, Prisma } from "@prisma/client";
 import { getServerAuthSession } from "./auth";
+import { CourseDate } from "@/types/courses";
+import { revalidatePath } from "next/cache";
+import { TLog, log } from "@/logger/logger";
 
-export async function createNotes(title: string) {
+export async function createNotes(title: string, courseDate?: CourseDate) {
     const session = await getServerAuthSession();
     if (session?.user?.id === undefined) return null;
 
@@ -13,6 +16,8 @@ export async function createNotes(title: string) {
             userId: session.user.id,
             title: title,
             content: Prisma.JsonNull,
+            courseId: courseDate?.courseId ?? undefined,
+            courseDate: courseDate?.courseDate ?? undefined,
         },
     });
 }
@@ -42,21 +47,42 @@ export async function updateNotes(notes: Notes) {
     });
 }
 
-export async function getNotes(noteId: number): Promise<Notes | null> {
-    const session = await getServerAuthSession();
-    if (session?.user?.id === undefined) return null;
-
-    const notes = await db.notes.findUnique({
+export async function getCourseDateNotes(
+    courseDate: CourseDate,
+): Promise<Notes[] | null> {
+    const notes = await db.notes.findMany({
         where: {
-            id: noteId,
-            userId: session.user.id,
+            courseId: courseDate.courseId,
+            courseDate: courseDate.courseDate,
+            public: true,
         },
     });
 
     return notes ?? null;
 }
 
-export async function getNoteContent(noteId: number): Promise<Notes | null> {
+export async function getNotes(noteId: string): Promise<Notes | null> {
+    try {
+        const session = await getServerAuthSession();
+        if (session?.user?.id === undefined) return null;
+
+        const notes = await db.notes.findUnique({
+            where: {
+                id: noteId,
+            },
+        });
+
+        return notes ?? null;
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "An error occured while trying to get notes from the db.",
+        });
+        return null;
+    }
+}
+
+export async function getNoteContent(noteId: string): Promise<Notes | null> {
     const notes = await db.notes.findUnique({
         where: {
             id: noteId,
@@ -67,19 +93,16 @@ export async function getNoteContent(noteId: number): Promise<Notes | null> {
 }
 
 export async function getAllNotes(): Promise<Notes[] | null> {
-    const session = await getServerAuthSession();
-    if (session?.user?.id === undefined) return null;
-
     const notes = await db.notes.findMany({
         where: {
-            userId: session.user.id,
+            public: true,
         },
     });
 
     return notes ?? null;
 }
 
-export async function deleteNotes(id: number) {
+export async function deleteNotes(id: string) {
     const session = await getServerAuthSession();
     if (session?.user?.id === undefined) return null;
 
@@ -89,6 +112,33 @@ export async function deleteNotes(id: number) {
             userId: session.user.id,
         },
     });
+    revalidatePath("/");
 
     return deletion ?? null;
+}
+
+export async function setNoteVisibility(notesId: string, value: boolean) {
+    const session = await getServerAuthSession();
+    if (session?.user?.id === undefined) return null;
+    revalidatePath("/");
+    return await db.notes.update({
+        where: {
+            id: notesId,
+            userId: session.user.id,
+        },
+        data: {
+            public: value,
+        },
+    });
+}
+
+export async function getAllUserNotes(userId: string) {
+    const session = await getServerAuthSession();
+    if (session?.user?.id === undefined) return null;
+
+    return await db.notes.findMany({
+        where: {
+            userId: userId,
+        },
+    });
 }

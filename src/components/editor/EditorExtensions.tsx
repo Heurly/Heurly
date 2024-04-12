@@ -13,6 +13,7 @@ import Mathematics from "@tiptap-pro/extension-mathematics";
 
 import { cx } from "class-variance-authority";
 
+// from: https://novel.sh/docs/guides/tailwind/extensions
 // TODO I am using cx here to get tailwind autocomplete working, idk if someone else can write a regex to just capture the class key in objects
 
 // You can overwrite the placeholder with your own configuration
@@ -67,7 +68,7 @@ const starterKit = StarterKit.configure({
     },
     blockquote: {
         HTMLAttributes: {
-            class: cx("border-l-4 border-primary"),
+            class: cx("border-l-4 border-primary pl-4"),
         },
     },
     codeBlock: {
@@ -89,7 +90,11 @@ const starterKit = StarterKit.configure({
     gapcursor: false,
 });
 
-const mathematics = Mathematics.configure({});
+const mathematics = Mathematics.configure({
+    katexOptions: {
+        output: "mathml",
+    },
+});
 
 export const defaultExtensions = [
     starterKit,

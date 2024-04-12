@@ -1,13 +1,14 @@
-name: ci-push
+name: CI/CD Pipeline
 
 on:
     push:
         branches:
             - beta
+            - main
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+    Build:
+        runs-on: self-hosted
         steps:
             - name: Inject slug/short variables
               uses: rlespinasse/github-slug-action@v4
@@ -41,29 +42,48 @@ jobs:
                   cache-to: type=local,dest=/tmp/.buildx-cache,mode=ma
                   build-args: TIPTAP_TOKEN=${{secrets.TIPTAP_TOKEN}}
 
-    deploy:
-        needs: build
-        runs-on: ubuntu-latest
+    Deploy:
+        needs: Build
+        runs-on: self-hosted
         steps:
             - name: Inject slug/short variables
               uses: rlespinasse/github-slug-action@v4.x
-
-            - name: SSH and Docker Pull
+            - name: Deploy on VPS
               uses: appleboy/ssh-action@v1.0.0
               with:
-                  host: ${{ secrets.PI_HOST }}
-                  username: ${{ secrets.PI_USERNAME }}
-                  password: ${{ secrets.PI_PASSWORD }}
+                  host: ${{ secrets.VPS_HOST }}
+                  username: ${{ secrets.VPS_USERNAME }}
+                  password: ${{ secrets.VPS_PASSWORD }}
                   script: |
-                      cd /home/heurly/Heurly-OPS
                       echo ${{secrets.DOCKER_TOKEN}} | docker login --username ${{secrets.DOCKER_USERNAME}} --password-stdin 2> /dev/null
-                      ./scripts/add-container.sh ${{ env.GITHUB_REF_NAME_SLUG_URL }}
+                      docker pull domesday/heurly:${{ env.GITHUB_REF_NAME_SLUG_URL }}
+                      docker service update --force ${{ env.GITHUB_REF_NAME_SLUG_URL }}_heurly
+
+    Discord:
+        needs: Deploy
+        runs-on: self-hosted
+        steps:
+            - name: Inject slug/short variables
+              uses: rlespinasse/github-slug-action@v4
+            - name: Get deployment info
+              id: info
+              run: |
+                  if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
+                    echo "NAME=Production"  >> "$GITHUB_OUTPUT"
+                    echo "LINK=https://heurly.fr"  >> "$GITHUB_OUTPUT"
+                    echo "BRANCH=main"  >> "$GITHUB_OUTPUT"
+                  else
+                    echo "NAME=Staging"  >> "$GITHUB_OUTPUT"
+                    echo "LINK=https://${{ env.GITHUB_REF_SLUG }}.heurly.fr"  >> "$GITHUB_OUTPUT"
+                    echo "BRANCH=${{ env.GITHUB_REF_SLUG }}"  >> "$GITHUB_OUTPUT"
+                  fi
 
             - name: Discord notification
               env:
                   DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                  DISCORD_EMBEDS: '[{"title": "Deployment - Link of ${{ env.GITHUB_REF_SLUG }}", "description": "[${{ github.repository }}] Branch ${{ env.GITHUB_REF_SLUG }} has been deployed.", "url": "https://${{ env.GITHUB_REF_SLUG }}.heurly.fr", "color": 14847590}]'
+                  DISCORD_EMBEDS: '[{"title": "Deployment - Link of ${{ steps.info.outputs.name }}", "description": "[${{ github.repository }}] Branch ${{ steps.info.outputs.branch }} has been deployed.", "url": "${{ steps.info.outputs.link }}", "color": 14847590}]'
               uses: Ilshidur/action-discord@master
               with:
-                  args: ""
-                  # étape pour ajouter le reverse proxy
+                  args:
+                      ""
+                      # étape pour ajouter le reverse proxy

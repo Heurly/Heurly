@@ -1,9 +1,9 @@
 "use server";
 import type { Role, User } from "@prisma/client";
 import { db } from "./db";
-import * as z from "zod";
 import { convert } from "ical2json";
 import { TLog, log } from "@/logger/logger";
+import { schemaUrl } from "@/types/schema/url";
 
 export async function getUsers(nbUser = 10) {
     let users: User[] = [];
@@ -70,9 +70,9 @@ export async function addProfileUnitByUrl(
 ): Promise<boolean> {
     log({ type: TLog.info, text: `Adding profile URL for ${userId}` });
     try {
-        const urlSchema = z.string().url();
         // This will throw if the URL is invalid, so let's wrap it in a try-catch
-        urlSchema.parse(url);
+        const checkURL = schemaUrl.safeParse(url);
+        if (!checkURL.success) throw new Error("Invalid URL");
 
         // Further processing...
         const urlHostName = new URL(url).hostname;
@@ -124,9 +124,9 @@ export async function updateProfileUnitUrl(
     log({ type: TLog.info, text: `Updating profile URL for user ${userId}` });
 
     try {
-        const urlSchema = z.string().url();
         // Validate the URL
-        urlSchema.parse(newUrl);
+        const checkURL = schemaUrl.safeParse(newUrl);
+        if (!checkURL.success) throw new Error("Invalid URL");
 
         // Extract hostname to ensure it matches a known school's hostname
         const urlHostName = new URL(newUrl).hostname;
@@ -248,4 +248,16 @@ export async function deleteProfileUnitUrl(
         }
         return false;
     }
+}
+
+export async function getUserPublicInfo(userId: string) {
+    return await db.user.findFirst({
+        where: {
+            id: userId,
+        },
+        select: {
+            image: true,
+            name: true,
+        },
+    });
 }
