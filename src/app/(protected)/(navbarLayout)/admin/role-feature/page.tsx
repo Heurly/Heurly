@@ -11,7 +11,7 @@ export default async function RoleFeaturePage() {
         <Card className="h-full">
             <CardHeader>
                 <div className="flex items-center justify-start gap-x-5">
-                    <GoBackButton /> <h1>Role Feature Page</h1>
+                    <GoBackButton /> <h1>Admin - Fonctionnalité par rôle</h1>
                 </div>
             </CardHeader>
             <CardContent>

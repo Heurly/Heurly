@@ -13,7 +13,7 @@ export default async function AdminRightPage() {
         <Card>
             <CardHeader>
                 <div className="flex items-center justify-start gap-x-5">
-                    <GoBackButton /> <h1>Admin - Page des droits</h1>
+                    <GoBackButton /> <h1>Admin - Rôle par utilisateur</h1>
                 </div>
             </CardHeader>
 

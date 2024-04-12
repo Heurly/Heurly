@@ -24,7 +24,11 @@ export async function getRights(nbRole = 10) {
     return roles;
 }
 
-export async function addRoleFeature(featureId: string, roleId: string) {
+export async function addRoleFeature(roleId: string, featureId: string) {
+    log({
+        type: TLog.info,
+        text: `Adding feature ${featureId} to role ${roleId}`,
+    });
     // verify if the role already have the feature
     let resGetRight = null;
     try {
@@ -74,7 +78,12 @@ export async function addRoleFeature(featureId: string, roleId: string) {
     }
 }
 
-export async function deleteRight(featureId: string, roleId: string) {
+export async function deleteRight(roleId: string, featureId: string) {
+    log({
+        type: TLog.info,
+        text: `Deleting feature ${roleId} from role ${featureId}`,
+    });
+
     let resGetRight = null;
     try {
         resGetRight = await db.right.findFirst({

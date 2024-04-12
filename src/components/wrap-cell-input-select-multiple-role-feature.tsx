@@ -26,7 +26,7 @@ export default function WrapCellInputSelectMultipleFeature({
     };
 
     const handleCreate = (name: string) => {
-        window.open(`/admin/features/create?name=${name}`, "_blank");
+        window.open(`/admin/feature/create?name=${name}`, "_blank");
     };
 
     useEffect(() => {
