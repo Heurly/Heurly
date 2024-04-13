@@ -28,8 +28,8 @@ const endTime = "20:00:00";
 export default function Timetable({ userId }: { userId: User["id"] }) {
     const calendarRef = useRef<FullCalendar>(null);
     const swipeHandlers = useSwipe({
-        onSwipedLeft: () => goToPreviousPeriod(calendarRef),
-        onSwipedRight: () => goToNextPeriod(calendarRef),
+        onSwipedLeft: () => goToNextPeriod(calendarRef),
+        onSwipedRight: () => goToPreviousPeriod(calendarRef),
     });
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
     const [events, setEvents] = useState<Map<string, TEventTimetable[]>>(
