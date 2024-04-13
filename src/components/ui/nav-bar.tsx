@@ -8,8 +8,8 @@ import {
 import Link from "next/link";
 import {
     Calendar,
-    CalendarCheck,
     FileStack,
+    Flame,
     // Settings,
     User,
 } from "lucide-react";
@@ -73,7 +73,7 @@ export default async function NavBar() {
     if (isAllowedToSeeEvent.result)
         navbarElement.push({
             name: "Evénements",
-            icon: <CalendarCheck />,
+            icon: <Flame />,
             href: "/event",
         });
 
