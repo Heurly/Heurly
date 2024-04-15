@@ -97,10 +97,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     setOpen={setIsDrawerOpen}
                 />
             )}
-            <CardContent
-                className="border-red h-5/6 overflow-scroll border"
-                {...swipeHandlers}
-            >
+            <CardContent className="h-5/6 overflow-scroll" {...swipeHandlers}>
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
