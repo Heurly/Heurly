@@ -89,7 +89,7 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
                     <DrawerContent
                         onEscapeKeyDown={() => setOpen(false)}
                         onClick={(e) => e.stopPropagation()}
-                        className="left-[unset] right-0 flex h-full w-full flex-col p-6 md:w-[500px]"
+                        className="left-[unset] right-0 flex h-2/3 w-full flex-col p-6 md:h-full md:w-[500px]"
                     >
                         <DrawerTitle className="p-6">
                             <p className="text-3xl font-bold">

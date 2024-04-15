@@ -51,7 +51,7 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
                         },
                     }}
                     editable={canEdit ?? false}
-                    className="h-full w-full"
+                    className="size-full"
                     extensions={[...defaultExtensions, slashCommand]}
                     initialContent={initialContent ?? undefined}
                     onUpdate={({ editor }) => {

@@ -59,13 +59,13 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
     }, [params.id, notes, setNotes]);
 
     return (
-        <div className="h-full w-full">
+        <div className="size-full">
             {notes !== undefined &&
                 session?.data?.user?.id !== undefined &&
                 (notes.userId === session.data.user.id || notes.public) && (
                     <Card className="size-full rounded-xl p-2">
-                        <ScrollArea
-                            className="flex size-full flex-col bg-white"
+                        <div
+                            className="flex size-full flex-col overflow-x-hidden overflow-y-scroll bg-white"
                             onScroll={(e) => {
                                 setShrink(e.currentTarget.scrollTop > 50);
                             }}
@@ -90,8 +90,8 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
                                     )}
                                 </div>
                             ) : (
-                                <div className="sticky top-0 flex flex-col items-center justify-between bg-white p-6 md:flex-row">
-                                    <div className="md:w-1/2">
+                                <div className="sticky top-0 flex flex-row items-center justify-between bg-white p-6">
+                                    <div className="w-2/3">
                                         <Input
                                             className="!border-none !text-xl font-bold md:!text-3xl"
                                             type="text"
@@ -111,10 +111,10 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
                                             }}
                                         />
                                     </div>
-                                    <div className="flex items-center md:w-1/6">
+                                    <div className="ml-auto flex items-center">
                                         {session.data.user.id ===
                                         notes.userId ? (
-                                            <div className="flex items-center gap-6">
+                                            <div className="flex items-center gap-2">
                                                 <div className="flex items-center gap-1 rounded-xl bg-slate-200 p-2 text-sm text-slate-400">
                                                     {saveState ===
                                                         SaveState.Saved && (
@@ -129,7 +129,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
                                                             className="animate-spin"
                                                         />
                                                     )}
-                                                    <p className="align-middle">
+                                                    <p className="hidden align-middle md:visible">
                                                         {saveState}
                                                     </p>
                                                 </div>
@@ -162,10 +162,10 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
                             )}
                             <CardContent className="size-full">
                                 <HeurlyEditor
+                                    className="size-full"
                                     canEdit={
                                         session.data.user.id === notes.userId
                                     }
-                                    className="size-full"
                                     debouncedUpdates={updates}
                                     initialContent={
                                         notes?.content as JSONContent
@@ -173,7 +173,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
                                     setSaveState={setSaveState}
                                 />
                             </CardContent>
-                        </ScrollArea>
+                        </div>
                     </Card>
                 )}
         </div>

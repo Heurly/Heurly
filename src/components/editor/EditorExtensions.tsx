@@ -11,6 +11,8 @@ import {
 
 import Mathematics from "@tiptap-pro/extension-mathematics";
 
+import Typography from "@tiptap/extension-typography";
+
 import { cx } from "class-variance-authority";
 
 // from: https://novel.sh/docs/guides/tailwind/extensions
@@ -106,4 +108,5 @@ export const defaultExtensions = [
     taskItem,
     horizontalRule,
     mathematics,
+    Typography,
 ];
