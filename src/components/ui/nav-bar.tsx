@@ -8,8 +8,8 @@ import {
 import Link from "next/link";
 import {
     Calendar,
-    CalendarCheck,
     FileStack,
+    Flame,
     Shield,
     // Settings,
     User,
@@ -76,7 +76,7 @@ export default async function NavBar() {
     if (isAllowedToSeeEvent.result)
         navbarElement.push({
             name: "Evénements",
-            icon: <CalendarCheck />,
+            icon: <Flame />,
             href: "/event",
         });
     if (isAllowedToSeeAdmin.result)
