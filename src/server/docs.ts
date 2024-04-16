@@ -32,7 +32,7 @@ export async function getDocById(docId: string): Promise<Docs> {
     }
 }
 
-export async function getFile(doc: Docs) {
+export async function getFile(doc: Docs): Promise<string> {
     return bucket.getFile(doc);
 }
 
