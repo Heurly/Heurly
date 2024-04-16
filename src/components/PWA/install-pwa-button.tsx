@@ -3,6 +3,12 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { TLog, log } from "@/logger/logger";
 import { DownloadCloud } from "lucide-react";
+import {
+    TooltipProvider,
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 declare global {
     interface WindowEventMap {
@@ -83,14 +89,34 @@ export default function InstallPwaButton({
     switch (variant) {
         case "button":
             return (
-                <Button onClick={handleInstallClick}>Installer Heurly</Button>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <Button onClick={handleInstallClick}>
+                                Installer Heurly
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Installer heurly</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             );
         case "icon":
             return (
-                <DownloadCloud
-                    onClick={handleInstallClick}
-                    className="cursor-pointer"
-                />
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <DownloadCloud
+                                onClick={handleInstallClick}
+                                className="cursor-pointer"
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Installer heurly</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             );
     }
 }
