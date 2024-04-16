@@ -9,6 +9,8 @@ type TRightName =
     | "edit_docs"
     | "show_note"
     | "edit_note"
+    | "create_note"
+    | "delete_note"
     | "show_revision"
     | "show_event"
     | "show_qanda"

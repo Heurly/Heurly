@@ -24,6 +24,14 @@
         "description": "takes note"
     },
     {
+        "name": "create_note",
+        "description": "create note"
+    },
+    {
+        "name": "delete_note",
+        "description": "create note"
+    },
+    {
         "name": "show_revision",
         "description": "Display the revision section"
     },
