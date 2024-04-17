@@ -1,16 +1,9 @@
 import Timetable from "@/components/timetable/timetable";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import FormUrlTimetable from "@/components/form/form-url-timetable";
 import { redirect } from "next/navigation";
 import isAllowedTo from "@/components/utils/is-allowed-to";
+import AlertTimetable from "@/components/alert-timetable";
 
 export default async function PageTimetable() {
     const session = await getServerAuthSession();
@@ -36,26 +29,9 @@ export default async function PageTimetable() {
     const isNewUser = userUrlCount <= 0;
 
     return (
-        <AlertDialog open={true}>
-            <main className="h-full w-full">
-                {isNewUser && (
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>
-                                Bonjour le nouveau late !
-                            </AlertDialogTitle>
-                            <p>
-                                Plus qu&apos;une étape pour être un vrai late,
-                                tu dois renseigner ton URL de calendrier et
-                                c&apos;est parti !
-                            </p>
-                        </AlertDialogHeader>
-                        <FormUrlTimetable />
-                        <AlertDialogFooter></AlertDialogFooter>
-                    </AlertDialogContent>
-                )}
-                <Timetable userId={userId} />
-            </main>
-        </AlertDialog>
+        <main className="h-full w-full">
+            <AlertTimetable isNewUser={isNewUser} />
+            <Timetable userId={userId} />
+        </main>
     );
 }

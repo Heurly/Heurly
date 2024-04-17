@@ -1,5 +1,5 @@
 "use client";
-
+import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import React, { useEffect } from "react";
 import { useState } from "react";
@@ -21,40 +21,48 @@ export default function Page({ params }: { params: { id: string } }) {
 function ContentDocs({ docId }: { docId: string }) {
     const session = useSession();
     const [doc, setDoc] = useState<Docs>();
+    const [blob, setBlob] = useState<Blob>();
     const [pdfUrl, setPdfUrl] = useState<string>("");
 
     useEffect(() => {
-        let isMounted = true; // Track whether the component is mounted
-
         const fetchDocs = async () => {
+            let fetchedDoc = null;
+            let fetchedBlob = null;
+            // Fetch doc from db
             try {
-                const fetchedDoc: Docs = await getDocById(docId);
-                if (!fetchedDoc) return;
-                // Assuming getDocs is defined elsewhere
-                if (isMounted) {
-                    setDoc(fetchedDoc);
-                    console.log(fetchedDoc);
-                    const testdoc = fetchedDoc;
-                    const json = await getFile(testdoc);
-                    const parsed = JSON.parse(json) as { blob: string };
-                    const buffer = Buffer.from(parsed.blob, "base64");
-                    const blob = new Blob([buffer], {
-                        type: "application/pdf",
-                    });
-                    const url = URL.createObjectURL(blob);
-                    setPdfUrl(url);
-                }
+                fetchedDoc = await getDocById(docId);
+                setDoc(fetchedDoc);
             } catch (error) {
-                console.error("Failed to fetch docs:", error);
+                console.error("Doc not found :", error);
+            }
+
+            if (!fetchedDoc) {
+                return notFound();
+            }
+
+            // Fetch pdf from bucket
+            try {
+                const json = await getFile(fetchedDoc);
+                if (!json) {
+                    throw new Error("Failed to fetch docs : no json");
+                }
+                const parsed = JSON.parse(json) as { blob: string };
+                const buffer = Buffer.from(parsed.blob, "base64");
+                fetchedBlob = new Blob([buffer], {
+                    type: "application/pdf",
+                });
+                setBlob(fetchedBlob);
+
+                // Create url for pdf
+                const url = URL.createObjectURL(fetchedBlob);
+                setPdfUrl(url);
+            } catch (error) {
+                console.error("Failed to fetch doc:", error);
             }
         };
 
         void fetchDocs();
-
-        return () => {
-            isMounted = false; // Cleanup function to set isMounted to false when the component unmounts
-        };
-    }, [docId, setDoc, setPdfUrl]);
+    }, [setDoc, docId, setBlob, setPdfUrl]);
 
     return (
         <>
@@ -86,13 +94,15 @@ function ContentDocs({ docId }: { docId: string }) {
                         </div>
                     </Card>
                     <Card className="flex h-full flex-col gap-5 p-10">
-                        <iframe
-                            src={pdfUrl}
-                            width="100%"
-                            title={doc?.title}
-                            height="100%"
-                            className="aspect-auto"
-                        ></iframe>
+                        {pdfUrl !== "" && (
+                            <iframe
+                                src={pdfUrl}
+                                width="100%"
+                                title={doc?.title}
+                                height="100%"
+                                className="aspect-auto"
+                            ></iframe>
+                        )}
                     </Card>
                 </div>
             )}
