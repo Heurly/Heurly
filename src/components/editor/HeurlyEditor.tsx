@@ -18,6 +18,9 @@ import { ColorSelector, LinkSelector, NodeSelector, TextButtons } from ".";
 import { useState } from "react";
 import { handleCommandNavigation } from "novel/extensions";
 import { SaveState } from "@/types/notes";
+import EditorInput from "./EditorInput";
+
+const katexRegex = /^\$.*?\$/;
 
 interface Props {
     canEdit?: boolean;
@@ -39,9 +42,13 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
     const [openNode, setOpenNode] = useState<boolean>(false);
     const [openLink, setOpenLink] = useState<boolean>(false);
     const [openColor, setOpenColor] = useState<boolean>(false);
+    const [preview, setPreview] = useState<{
+        idx: number;
+        content: string;
+    } | null>(null);
 
     return (
-        <div className={className ?? ""}>
+        <div className={className ?? ""} onClick={() => setPreview(null)}>
             <EditorRoot>
                 <EditorContent
                     editorProps={{
@@ -56,10 +63,26 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
                     initialContent={initialContent ?? undefined}
                     onUpdate={({ editor }) => {
                         setSaveState?.(SaveState.Saving);
+
+                        const idx = editor.state.selection.from;
+                        const focused = editor.state.doc.nodeAt(idx);
+                        console.log(focused);
+                        if (focused?.text && katexRegex.test(focused.text)) {
+                            setPreview({ idx: idx, content: focused.text });
+                        } else {
+                            setPreview(null);
+                        }
+
                         void debouncedUpdates(editor);
                     }}
                 >
                     {children}
+                    {preview !== null && (
+                        <EditorInput
+                            preview={preview}
+                            debouncedUpdates={debouncedUpdates}
+                        />
+                    )}
                     <EditorBubble
                         tippyOptions={{
                             placement: "top",

@@ -338,7 +338,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 
 /* Tiptap Mathematics */
 .ProseMirror .katex-html {
-    visibility: hidden;
+    display: none;
 }
 
 .Tiptap-mathematics-editor {

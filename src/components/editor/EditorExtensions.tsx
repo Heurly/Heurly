@@ -34,6 +34,7 @@ const taskList = TaskList.configure({
         class: cx("not-prose pl-2"),
     },
 });
+
 const taskItem = TaskItem.configure({
     HTMLAttributes: {
         class: cx("flex items-start my-4"),
