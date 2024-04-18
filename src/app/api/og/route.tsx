@@ -1,4 +1,3 @@
-import Logo from "@/components/icon/Logo";
 import { getDocById } from "@/server/docs";
 import { getUserPublicInfo } from "@/server/user";
 import { Docs } from "@prisma/client";
@@ -48,25 +47,6 @@ export async function GET({ document }: { document: Docs }) {
         }
         return new ImageResponse(
             (
-                // <div
-                //     style={{
-                //         height: "100%",
-                //         width: "100%",
-                //         display: "flex",
-                //         flexDirection: "column",
-                //         alignItems: "center",
-                //         justifyContent: "center",
-                //         backgroundColor: "#fff",
-                //         fontSize: 32,
-                //         fontWeight: 600
-                //     }}
-                // >
-                //     <Logo/>
-                //     <div style={{ marginTop: 10 }}>You are on /works-too/</div>
-                //     <div style={{ marginTop: 10 }}>{fetchedDoc.title}</div>
-                // </div>
-                // Modified based on https://tailwindui.com/components/marketing/sections/cta-sections
-
                 <div
                     tw="p-6 h-full w-full flex justify-center items-center"
                     style={{
@@ -81,6 +61,7 @@ export async function GET({ document }: { document: Docs }) {
                                 width="84"
                                 height="84"
                                 src={user.image}
+                                alt="user profile picture"
                                 tw="border-2 border-white rounded-full"
                             />
                         </div>

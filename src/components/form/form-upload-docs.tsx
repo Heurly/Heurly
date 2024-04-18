@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
     Form,
     FormControl,
@@ -26,6 +27,8 @@ export default function FormUploadDocs({ userId }: { userId: User["id"] }) {
     const [wasUploaded, setWasUploaded] = useState(false);
 
     const fileRef = form.register("file");
+    const descriptionRef = form.register("description");
+    const titleRef = form.register("title");
 
     const onSubmit = async (data: z.infer<typeof formUploadDocsSchema>) => {
         // Verification for file size and type with zod
@@ -84,15 +87,54 @@ export default function FormUploadDocs({ userId }: { userId: User["id"] }) {
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className="w-full p-10"
+                        className="md:w-1/1 flex w-full flex-col gap-4 lg:w-1/2 xl:w-1/3"
                     >
+                        <FormField
+                            control={form.control}
+                            name="title"
+                            render={() => {
+                                return (
+                                    <FormItem>
+                                        <FormLabel className="text-xl font-bold">
+                                            Titre
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input type="text" {...titleRef} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                );
+                            }}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={() => {
+                                return (
+                                    <FormItem>
+                                        <FormLabel className="text-xl font-bold">
+                                            Description
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Tape ta description ici"
+                                                {...descriptionRef}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                );
+                            }}
+                        />
                         <FormField
                             control={form.control}
                             name="file"
                             render={() => {
                                 return (
                                     <FormItem>
-                                        <FormLabel>File</FormLabel>
+                                        <FormLabel className="text-xl font-bold">
+                                            Télécharger un document
+                                        </FormLabel>
                                         <FormControl>
                                             <Input type="file" {...fileRef} />
                                         </FormControl>
