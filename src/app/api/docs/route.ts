@@ -175,6 +175,8 @@ async function handleFormUploadDocs(data: FormData) {
                     file,
                     userId,
                     filename,
+                    title,
+                    description,
                 );
                 if (resPostFileMultiple?.error) {
                     return {
