@@ -49,6 +49,8 @@ export default function FormUploadDocs({ userId }: { userId: User["id"] }) {
             // Correctly check if the file at the current index is not undefined
             if (file) {
                 sendForm.append("file", file);
+                sendForm.append("title", data.title);
+                sendForm.append("description", data.description);
             }
         }
 

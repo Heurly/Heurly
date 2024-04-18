@@ -6,6 +6,7 @@ import { log, TLog } from "@/logger/logger";
 import * as pdfjs from "pdfjs-dist";
 import { bucket } from "@/server/bucket";
 import { UserModel } from "prisma/zod";
+import { Docs } from "@prisma/client";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -55,9 +56,13 @@ async function extractTextFromPDF(pdfFile: File): Promise<string> {
 
 async function handleFormUploadDocs(data: FormData) {
     log({ type: TLog.info, text: "Handling form upload" });
+    console.log(data);
     const fileEntry = data.get("file") as unknown as FileList;
 
     const userId = data.get("userId") as User["id"];
+    const title = data.get("title") as Docs["title"];
+    const description = data.get("description") as Docs["description"];
+
     if (!fileEntry) {
         // Handle the case where no file was found in the FormData
         return {
@@ -115,7 +120,13 @@ async function handleFormUploadDocs(data: FormData) {
         }
 
         // post the file to the database
-        const resPostFile = await postFile(file, userId, filename);
+        const resPostFile = await postFile(
+            file,
+            userId,
+            filename,
+            title,
+            description,
+        );
         if (resPostFile?.error) {
             return {
                 error: resPostFile.error,
@@ -183,7 +194,13 @@ async function handleFormUploadDocs(data: FormData) {
     };
 }
 
-async function postFile(file: File, userId: User["id"], filename: string) {
+async function postFile(
+    file: File,
+    userId: User["id"],
+    filename: string,
+    title: string,
+    description: string,
+) {
     log({ type: TLog.info, text: "Posting file to the database" });
     // validate the file
     const res = trustFile.safeParse(file);
@@ -216,9 +233,9 @@ async function postFile(file: File, userId: User["id"], filename: string) {
     // filename : is a cuid + ".pdf"
     const resDb = await db.docs.create({
         data: {
-            title: file.name,
+            title: title,
             filename: filename,
-            description: "A file",
+            description: description,
             userId: userId,
         },
     });
