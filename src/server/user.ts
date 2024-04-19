@@ -4,8 +4,23 @@ import { db } from "./db";
 import { convert } from "ical2json";
 import { TLog, log } from "@/logger/logger";
 import { schemaUrl } from "@/types/schema/url";
+import { getServerAuthSession } from "./auth";
+import isAllowedTo from "@/components/utils/is-allowed-to";
+import { UserModel } from "prisma/zod";
 
 export async function getUsers(nbUser = 10) {
+    // verify if the user is allowed to fetch the users
+    const session = await getServerAuthSession();
+
+    if (!session?.user?.id) throw new Error("User not found");
+
+    const isAllowedToFetchUsers = await isAllowedTo(
+        "show_users",
+        session.user.id,
+    );
+    if (!isAllowedToFetchUsers)
+        throw new Error("User is not allowed to fetch users");
+
     let users: User[] = [];
 
     try {
@@ -34,6 +49,19 @@ export type UserWithRole = User & {
 export async function getUsersWithRole(
     nbUsers = 10,
 ): Promise<UserWithRole[] | null> {
+    // verify if the user is allowed to fetch the users
+    const session = await getServerAuthSession();
+
+    if (!session?.user?.id) throw new Error("User not found");
+
+    const isAllowedToFetchUsers = await isAllowedTo(
+        "show_users",
+        session.user.id,
+    );
+
+    if (!isAllowedToFetchUsers)
+        throw new Error("User is not allowed to fetch users");
+
     let users: UserWithRole[] | null = null;
 
     try {
@@ -69,6 +97,26 @@ export async function addProfileUnitByUrl(
     url: string,
 ): Promise<boolean> {
     log({ type: TLog.info, text: `Adding profile URL for ${userId}` });
+
+    // zod verification for user id
+    const checkIdType = UserModel.shape.id.safeParse(userId);
+
+    if (!checkIdType.success) throw new Error("Invalid user ID");
+
+    // verify if the user exists
+    const resUser = await db.user.findFirst({
+        where: { id: userId },
+    });
+
+    if (resUser === null) throw new Error("User not found");
+
+    // verify if the user is allowed to add a profile unit
+
+    const isAllowedToAddProfileUnit = await isAllowedTo("edit_profile", userId);
+
+    if (!isAllowedToAddProfileUnit)
+        throw new Error("User is not allowed to add a profile unit");
+
     try {
         // This will throw if the URL is invalid, so let's wrap it in a try-catch
         const checkURL = schemaUrl.safeParse(url);
@@ -185,6 +233,35 @@ export async function getCurrentProfileUnitUrls(
         text: `Fetching current profile URLs for user ${userId}`,
     });
 
+    // zod verification for user id
+    const checkIdType = UserModel.shape.id.safeParse(userId);
+    if (!checkIdType.success) {
+        throw new Error("Invalid user ID");
+    }
+
+    // verify if the user exists
+    const userExists = await db.user.findFirst({
+        where: { id: userId },
+    });
+
+    if (!userExists) {
+        log({
+            type: TLog.error,
+            text: `User ${userId} not found`,
+        });
+        return [];
+    }
+
+    // verify if the user can fetch the profile URLs
+    const isAllowedToFetchProfileUrls = await isAllowedTo(
+        "show_profile",
+        userId,
+    );
+
+    if (!isAllowedToFetchProfileUrls) {
+        throw new Error("User is not allowed to fetch profile URLs");
+    }
+
     try {
         const userUrls = await db.userTimetableURL.findMany({
             where: { userId: userId },
@@ -221,6 +298,35 @@ export async function deleteProfileUnitUrl(
 ): Promise<boolean> {
     log({ type: TLog.info, text: `Deleting profile URL for user ${userId}` });
 
+    // zod verification for user id
+    const checkIdType = UserModel.shape.id.safeParse(userId);
+    if (!checkIdType.success) {
+        throw new Error("Invalid user ID");
+    }
+
+    // verify if the user exists
+    const userExists = await db.user.findFirst({
+        where: { id: userId },
+    });
+
+    if (!userExists) {
+        log({
+            type: TLog.error,
+            text: `User ${userId} not found`,
+        });
+        return false;
+    }
+
+    // verify if the user can delete the profile URL
+    const isAllowedToDeleteProfileUrl = await isAllowedTo(
+        "edit_profile",
+        userId,
+    );
+
+    if (!isAllowedToDeleteProfileUrl) {
+        throw new Error("User is not allowed to delete profile URLs");
+    }
+
     try {
         // Check if the URL exists for the user
         const urlExists = await db.userTimetableURL.findFirst({
@@ -250,14 +356,44 @@ export async function deleteProfileUnitUrl(
     }
 }
 
-export async function getUserPublicInfo(userId: string) {
-    return await db.user.findFirst({
-        where: {
-            id: userId,
-        },
-        select: {
-            image: true,
-            name: true,
-        },
+export async function getUserPublicInfo(userId: User["id"]) {
+    // zo verification for user id
+    const checkIdType = UserModel.shape.id.safeParse(userId);
+
+    if (!checkIdType.success) throw new Error("Invalid user ID");
+
+    // verify if the user exists
+    const userExists = await db.user.findFirst({
+        where: { id: userId },
     });
+
+    if (!userExists) throw new Error("User not found");
+
+    // verify if the user is allowed to fetch the public info
+    const isAllowedToFetchPublicInfo = await isAllowedTo(
+        "show_public_info",
+        userId,
+    );
+
+    if (!isAllowedToFetchPublicInfo)
+        throw new Error("User is not allowed to fetch public info");
+
+    let userPublicInfo = null;
+
+    try {
+        userPublicInfo = await db.user.findFirst({
+            where: {
+                id: userId,
+            },
+            select: {
+                image: true,
+                name: true,
+            },
+        });
+    } catch (e) {
+        if (e instanceof Error)
+            throw new Error(`Error fetching user public info: ${e.message}`);
+    }
+
+    return;
 }

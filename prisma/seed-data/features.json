@@ -16,6 +16,10 @@
         "description": "Upload docs"
     },
     {
+        "name": "delete_docs",
+        "description": "Delete docs"
+    },
+    {
         "name": "show_note",
         "description": "Display the note section"
     },
@@ -56,6 +60,10 @@
         "description": "Edit the profile section"
     },
     {
+        "name": "show_users",
+        "description": "Show other user"
+    },
+    {
         "name": "show_admin",
         "description": "Display the admin section"
     },
@@ -74,5 +82,9 @@
     {
         "name": "edit_right",
         "description": "Edit the right of a user"
+    },
+    {
+        "name": "show_public_info",
+        "description": "Show public info"
     }
 ]

@@ -20,6 +20,9 @@ type TRightName =
     | "show_admin"
     | "show_feature"
     | "show_right"
+    | "delete_docs"
+    | "show_users"
+    | "show_public_info"
     | "edit_right";
 
 export default async function isAllowedTo(
