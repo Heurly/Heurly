@@ -116,7 +116,6 @@ function ContentDocs({ docId }: { docId: string }) {
 
                 // Create url for pdf
                 const url = URL.createObjectURL(fetchedBlob);
-                console.log("url", url);
                 setPdfUrl(url);
             } catch (error) {
                 console.error("Failed to fetch doc:", error);

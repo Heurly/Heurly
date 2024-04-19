@@ -87,6 +87,9 @@ export default function FormUploadDocs({ userId }: { userId: User["id"] }) {
                 </p>
             ) : (
                 <Form {...form}>
+                    <h2 className="text-2xl font-bold md:text-3xl">
+                        Upload un document
+                    </h2>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="md:w-1/1 flex w-full flex-col gap-4 lg:w-1/2 xl:w-1/3"
