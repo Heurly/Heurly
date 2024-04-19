@@ -86,6 +86,12 @@ export default async function NavBar() {
             href: "/admin",
         });
 
+    navbarElement.push({
+        name: "Profil",
+        icon: <User />,
+        href: "/profile",
+    });
+
     return (
         <nav className="fixed bottom-0 left-1/2 z-40 mb-4 flex w-11/12 -translate-x-1/2 flex-col items-center justify-between rounded-3xl bg-sky-200 px-3 py-4 md:relative md:left-[unset] md:top-[unset] md:h-full md:w-[unset] md:translate-x-0 md:py-10">
             <Link href="/" data-cy="logo" className="hidden md:block">
@@ -102,19 +108,11 @@ export default async function NavBar() {
                         />
                     );
                 })}
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger>
-                            <InstallPwaButton variant={"icon"} />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Installer heurly</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
+                <InstallPwaButton variant={"icon"} />
             </div>
+            <div />
             <div className="hidden flex-col justify-between gap-5 md:flex">
-                <NavBarItems href="/profile" name="Profil" icon={<User />} />
+                {/* <NavBarItems href="/profile" name="Profil" icon={<User />} />*/}
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>

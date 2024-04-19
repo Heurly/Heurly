@@ -6,12 +6,12 @@ import { log, TLog } from "@/logger/logger";
 import * as pdfjs from "pdfjs-dist";
 import { bucket } from "@/server/bucket";
 import { UserModel } from "prisma/zod";
-pdfjs.GlobalWorkerOptions.workerSrc = "pdfjs-dist/build/pdf.worker.mjs";
-// let apiURL: string;
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export async function POST(request: Request): Promise<Response> {
     log({ type: TLog.info, text: "Handling POST request" });
-    // apiURL = request.headers.get("origin") ?? "";
+    // let apiURL = request.headers.get("origin") ?? "";
 
     // handle the form data
     const res = await handleFormUploadDocs(await request.formData());
