@@ -40,6 +40,6 @@ export const trustFileList = z.any().refine(
 
 export const formUploadDocsSchema = z.object({
     file: trustFileList,
-    title: z.string().min(3).max(100),
-    description: z.string().min(3).max(1000),
+    title: z.string().min(3).max(20),
+    description: z.string().min(3).max(300),
 });
