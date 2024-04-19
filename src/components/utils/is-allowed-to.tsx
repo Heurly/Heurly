@@ -17,7 +17,10 @@ type TRightName =
     | "edit_qanda"
     | "show_profile"
     | "edit_profile"
-    | "show_admin";
+    | "show_admin"
+    | "show_feature"
+    | "show_right"
+    | "edit_right";
 
 export default async function isAllowedTo(
     rightName: TRightName,

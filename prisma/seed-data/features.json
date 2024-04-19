@@ -58,5 +58,21 @@
     {
         "name": "show_admin",
         "description": "Display the admin section"
+    },
+    {
+        "name": "edit_feature",
+        "description": "Edit the feature for the user"
+    },
+    {
+        "name": "edit_feature",
+        "description": "Edit the feature for the user"
+    },
+    {
+        "name": "show_right",
+        "description": "Show user right"
+    },
+    {
+        "name": "edit_right",
+        "description": "Edit the right of a user"
     }
 ]
