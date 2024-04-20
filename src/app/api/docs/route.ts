@@ -104,9 +104,13 @@ async function handleFormUploadDocs(data: FormData) {
         //     };
         // }
         const filename = crypto.randomUUID() + `.pdf`;
+        const file_with_new_name = new File([file], filename, {
+            type: file.type,
+        });
         // upload the file to the cloud
         try {
-            const resUploadOneFile = await bucket.uploadFile(file, filename);
+            const resUploadOneFile =
+                await bucket.uploadFile(file_with_new_name);
             if (!resUploadOneFile.success) {
                 return {
                     error: "Error uploading the file",
@@ -150,9 +154,12 @@ async function handleFormUploadDocs(data: FormData) {
         // Handle multiple file uploads
         for (const file of fileEntry) {
             const filename = crypto.randomUUID() + `.pdf`;
+            const file_with_new_name = new File([file], filename, {
+                type: file.type,
+            });
             // upload the file to the cloud
             try {
-                const res = await bucket.uploadFile(file, filename);
+                const res = await bucket.uploadFile(file_with_new_name);
                 if (!res.success) {
                     return {
                         error: "Error uploading the file",

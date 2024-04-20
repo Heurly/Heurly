@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import UserProfile from "@/components/profile/UserProfile";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 
 export default function Page({ params }: { params: { id: string } }) {
     return (
@@ -58,22 +58,32 @@ function DocsInfo({ doc, url }: { doc: Docs; url: string }) {
                 <div className="h-8 w-16 rounded-xl bg-sky-300"></div>
             </div>
             <div>
-                <div className="size-full">
-                    <Button
-                        className="size-full"
-                        onClick={
-                            // download pdf
-                            () => {
-                                const a = document.createElement("a");
-                                a.href = url;
-                                a.download = doc.title;
-                                a.click();
+                <div className="flex size-full flex-col gap-4">
+                    <div className="md:hidden ">
+                        <Link href={url}>
+                            <Button className="size-full">
+                                <ExternalLink size={24} />
+                                <p> Ouvrir</p>
+                            </Button>
+                        </Link>
+                    </div>
+                    <div>
+                        <Button
+                            className="size-full"
+                            onClick={
+                                // download pdf
+                                () => {
+                                    const a = document.createElement("a");
+                                    a.href = url;
+                                    a.download = doc.title;
+                                    a.click();
+                                }
                             }
-                        }
-                    >
-                        <Download size={24} />
-                        <p> Télécharger</p>
-                    </Button>
+                        >
+                            <Download size={24} />
+                            <p> Télécharger</p>
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

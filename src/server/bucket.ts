@@ -57,7 +57,6 @@ export class Bucket {
      */
     public async uploadFile(
         file: File,
-        fileName: string,
     ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
         log({ type: TLog.info, text: "Uploading file to the cloud" });
 
@@ -72,7 +71,7 @@ export class Bucket {
             const response = await this.client.send(
                 new PutObjectCommand({
                     Bucket: env.BUCKET_NAME,
-                    Key: this.prefix + fileName,
+                    Key: this.prefix + file.name,
                     Body: fileBuffer,
                     ContentType: file.type,
                 }),
