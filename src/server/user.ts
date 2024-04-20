@@ -395,5 +395,5 @@ export async function getUserPublicInfo(userId: User["id"]) {
             throw new Error(`Error fetching user public info: ${e.message}`);
     }
 
-    return;
+    return userPublicInfo;
 }
