@@ -1,6 +1,7 @@
 import { db } from "@/server/db";
 import { User } from "@prisma/client";
 import LogCatch from "./log-catch";
+import { log, TLog } from "@/logger/logger";
 
 type TRightName =
     | "show_timetable"
@@ -25,10 +26,20 @@ type TRightName =
     | "show_public_info"
     | "edit_right";
 
+/**
+ *
+ * @param rightName one of the right names present in TRightName
+ * @param userId id of the user
+ * @returns true if the user has the right, false otherwise
+ */
 export default async function isAllowedTo(
     rightName: TRightName,
     userId: User["id"],
 ) {
+    log({
+        type: TLog.info,
+        text: `Checking if user ${userId} has the right ${rightName}`,
+    });
     // Find the feature
     let feature;
     try {

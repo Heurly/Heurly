@@ -83,7 +83,7 @@ export async function getCourseDateNotes(
     const isAllowedToSeeNotes = await isAllowedTo("show_note", session.user.id);
 
     // verify if the user is allowed to see notes
-    if (isAllowedToSeeNotes)
+    if (!isAllowedToSeeNotes)
         throw new Error("You are not allowed to see notes");
 
     try {
