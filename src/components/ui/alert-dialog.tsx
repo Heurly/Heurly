@@ -31,9 +31,7 @@ const AlertDialogContent = React.forwardRef<
     React.ElementRef<typeof AlertDialogPrimitive.Content>,
     React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
 >(({ className, ...props }, ref) => (
-    // change to div to avoid hydration error
-    <div>
-        {/* <AlertDialogPortal> */}
+    <AlertDialogPortal>
         <AlertDialogOverlay />
         <AlertDialogPrimitive.Content
             ref={ref}
@@ -43,8 +41,7 @@ const AlertDialogContent = React.forwardRef<
             )}
             {...props}
         />
-        {/* </AlertDialogPortal> */}
-    </div>
+    </AlertDialogPortal>
 ));
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
 

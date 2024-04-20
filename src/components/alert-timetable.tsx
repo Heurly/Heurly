@@ -1,17 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import FormUrlTimetable from "./form/form-url-timetable";
 import {
     AlertDialog,
     AlertDialogContent,
-    AlertDialogDescription,
     AlertDialogHeader,
     AlertDialogTitle,
 } from "./ui/alert-dialog";
 
 export default function AlertTimetable({ isNewUser }: { isNewUser: boolean }) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        setIsOpen(isNewUser);
+    }, [isNewUser]);
+
     return (
-        <AlertDialog open={isNewUser}>
+        <AlertDialog open={isOpen}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
