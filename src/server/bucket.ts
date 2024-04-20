@@ -29,7 +29,9 @@ export class Bucket {
     });
 
     // prefix for all file names
-    private prefix = "heurly_";
+    public prefix = "heurly_";
+    public docFolder = "docs/";
+    public imageFolder = "images/";
 
     private static instance: Bucket;
 
@@ -71,7 +73,7 @@ export class Bucket {
             const response = await this.client.send(
                 new PutObjectCommand({
                     Bucket: env.BUCKET_NAME,
-                    Key: this.prefix + file.name,
+                    Key: file.name,
                     Body: fileBuffer,
                     ContentType: file.type,
                 }),
@@ -155,7 +157,7 @@ export class Bucket {
     }
 
     public async getFile(doc: Docs): Promise<string> {
-        const key = this.prefix + doc.filename;
+        const key = doc.filename;
         const command = new GetObjectCommand({
             Bucket: env.BUCKET_NAME,
             Key: key,

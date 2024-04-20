@@ -103,7 +103,7 @@ async function handleFormUploadDocs(data: FormData) {
         //         error: "This file is toxic",
         //     };
         // }
-        const filename = crypto.randomUUID() + `.pdf`;
+        const filename = bucket.prefix + crypto.randomUUID() + `.pdf`;
         const file_with_new_name = new File([file], filename, {
             type: file.type,
         });
@@ -153,7 +153,7 @@ async function handleFormUploadDocs(data: FormData) {
 
         // Handle multiple file uploads
         for (const file of fileEntry) {
-            const filename = crypto.randomUUID() + `.pdf`;
+            const filename = bucket.prefix + crypto.randomUUID() + `.pdf`;
             const file_with_new_name = new File([file], filename, {
                 type: file.type,
             });
