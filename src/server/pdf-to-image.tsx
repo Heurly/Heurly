@@ -25,7 +25,7 @@ export async function convertPdfToImage(pdfFile: File) {
     });
 
     // UUID for the filename image
-    const filename = crypto.randomUUID() + ".png";
+    // const filename = crypto.randomUUID() + ".png";
 
     // Save the image as File type
     // const file = new File([image], filename, { type: "image/png" });

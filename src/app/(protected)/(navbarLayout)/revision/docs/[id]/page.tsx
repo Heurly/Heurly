@@ -92,7 +92,6 @@ function DocsInfo({ doc, url }: { doc: Docs; url: string }) {
 
 function ContentDocs({ docId }: { docId: string }) {
     const [doc, setDoc] = useState<Docs>();
-    const [blob, setBlob] = useState<Blob>();
     const [pdfUrl, setPdfUrl] = useState<string>("");
 
     useEffect(() => {
@@ -122,7 +121,6 @@ function ContentDocs({ docId }: { docId: string }) {
                 fetchedBlob = new Blob([buffer], {
                     type: "application/pdf",
                 });
-                setBlob(fetchedBlob);
 
                 // Create url for pdf
                 const url = URL.createObjectURL(fetchedBlob);
@@ -133,7 +131,7 @@ function ContentDocs({ docId }: { docId: string }) {
         };
 
         void fetchDocs();
-    }, [setDoc, docId, setBlob, setPdfUrl]);
+    }, [setDoc, docId, setPdfUrl]);
 
     return (
         <>
