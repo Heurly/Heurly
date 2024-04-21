@@ -27,6 +27,11 @@ export default async function PageDocsList() {
     const data = {
         name: "Entreprise Ressource Planninggggggggggggggggg"
     }
+    const data2 = {
+        name: "Doc"
+    }
+
+
     return (
         <div className="flex h-full w-full flex-col gap-5 md:flex-row">
             <Card className="flex flex-col p-10 md:h-full md:w-1/2">
@@ -37,6 +42,12 @@ export default async function PageDocsList() {
                 <div className="flex justify-start">
                     <CourseCard data={data} />
                     <CourseCard data={data} />
+                </div>
+                <div id="ERP"className="hidden">
+                    <div className="flex justify-start">
+                        <CourseCard data={data2} />
+                        <CourseCard data={data2} />
+                    </div>
                 </div>
 
             </Card>
