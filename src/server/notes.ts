@@ -47,6 +47,29 @@ export async function updateNotes(notes: Notes) {
     });
 }
 
+export async function updateNotesContent(id: string, content: string) {
+    const session = await getServerAuthSession();
+    if (session?.user?.id === undefined) return null;
+
+    try {
+        return await db.notes.update({
+            where: {
+                id: id,
+                userId: session.user.id,
+            },
+            data: {
+                content:
+                    (JSON.parse(content) as Prisma.JsonValue) ??
+                    Prisma.JsonNull,
+                updatedAt: new Date(),
+            },
+        });
+    } catch (e) {
+        log({ type: TLog.error, text: "Could not save editor content to db." });
+        throw e;
+    }
+}
+
 export async function getCourseDateNotes(
     courseDate: CourseDate,
 ): Promise<Notes[] | null> {
