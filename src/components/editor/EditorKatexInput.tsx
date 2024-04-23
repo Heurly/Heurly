@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useRef } from "react";
 import { Textarea } from "../ui/textarea";
 import { EditorContextValue, useCurrentEditor } from "@tiptap/react";
@@ -13,19 +14,21 @@ export interface ContentToPreview {
 
 interface Props {
     className?: string;
+    position: number;
     preview: ContentToPreview;
     setPreview: React.Dispatch<React.SetStateAction<ContentToPreview>>;
 }
 
 const EditorKatexInput: React.FunctionComponent<Props> = ({
     className,
+    position,
     preview,
     setPreview,
 }) => {
     const editor: EditorContextValue = useCurrentEditor();
     const ref = useRef<HTMLTextAreaElement>(null);
 
-    const changeCallback = useDebouncedCallback((s: string | undefined) => {
+    const changeCallback = (s: string | undefined) => {
         if (editor.editor === null || s == undefined || ref.current == null)
             return;
 
@@ -35,6 +38,7 @@ const EditorKatexInput: React.FunctionComponent<Props> = ({
                 from: preview.from,
                 to: preview.to,
             })
+            // TODO: find a way to get rid of the space but still render the katex
             .insertContent(`$${s}$ `)
             .run();
 
@@ -46,13 +50,21 @@ const EditorKatexInput: React.FunctionComponent<Props> = ({
         });
 
         ref.current.focus();
-    }, 500);
+    };
+
+    const debouncedChangeCallback = useDebouncedCallback(
+        (s: string | undefined) => {
+            changeCallback(s);
+        },
+        500,
+    );
 
     useEffect(() => {
         if (ref.current === null) return;
 
         ref.current.focus();
-    }, [ref]);
+        ref.current.selectionStart = position - 1;
+    }, [ref, position]);
 
     return (
         <div className={`absolute flex w-[500px] flex-col ${className}`}>
@@ -63,12 +75,18 @@ const EditorKatexInput: React.FunctionComponent<Props> = ({
                 onKeyDown={(e) => {
                     e.stopPropagation();
                     if (e.key === "Enter") {
+                        if (ref?.current?.value !== undefined)
+                            changeCallback(ref.current.value);
                         setPreview({ ...preview, shouldPreview: false });
+                        editor.editor?.chain().focus().run();
+                    } else if (e.key === "Escape") {
+                        setPreview({ ...preview, shouldPreview: false });
+                        editor.editor?.chain().focus().run();
                     }
                 }}
                 onChange={(e) => {
                     e.stopPropagation();
-                    changeCallback(e.currentTarget.value);
+                    debouncedChangeCallback(e.currentTarget.value);
                 }}
             >
                 {preview.content}

@@ -20,8 +20,6 @@ import { handleCommandNavigation } from "novel/extensions";
 import { SaveState } from "@/types/notes";
 import EditorKatexInput, { ContentToPreview } from "./EditorKatexInput";
 
-const katexRegex = /.*?(\$.*?\$).*?/;
-
 interface Props {
     canEdit?: boolean;
     className?: string;
@@ -42,6 +40,7 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
     const [openNode, setOpenNode] = useState<boolean>(false);
     const [openLink, setOpenLink] = useState<boolean>(false);
     const [openColor, setOpenColor] = useState<boolean>(false);
+    const [position, setPosition] = useState<number | undefined>(undefined);
     const [katexPreview, setKatexPreview] = useState<ContentToPreview>({
         from: 0,
         to: 0,
@@ -54,39 +53,28 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
         const focused = editor.$pos(from);
 
         if (focused?.textContent == undefined) return;
-        const res = katexRegex.exec(focused.textContent);
-        console.log(res);
 
-        if (
-            katexPreview.shouldPreview === false &&
-            res !== null &&
-            res.length > 0
-        ) {
-            let katexIdx = focused.textContent.indexOf("$");
-            let katexCount = 0;
+        const katexRegex = /.*?(\$.*?\$).*?/g;
 
-            while (katexIdx !== -1) {
-                katexCount++;
-                const katexStart = focused.from + katexIdx;
-                const katexContent = res[katexCount];
+        let captured = katexRegex.exec(focused.textContent)?.[1];
+        while (katexPreview.shouldPreview === false && captured !== undefined) {
+            console.log(captured);
+            const katexIdx = focused.textContent.indexOf(captured);
+            const katexStart = focused.from + katexIdx;
 
-                if (
-                    katexContent !== undefined &&
-                    from > katexStart &&
-                    from < katexStart + katexContent.length
-                ) {
-                    setKatexPreview({
-                        from: katexStart,
-                        to: katexStart + katexContent.length,
-                        content: katexContent.replaceAll("$", ""),
-                        shouldPreview: true,
-                    });
+            if (from > katexStart && from < katexStart + captured.length) {
+                setPosition(from - katexStart);
+                setKatexPreview({
+                    from: katexStart,
+                    to: katexStart + captured.length,
+                    content: captured.replaceAll("$", ""),
+                    shouldPreview: true,
+                });
 
-                    break;
-                }
-
-                katexIdx = focused.textContent.indexOf("$", katexIdx + 1);
+                break;
             }
+
+            captured = katexRegex.exec(focused.textContent)?.[1];
         }
     };
 
@@ -120,6 +108,7 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
                     {children}
                     {katexPreview.shouldPreview && (
                         <EditorKatexInput
+                            position={position ?? 0}
                             preview={katexPreview}
                             setPreview={setKatexPreview}
                         />
