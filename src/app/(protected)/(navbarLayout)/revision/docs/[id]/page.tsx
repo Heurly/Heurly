@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { getDocById, getFile } from "@/server/docs";
-import type { Docs, User } from "@prisma/client";
+import type { Docs } from "@prisma/client";
 import { SessionProvider, useSession } from "next-auth/react";
 import NotesVisibility from "@/components/docs/NotesVisibility";
 import { Switch } from "@/components/ui/switch";

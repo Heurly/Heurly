@@ -1,7 +1,6 @@
 import { trustFile, trustFileList } from "@/types/schema/file-upload";
 import { db } from "@/server/db";
 import type { User } from "next-auth";
-import { getDocument } from "pdfjs-dist";
 import { log, TLog } from "@/logger/logger";
 import * as pdfjs from "pdfjs-dist";
 import { bucket } from "@/server/bucket";
@@ -28,31 +27,31 @@ function isDocsTypeSafe(file: File) {
 //     isToxic: boolean;
 // };
 
-async function extractTextFromPDF(pdfFile: File): Promise<string> {
-    log({ type: TLog.info, text: "Extracting text from PDF" });
-    const fileContentArrayBuffer = await pdfFile.arrayBuffer();
-    // Convert ArrayBuffer to Uint8Array
-    const fileContent = new Uint8Array(fileContentArrayBuffer);
+// async function extractTextFromPDF(pdfFile: File): Promise<string> {
+//     log({ type: TLog.info, text: "Extracting text from PDF" });
+//     const fileContentArrayBuffer = await pdfFile.arrayBuffer();
+//     // Convert ArrayBuffer to Uint8Array
+//     const fileContent = new Uint8Array(fileContentArrayBuffer);
 
-    const loadingTask = getDocument({ data: fileContent });
-    const pdf = await loadingTask.promise;
+//     const loadingTask = getDocument({ data: fileContent });
+//     const pdf = await loadingTask.promise;
 
-    let textContent = "";
+//     let textContent = "";
 
-    // Iterate through each page
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
+//     // Iterate through each page
+//     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+//         const page = await pdf.getPage(pageNum);
 
-        const pageTextContent = await page.getTextContent();
+//         const pageTextContent = await page.getTextContent();
 
-        pageTextContent.items.forEach((item) => {
-            if ("str" in item) {
-                textContent += item.str + " ";
-            }
-        });
-    }
-    return textContent;
-}
+//         pageTextContent.items.forEach((item) => {
+//             if ("str" in item) {
+//                 textContent += item.str + " ";
+//             }
+//         });
+//     }
+//     return textContent;
+// }
 
 async function handleFormUploadDocs(data: FormData) {
     log({ type: TLog.info, text: "Handling form upload" });
