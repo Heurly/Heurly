@@ -1,7 +1,9 @@
 "use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { getDocs } from "@/server/docs";
 import { Folder } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 
 interface props {
@@ -28,7 +30,18 @@ export function CourseCard({ data }: { data: props }) {
         setshow_div(true);
     }
 
+    useEffect(()=>{
+        
+        const fetchDocs = async () =>{
+            const resFetchDocs = await getDocs();
+            console.log(resFetchDocs)
+        }
+
+        void fetchDocs()
+    },[])
+
     return (
+        <Link href={`?type=${data.name}`}>
         <Card onClick={onClick} className="flex mx-2 my-2 bg-secondary !rounded-xl ">
             {!show_div && <div className="flex gap-4 px-4 py-2 wrap align items-center">
                 <Folder size={32} />
@@ -47,6 +60,7 @@ export function CourseCard({ data }: { data: props }) {
                 {!plugIns && <p>Aucun plug-in trouvé</p>}
             </div>}
         </Card>
+        </Link>
     );
 }
 

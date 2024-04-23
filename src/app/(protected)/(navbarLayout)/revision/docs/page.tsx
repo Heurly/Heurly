@@ -11,7 +11,7 @@ import type { Docs, Notes } from "@prisma/client";
 import { FileText, CirclePlus } from "lucide-react";
 import Link from "next/link";
 
-export default async function PageDocsList() {
+export default async function PageDocsList({ searchParams: { course } }: { searchParams: { course: string } }) {
     const session = await getServerAuthSession();
     if (!session) return null;
 
@@ -25,7 +25,8 @@ export default async function PageDocsList() {
 
 
     const data = {
-        name: "Entreprise Ressource Planninggggggggggggggggg"
+        name: "Entreprise Ressource Planninggggggggggggggggg",
+        newurl: course
     }
     const data2 = {
         name: "Doc"
@@ -43,7 +44,7 @@ export default async function PageDocsList() {
                     <CourseCard data={data} />
                     <CourseCard data={data} />
                 </div>
-                <div id="ERP"className="hidden">
+                <div id="ERP" className="hidden">
                     <div className="flex justify-start">
                         <CourseCard data={data2} />
                         <CourseCard data={data2} />
