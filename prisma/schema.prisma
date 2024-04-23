@@ -8,6 +8,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+
 model Docs {
   id          String   @id @default(cuid())
   title       String
@@ -94,6 +96,31 @@ model UserVoteAnswer {
   user      User     @relation(fields: [userId], references: [id])
 }
 
+model Event{
+  id          String   @id @default(cuid())
+  userId      String
+  event       String
+  description String
+  urlImage    String
+  location    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  eventDate   DateTime
+  user        User  @relation(fields: [userId], references: [id])
+  EventUser   EventUser[]
+}
+
+model EventUser {
+  id        Int      @id @default(autoincrement())
+  userId    String   
+  eventId   String   
+  vote      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
 model UserVoteQuestion {
   id         Int      @id @default(autoincrement())
   userId     String
@@ -153,6 +180,8 @@ model User {
   UserVoteAnswer   UserVoteAnswer[]
   UserVoteQuestion UserVoteQuestion[]
   UserRole         UserRole[]
+  Event            Event[]
+  EventUser       EventUser[]
 }
 
 model UserRole {
