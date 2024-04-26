@@ -40,7 +40,7 @@ export default function FeatureCreatePage() {
                     onSubmit={handleSubmit}
                     className="flex flex-col items-start gap-3"
                 >
-                    <Label>Nom de la feaure</Label>
+                    <Label>Nom de la feature</Label>
                     <Input
                         type="text"
                         placeholder="la nouvelle feature trop cool"
