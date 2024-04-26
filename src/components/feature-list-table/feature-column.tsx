@@ -17,11 +17,11 @@ export const featureDetailsColumns: ColumnDef<Feature>[] = [
         accessorKey: "description",
     },
     {
-        header: "Créer le",
+        header: "Créé le",
         accessorKey: "createdAt",
     },
     {
-        header: "Modifier le",
+        header: "Modifié le",
         accessorKey: "updatedAt",
     },
 ];
