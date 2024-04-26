@@ -209,6 +209,5 @@ export async function getRolesFeaturesByRole(
         }
     }
 
-    console.log(rolesWithFeatures);
     return rolesWithFeatures;
 }
