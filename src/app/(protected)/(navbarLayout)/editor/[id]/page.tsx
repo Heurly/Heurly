@@ -52,10 +52,16 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
         }
 
         try {
-            void updateNotesContent(
-                newNotes.id,
-                JSON.stringify(newNotes.content),
-            );
+            const r: { succes: boolean; message: string } =
+                void updateNotesContent(
+                    newNotes.id,
+                    JSON.stringify(newNotes.content),
+                );
+
+            if (!r.succes) {
+                throw new Error("Error occured while trying to update notes.");
+            }
+
             setLocalNotes(newNotes);
             setSaveState(SaveState.Saved);
             log({ type: TLog.info, text: "Saved editor content to db." });
