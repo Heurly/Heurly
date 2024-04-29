@@ -51,8 +51,10 @@ export async function updateNotesContent(id: string, content: string) {
     const session = await getServerAuthSession();
     if (session?.user?.id === undefined) return null;
 
+    let r = null;
+    let message = "";
     try {
-        return await db.notes.update({
+        r = await db.notes.update({
             where: {
                 id: id,
                 userId: session.user.id,
@@ -66,7 +68,13 @@ export async function updateNotesContent(id: string, content: string) {
         });
     } catch (e) {
         log({ type: TLog.error, text: "Could not save editor content to db." });
+        message = `Could not save editor content to db: ${(e as string) ?? ""}`;
         throw e;
+    } finally {
+        return {
+            succes: r !== null,
+            message: message,
+        };
     }
 }
 
