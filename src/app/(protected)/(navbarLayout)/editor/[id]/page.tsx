@@ -52,13 +52,13 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
         }
 
         try {
-            const r: { succes: boolean; message: string } =
-                void updateNotesContent(
+            const r: { success: boolean; message: string } =
+                await updateNotesContent(
                     newNotes.id,
                     JSON.stringify(newNotes.content),
                 );
 
-            if (!r.succes) {
+            if (!r.success) {
                 throw new Error("Error occured while trying to update notes.");
             }
 

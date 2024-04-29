@@ -47,9 +47,16 @@ export async function updateNotes(notes: Notes) {
     });
 }
 
-export async function updateNotesContent(id: string, content: string) {
+export async function updateNotesContent(
+    id: string,
+    content: string,
+): Promise<{ success: boolean; message: string }> {
     const session = await getServerAuthSession();
-    if (session?.user?.id === undefined) return null;
+    if (session?.user?.id === undefined)
+        return {
+            success: false,
+            message: "You don't have the permission to access this data.",
+        };
 
     let r = null;
     let message = "";
@@ -72,7 +79,7 @@ export async function updateNotesContent(id: string, content: string) {
         throw e;
     } finally {
         return {
-            succes: r !== null,
+            success: r !== null,
             message: message,
         };
     }
