@@ -12,7 +12,7 @@ model Docs {
   id          String   @id @default(cuid())
   title       String
   filename    String
-  picturename String   @default("")
+  pictureName String   @default("")
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
