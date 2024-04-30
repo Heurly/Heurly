@@ -1,11 +1,11 @@
 import { trustFile, trustFileList } from "@/types/schema/file-upload";
 import { db } from "@/server/db";
 import type { User } from "next-auth";
-import { getDocument } from "pdfjs-dist";
 import { log, TLog } from "@/logger/logger";
 import * as pdfjs from "pdfjs-dist";
 import { bucket } from "@/server/bucket";
 import { UserModel } from "prisma/zod";
+import { Docs } from "@prisma/client";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -27,37 +27,41 @@ function isDocsTypeSafe(file: File) {
 //     isToxic: boolean;
 // };
 
-async function extractTextFromPDF(pdfFile: File): Promise<string> {
-    log({ type: TLog.info, text: "Extracting text from PDF" });
-    const fileContentArrayBuffer = await pdfFile.arrayBuffer();
-    // Convert ArrayBuffer to Uint8Array
-    const fileContent = new Uint8Array(fileContentArrayBuffer);
+// async function extractTextFromPDF(pdfFile: File): Promise<string> {
+//     log({ type: TLog.info, text: "Extracting text from PDF" });
+//     const fileContentArrayBuffer = await pdfFile.arrayBuffer();
+//     // Convert ArrayBuffer to Uint8Array
+//     const fileContent = new Uint8Array(fileContentArrayBuffer);
 
-    const loadingTask = getDocument({ data: fileContent });
-    const pdf = await loadingTask.promise;
+//     const loadingTask = getDocument({ data: fileContent });
+//     const pdf = await loadingTask.promise;
 
-    let textContent = "";
+//     let textContent = "";
 
-    // Iterate through each page
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
+//     // Iterate through each page
+//     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+//         const page = await pdf.getPage(pageNum);
 
-        const pageTextContent = await page.getTextContent();
+//         const pageTextContent = await page.getTextContent();
 
-        pageTextContent.items.forEach((item) => {
-            if ("str" in item) {
-                textContent += item.str + " ";
-            }
-        });
-    }
-    return textContent;
-}
+//         pageTextContent.items.forEach((item) => {
+//             if ("str" in item) {
+//                 textContent += item.str + " ";
+//             }
+//         });
+//     }
+//     return textContent;
+// }
 
 async function handleFormUploadDocs(data: FormData) {
     log({ type: TLog.info, text: "Handling form upload" });
+    console.log(data);
     const fileEntry = data.get("file") as unknown as FileList;
 
     const userId = data.get("userId") as User["id"];
+    const title = data.get("title") as Docs["title"];
+    const description = data.get("description") as Docs["description"];
+
     if (!fileEntry) {
         // Handle the case where no file was found in the FormData
         return {
@@ -98,10 +102,15 @@ async function handleFormUploadDocs(data: FormData) {
         //         error: "This file is toxic",
         //     };
         // }
-        const filename = crypto.randomUUID() + `.pdf`;
+        const filename =
+            bucket.prefix + bucket.docFolder + crypto.randomUUID() + `.pdf`;
+        const file_with_new_name = new File([file], filename, {
+            type: file.type,
+        });
         // upload the file to the cloud
         try {
-            const resUploadOneFile = await bucket.uploadFile(file, filename);
+            const resUploadOneFile =
+                await bucket.uploadFile(file_with_new_name);
             if (!resUploadOneFile.success) {
                 return {
                     error: "Error uploading the file",
@@ -115,7 +124,13 @@ async function handleFormUploadDocs(data: FormData) {
         }
 
         // post the file to the database
-        const resPostFile = await postFile(file, userId, filename);
+        const resPostFile = await postFile(
+            file,
+            userId,
+            filename,
+            title,
+            description,
+        );
         if (resPostFile?.error) {
             return {
                 error: resPostFile.error,
@@ -138,10 +153,14 @@ async function handleFormUploadDocs(data: FormData) {
 
         // Handle multiple file uploads
         for (const file of fileEntry) {
-            const filename = crypto.randomUUID() + `.pdf`;
+            const filename =
+                bucket.prefix + bucket.docFolder + crypto.randomUUID() + `.pdf`;
+            const file_with_new_name = new File([file], filename, {
+                type: file.type,
+            });
             // upload the file to the cloud
             try {
-                const res = await bucket.uploadFile(file, filename);
+                const res = await bucket.uploadFile(file_with_new_name);
                 if (!res.success) {
                     return {
                         error: "Error uploading the file",
@@ -164,6 +183,8 @@ async function handleFormUploadDocs(data: FormData) {
                     file,
                     userId,
                     filename,
+                    title,
+                    description,
                 );
                 if (resPostFileMultiple?.error) {
                     return {
@@ -183,7 +204,13 @@ async function handleFormUploadDocs(data: FormData) {
     };
 }
 
-async function postFile(file: File, userId: User["id"], filename: string) {
+async function postFile(
+    file: File,
+    userId: User["id"],
+    filename: string,
+    title: string,
+    description: string,
+) {
     log({ type: TLog.info, text: "Posting file to the database" });
     // validate the file
     const res = trustFile.safeParse(file);
@@ -216,9 +243,9 @@ async function postFile(file: File, userId: User["id"], filename: string) {
     // filename : is a cuid + ".pdf"
     const resDb = await db.docs.create({
         data: {
-            title: file.name,
+            title: title,
             filename: filename,
-            description: "A file",
+            description: description,
             userId: userId,
         },
     });
