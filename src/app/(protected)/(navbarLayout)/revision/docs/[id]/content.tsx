@@ -93,6 +93,7 @@ export function ContentDocs({ docId }: { docId: string }) {
             // Fetch doc from db
             try {
                 fetchedDoc = await getDocById(docId);
+                if (!fetchedDoc) return notFound();
                 setDoc(fetchedDoc);
             } catch (error) {
                 console.error("Doc not found :", error);

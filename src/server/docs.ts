@@ -58,10 +58,10 @@ export async function getDocById(docId: Docs["id"]): Promise<Docs | null> {
                 id: docId,
             },
         });
-        return resDBDoc;
     } catch (e) {
         throw new Error("Error: Could not get docs.");
     }
+    return resDBDoc;
 }
 
 export async function getFile(doc: Docs): Promise<string> {
