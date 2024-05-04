@@ -16,12 +16,24 @@
         "description": "Upload docs"
     },
     {
+        "name": "delete_docs",
+        "description": "Delete docs"
+    },
+    {
         "name": "show_note",
         "description": "Display the note section"
     },
     {
         "name": "edit_note",
         "description": "takes note"
+    },
+    {
+        "name": "create_note",
+        "description": "create note"
+    },
+    {
+        "name": "delete_note",
+        "description": "create note"
     },
     {
         "name": "show_revision",
@@ -42,5 +54,37 @@
     {
         "name": "show_profile",
         "description": "Display the profile section"
+    },
+    {
+        "name": "edit_profile",
+        "description": "Edit the profile section"
+    },
+    {
+        "name": "show_users",
+        "description": "Show other user"
+    },
+    {
+        "name": "show_admin",
+        "description": "Display the admin section"
+    },
+    {
+        "name": "edit_feature",
+        "description": "Edit the feature for the user"
+    },
+    {
+        "name": "edit_feature",
+        "description": "Edit the feature for the user"
+    },
+    {
+        "name": "show_right",
+        "description": "Show user right"
+    },
+    {
+        "name": "edit_right",
+        "description": "Edit the right of a user"
+    },
+    {
+        "name": "show_public_info",
+        "description": "Show public info"
     }
 ]

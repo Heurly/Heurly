@@ -15,10 +15,19 @@ const UserProfile: React.FunctionComponent<Props> = ({ userId }) => {
     const [infos, setInfos] = useState<UserInfos | undefined>(undefined);
 
     useEffect(() => {
-        void getUserPublicInfo(userId).then((u) => {
-            if (u?.image != null && u.name != null)
+        const fetchUserPublicInfo = async () => {
+            let u = null;
+            try {
+                u = await getUserPublicInfo(userId);
+            } catch (e) {
+                console.error(e);
+            }
+            if (u === null) return;
+            if (u?.image != null && u.name != null) {
                 setInfos({ image: u.image, name: u.name });
-        });
+            }
+        };
+        void fetchUserPublicInfo();
     }, [userId]);
 
     return (

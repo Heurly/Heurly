@@ -10,6 +10,7 @@ import {
     Calendar,
     FileStack,
     Flame,
+    Shield,
     // Settings,
     User,
 } from "lucide-react";
@@ -52,10 +53,12 @@ export default async function NavBar() {
         isAllowedToSeeTimetable,
         isAllowedToSeeRevision,
         isAllowedToSeeEvent,
+        isAllowedToSeeAdmin,
     ] = await Promise.all([
         isAllowedTo("show_timetable", userId),
         isAllowedTo("show_revision", userId),
         isAllowedTo("show_event", userId),
+        isAllowedTo("show_admin", userId),
     ]);
 
     if (isAllowedToSeeTimetable.result)
@@ -75,6 +78,12 @@ export default async function NavBar() {
             name: "Evénements",
             icon: <Flame />,
             href: "/event",
+        });
+    if (isAllowedToSeeAdmin.result)
+        navbarElement.push({
+            name: "Admin",
+            icon: <Shield className="text-red-500" />,
+            href: "/admin",
         });
 
     navbarElement.push({

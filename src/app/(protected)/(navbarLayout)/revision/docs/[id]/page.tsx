@@ -7,8 +7,9 @@ export async function generateMetadata({
     params,
 }: {
     params: { id: string };
-}): Promise<Metadata> {
+}): Promise<Metadata | undefined> {
     const doc = await getDocById(params.id);
+    if (!doc) return;
     const url = `${env.NEXTAUTH_URL}/api/og?doc=${params.id}`;
     return {
         title: doc.title,
