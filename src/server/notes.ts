@@ -71,6 +71,44 @@ export async function updateNotes(notes: Notes) {
     return updatedNotes;
 }
 
+export async function updateNotesContent(
+    id: string,
+    content: string,
+): Promise<{ success: boolean; message: string }> {
+    const session = await getServerAuthSession();
+    if (session?.user?.id === undefined)
+        return {
+            success: false,
+            message: "You don't have the permission to access this data.",
+        };
+
+    let r = null;
+    let message = "";
+    try {
+        r = await db.notes.update({
+            where: {
+                id: id,
+                userId: session.user.id,
+            },
+            data: {
+                content:
+                    (JSON.parse(content) as Prisma.JsonValue) ??
+                    Prisma.JsonNull,
+                updatedAt: new Date(),
+            },
+        });
+    } catch (e) {
+        log({ type: TLog.error, text: "Could not save editor content to db." });
+        message = `Could not save editor content to db: ${(e as string) ?? ""}`;
+        throw e;
+    } finally {
+        return {
+            success: r !== null,
+            message: message,
+        };
+    }
+}
+
 export async function getCourseDateNotes(
     courseDate: CourseDate,
 ): Promise<Notes[] | null> {

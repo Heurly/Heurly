@@ -11,6 +11,8 @@ import {
 
 import Mathematics from "@tiptap-pro/extension-mathematics";
 
+import Typography from "@tiptap/extension-typography";
+
 import { cx } from "class-variance-authority";
 
 // from: https://novel.sh/docs/guides/tailwind/extensions
@@ -32,6 +34,7 @@ const taskList = TaskList.configure({
         class: cx("not-prose pl-2"),
     },
 });
+
 const taskItem = TaskItem.configure({
     HTMLAttributes: {
         class: cx("flex items-start my-4"),
@@ -106,4 +109,5 @@ export const defaultExtensions = [
     taskItem,
     horizontalRule,
     mathematics,
+    Typography,
 ];

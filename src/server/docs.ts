@@ -137,7 +137,7 @@ export async function deleteUserDoc(docId: Docs["id"], userId: User["id"]) {
 
         // delete the doc in the cloud storage
         const resDeleteFromBucket = await bucket.deleteFileByName(
-            "heurly_" + resDBDoc.filename,
+            resDBDoc.filename,
         );
         if (!resDeleteFromBucket.success)
             throw new Error("Error: Could not delete doc. (bucket error)");
@@ -202,7 +202,7 @@ export async function deleteDoc(docId: Docs["id"]) {
 
         // delete the doc in the cloud storage
         const resDeleteFromBucket = await bucket.deleteFileByName(
-            "heurly_" + resDBDoc.filename,
+            resDBDoc.filename,
         );
         if (!resDeleteFromBucket.success)
             throw new Error("Error: Could not delete doc. (bucket error)");
