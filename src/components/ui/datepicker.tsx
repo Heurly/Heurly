@@ -38,7 +38,6 @@ export function DatePicker({
     const handleDateSelect = (selectedDate: Date | undefined) => {
         if (selectedDate) {
             selectedDate.setHours(12);
-            console.log(selectedDate);
             onChange(selectedDate);
         } else {
             // Handle the case where selectedDate is undefined, if necessary
