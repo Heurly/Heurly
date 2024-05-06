@@ -5,7 +5,12 @@ import { RefObject } from "@fullcalendar/core/preact.js";
 import FullCalendar from "@fullcalendar/react";
 import { DatePicker } from "../ui/datepicker";
 import { Button } from "../ui/button";
-import { ArrowLeft, ArrowRight, LoaderCircle } from "lucide-react";
+import {
+    ArrowLeft,
+    ArrowRight,
+    FlagTriangleRight,
+    LoaderCircle,
+} from "lucide-react";
 import { goToNextPeriod, goToPreviousPeriod } from "@/utils/fullCalendarHelper";
 
 interface Props {
@@ -33,10 +38,11 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
     setLoading,
     expandHeader,
 }) => {
+    const date = calendarRef.current?.getApi().getDate();
+
+    if (!date) return null;
     return (
         <div className={className}>
-            <p>{periodDisplay}</p>
-
             <DatePicker
                 onChange={(d: Date) =>
                     handleDateChange(
@@ -49,14 +55,15 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
                         userId,
                     )
                 }
+                dateInput={date}
             />
             {expandHeader && (
                 <Button
-                    className="hidden bg-sky-50 text-black md:block"
+                    className="bg-sky-50 text-black"
                     onClick={() =>
                         handleDateChange(
                             calendarRef,
-                            new Date(),
+                            new Date(new Date().setHours(12)),
                             events,
                             setEvents,
                             setCalendarEvents,
@@ -66,13 +73,14 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
                     }
                     data-cy="todayBtn"
                 >
-                    Aujourd&apos;hui
+                    <FlagTriangleRight />
+                    <a className="hidden md:block">Aujourd&apos;hui</a>
                 </Button>
             )}
             {loading && <LoaderCircle className="ml-6 animate-spin" />}
             {expandHeader && (
                 <p data-cy="periodDisplay" className="ml-auto hidden md:block">
-                    {periodDisplay}
+                    {/* {periodDisplay} */}
                 </p>
             )}
             <Button
