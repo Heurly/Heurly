@@ -35,6 +35,8 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
 }) => {
     return (
         <div className={className}>
+            <p>{periodDisplay}</p>
+
             <DatePicker
                 onChange={(d: Date) =>
                     handleDateChange(

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
-
 import cn from "classnames";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -20,15 +19,16 @@ type PropsDatePicker = {
 };
 
 export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
+    // new Date in france timezone
     const [date, setDate] = useState<Date>(new Date());
 
     useEffect(() => {
         onChange(date);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [date]);
-
     const handleDateSelect = (selectedDate: Date | undefined) => {
         if (selectedDate) {
+            selectedDate.setHours(12);
             setDate(selectedDate);
         } else {
             // Handle the case where selectedDate is undefined, if necessary
@@ -62,6 +62,8 @@ export function DatePicker({ onChange, className = "" }: PropsDatePicker) {
                     selected={date}
                     onSelect={handleDateSelect}
                     initialFocus
+                    ISOWeek
+                    locale={fr}
                 />
             </PopoverContent>
         </Popover>
