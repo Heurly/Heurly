@@ -30,6 +30,66 @@ declare module "next-auth" {
     }
 }
 
+async function asignDefaultRole(userId: User["id"]) {
+    let userRoleId = null;
+    let testerRoleId = null;
+
+    try {
+        userRoleId = await db.role.findFirst({
+            where: {
+                name: "user",
+            },
+        });
+    } catch (e) {
+        console.log(e);
+        return false;
+    }
+
+    if (!userRoleId) {
+        return false;
+    }
+
+    try {
+        testerRoleId = await db.role.findFirst({
+            where: {
+                name: "tester",
+            },
+        });
+    } catch (e) {
+        console.log(e);
+        return false;
+    }
+    if (!testerRoleId) {
+        return false;
+    }
+
+    let resUserRole = null;
+
+    try {
+        resUserRole = await db.userRole.create({
+            data: {
+                roleId: userRoleId.id,
+                userId: userId,
+            },
+        });
+    } catch (e) {
+        console.log(e);
+    }
+
+    let resTesterRole = null;
+
+    try {
+        resTesterRole = await db.userRole.create({
+            data: {
+                roleId: testerRoleId.id,
+                userId: userId,
+            },
+        });
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -55,17 +115,26 @@ export const authOptions: NextAuthOptions = {
             user: User;
         }) {
             if (account && user) {
+                console.log("ziziz");
                 if (account.provider === "google" && user.email) {
                     const allowedEmail = await db.betaList.findFirst({
                         where: {
                             email: user.email,
                         },
                     });
+
+                    await asignDefaultRole(user.id);
                     if (!allowedEmail) return false;
                     return true;
                 }
             }
             return false;
+        },
+    },
+    events: {
+        createUser: async (message) => {
+            console.log("test", message);
+            await asignDefaultRole(message.user.id);
         },
     },
     adapter: PrismaAdapter(db),
