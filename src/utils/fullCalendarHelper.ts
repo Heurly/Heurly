@@ -66,7 +66,6 @@ export const goToPreviousPeriod = (
  */
 export const updatePeriodDisplay = (arg: DatesSetArg) => {
     const { view } = arg;
-
     let formatStr = "";
     switch (view.type) {
         case "timeGridWeek":
@@ -95,5 +94,7 @@ export const updatePeriodDisplay = (arg: DatesSetArg) => {
             ? startOfWeek(view.currentStart, { weekStartsOn: 1 })
             : view.currentStart;
 
-    return format(dateToFormat, formatStr, { locale: fr });
+    const date = format(dateToFormat, formatStr, { locale: fr });
+
+    return date;
 };
