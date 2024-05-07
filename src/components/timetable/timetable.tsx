@@ -79,7 +79,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
             <CardHeader className="h-1/6">
                 <TimetableHeader
                     periodDisplay={periodDisplay}
-                    className="flex w-full items-center justify-between gap-5"
+                    className="flex w-full items-center justify-between gap-2"
                     calendarRef={calendarRef}
                     events={events}
                     setEvents={setEvents}
