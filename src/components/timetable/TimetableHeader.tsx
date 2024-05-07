@@ -77,25 +77,27 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
                     <a className="hidden md:block">Aujourd&apos;hui</a>
                 </Button>
             )}
-            {loading && <LoaderCircle className="ml-6 animate-spin" />}
+            {loading && (
+                <LoaderCircle className="ml-6 hidden animate-spin md:block" />
+            )}
             {expandHeader && (
                 <p data-cy="periodDisplay" className="ml-auto hidden md:block">
                     {/* {periodDisplay} */}
                 </p>
             )}
             <Button
-                className="-order-1 aspect-square rounded-full bg-sky-50 p-3 md:order-[unset]"
+                className="-order-1 rounded-full bg-sky-50 md:order-[unset]"
                 onClick={() => goToPreviousPeriod(calendarRef)}
                 data-cy="previousPeriodBtn"
             >
-                <ArrowLeft className="text-black" size={45} />
+                <ArrowLeft className="text-black" />
             </Button>
             <Button
-                className="aspect-square rounded-full bg-sky-50 p-3"
+                className="rounded-full bg-sky-50"
                 onClick={() => goToNextPeriod(calendarRef)}
                 data-cy="nextPeriodBtn"
             >
-                <ArrowRight className="text-black" size={45} />
+                <ArrowRight className="text-black" />
             </Button>
         </div>
     );
