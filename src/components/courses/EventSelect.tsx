@@ -106,13 +106,15 @@ const EventSelect: React.FunctionComponent<Props> = ({
 					nowIndicator={true}
 					eventClick={(eventClickArgs) => {
 						if (
-							eventClickArgs?.event?.extendedProps?.courseId === undefined &&
+							eventClickArgs?.event?.extendedProps?.courseId ===
+								undefined &&
 							eventClickArgs?.event?.startStr === undefined
 						)
 							return;
 
 						setValue({
-							courseId: eventClickArgs.event.extendedProps.courseId as number,
+							courseId: eventClickArgs.event.extendedProps
+								.courseId as number,
 							courseDate: new Date(eventClickArgs.event.startStr),
 						});
 					}}

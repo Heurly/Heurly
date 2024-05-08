@@ -94,7 +94,9 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
 						className="left-[unset] right-0 flex h-2/3 w-full flex-col p-6 md:h-full md:w-[500px]"
 					>
 						<DrawerTitle className="p-6">
-							<p className="text-3xl font-bold">Gestion de notes</p>
+							<p className="text-3xl font-bold">
+								Gestion de notes
+							</p>
 							<p className="text-xl">Titre : {notes.title}</p>
 						</DrawerTitle>
 						<div className="mt-6 flex size-full flex-col gap-4">
@@ -102,7 +104,9 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
 							<div className="flex items-center gap-4 rounded-xl border p-6 align-middle">
 								<NotesVisibility isPublic={notes.public} />
 								<Switch
-									disabled={session.data?.user.id !== notes.userId}
+									disabled={
+										session.data?.user.id !== notes.userId
+									}
 									onCheckedChange={async (v) => {
 										setNotes({
 											...notes,
@@ -113,7 +117,9 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
 								/>
 							</div>
 							<Collapsible className="flex flex-col gap-2">
-								<h3 className="text-xl font-bold">Cours associé</h3>
+								<h3 className="text-xl font-bold">
+									Cours associé
+								</h3>
 								<div className=" rounded-xl border p-6">
 									<CollapsibleTrigger className="flex w-fit items-center justify-between gap-4 rounded-xl border bg-sky-200 p-1 px-4 text-sm text-slate-600 hover:bg-sky-200/50">
 										<CalendarSearch />
@@ -125,7 +131,10 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
 														course?.small_code ??
 														""}
 												</p>
-												<p>{notes.courseDate?.toLocaleString() ?? ""}</p>
+												<p>
+													{notes.courseDate?.toLocaleString() ??
+														""}
+												</p>
 											</div>
 										) : (
 											<p>Associer un cours</p>

@@ -76,7 +76,9 @@ export default function FormAnswer({ userId, questionId }: PropsFormAnswer) {
 														: "h-2 min-h-[2.5rem] border-x-0 border-t-0",
 												)}
 												{...field}
-												onClick={() => setIsClicked(true)}
+												onClick={() =>
+													setIsClicked(true)
+												}
 											/>
 										</FormControl>
 										<FormMessage />

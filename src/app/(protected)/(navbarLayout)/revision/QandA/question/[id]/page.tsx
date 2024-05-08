@@ -49,8 +49,12 @@ export default async function QuestionPage({
 				downvotes={questionAndAnswersDb.downvotes}
 				nbrAnswers={questionAndAnswersDb.answer?.length}
 				className="sticky top-0 z-10"
-				hasVotedDown={questionAndAnswersDb.UserVoteQuestion[0]?.vote === 0}
-				hasVotedUp={questionAndAnswersDb.UserVoteQuestion[0]?.vote === 1}
+				hasVotedDown={
+					questionAndAnswersDb.UserVoteQuestion[0]?.vote === 0
+				}
+				hasVotedUp={
+					questionAndAnswersDb.UserVoteQuestion[0]?.vote === 1
+				}
 			/>
 			<ResponseCard user={session.user} questionId={params.id} />
 

@@ -34,7 +34,10 @@ const UserProfile: React.FunctionComponent<Props> = ({ userId }) => {
 	return (
 		<div className="flex items-center gap-5">
 			<Avatar>
-				<AvatarImage src={infos?.image ?? ""} alt={infos?.name ?? "?"} />
+				<AvatarImage
+					src={infos?.image ?? ""}
+					alt={infos?.name ?? "?"}
+				/>
 				<AvatarFallback>?</AvatarFallback>
 			</Avatar>
 			<p>{infos?.name ?? "chargement..."}</p>

@@ -55,16 +55,21 @@ export default async function PageUserProfile() {
 
 			<Card className="overflow-y-auto md:col-span-2 md:col-start-2 md:row-span-1">
 				<CardHeader>
-					<h2 className="text-xl font-bold">Mes url d&apos;emplois du temps</h2>
+					<h2 className="text-xl font-bold">
+						Mes url d&apos;emplois du temps
+					</h2>
 				</CardHeader>
 				<CardContent>
 					{userUrl.length > 0 ? (
 						<>
-							<MultipleUrlForm initialUrls={userUrl.map((item) => item.url)} />
+							<MultipleUrlForm
+								initialUrls={userUrl.map((item) => item.url)}
+							/>
 						</>
 					) : (
 						<p>
-							Vous n&apos;avez pas encore d&apos;url d&apos;emplois du temps.
+							Vous n&apos;avez pas encore d&apos;url
+							d&apos;emplois du temps.
 						</p>
 					)}
 					{/* <Separator /> */}
@@ -72,11 +77,17 @@ export default async function PageUserProfile() {
 			</Card>
 
 			<Card className="col-span-1 row-span-2">
-				<CardHeader className="text-xl font-bold">Mon Activité</CardHeader>
-				<CardContent className="w-full">Aucune activité récente.</CardContent>
+				<CardHeader className="text-xl font-bold">
+					Mon Activité
+				</CardHeader>
+				<CardContent className="w-full">
+					Aucune activité récente.
+				</CardContent>
 			</Card>
 			<Card className="col-span-1 row-span-2">
-				<CardHeader className="text-xl font-bold">Mes Documents</CardHeader>
+				<CardHeader className="text-xl font-bold">
+					Mes Documents
+				</CardHeader>
 				<CardContent className="w-full">
 					<DocsTable data={userDocs ?? []} />
 				</CardContent>

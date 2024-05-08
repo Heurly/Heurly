@@ -108,12 +108,21 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
 				<CardHeader className="col-start-1">
 					<div className="flex items-center gap-3">
 						<Avatar>
-							<AvatarImage src={author.image ?? ""} alt={author.name} />
-							<AvatarFallback>{nameToInitials(author.name)}</AvatarFallback>
+							<AvatarImage
+								src={author.image ?? ""}
+								alt={author.name}
+							/>
+							<AvatarFallback>
+								{nameToInitials(author.name)}
+							</AvatarFallback>
 						</Avatar>
 
 						<div>
-							{title && <h2 className="font-bold md:text-lg">{title}</h2>}
+							{title && (
+								<h2 className="font-bold md:text-lg">
+									{title}
+								</h2>
+							)}
 							<p className="text-xs">
 								{authorName}&nbsp;le&nbsp;
 								<DateFormatted format="dd/MM/yyyy à hh:mm:ss">

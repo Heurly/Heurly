@@ -30,7 +30,9 @@ export default function AdminPage() {
 	return (
 		<Card>
 			<CardHeader>
-				<h1 className="text-xl font-bold">Page d&apos;administrateur</h1>
+				<h1 className="text-xl font-bold">
+					Page d&apos;administrateur
+				</h1>
 			</CardHeader>
 			<CardContent className="flex flex-col flex-wrap gap-5 md:flex-row">
 				{adminPages.map((page) => (

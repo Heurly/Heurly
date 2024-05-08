@@ -39,9 +39,8 @@ export function DataTable<TData, TValue>({
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [columnVisibility, setColumnVisibility] =
 		React.useState<VisibilityState>({});
-	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-		[],
-	);
+	const [columnFilters, setColumnFilters] =
+		React.useState<ColumnFiltersState>([]);
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 
 	const table = useReactTable({
@@ -76,11 +75,15 @@ export function DataTable<TData, TValue>({
 							<TableRow key={headerGroup.id}>
 								{headerGroup.headers.map((header) => {
 									return (
-										<TableHead key={header.id} colSpan={header.colSpan}>
+										<TableHead
+											key={header.id}
+											colSpan={header.colSpan}
+										>
 											{header.isPlaceholder
 												? null
 												: flexRender(
-														header.column.columnDef.header,
+														header.column.columnDef
+															.header,
 														header.getContext(),
 													)}
 										</TableHead>
@@ -94,7 +97,9 @@ export function DataTable<TData, TValue>({
 							table.getRowModel().rows.map((row) => (
 								<TableRow
 									key={row.id}
-									data-state={row.getIsSelected() && "selected"}
+									data-state={
+										row.getIsSelected() && "selected"
+									}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id}>

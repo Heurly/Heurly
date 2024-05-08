@@ -68,7 +68,9 @@ const CoursesSelect: React.FunctionComponent<Props> = ({
 								className="!border-none focus:!ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
 								autoFocus
 								value={query}
-								onChange={(e: ChangeEvent<HTMLInputElement>) => {
+								onChange={(
+									e: ChangeEvent<HTMLInputElement>,
+								) => {
 									setLoading(true);
 									setQuery(e.currentTarget.value);
 								}}
@@ -84,7 +86,9 @@ const CoursesSelect: React.FunctionComponent<Props> = ({
 
 						<Separator />
 						<CommandEmpty>
-							{query !== "" ? "Aucun résultat." : "Tapez un nom ou un code."}
+							{query !== ""
+								? "Aucun résultat."
+								: "Tapez un nom ou un code."}
 						</CommandEmpty>
 						<CommandList>
 							{courses.map((c) => (
@@ -102,7 +106,9 @@ const CoursesSelect: React.FunctionComponent<Props> = ({
 									<Check
 										className={cn(
 											"mr-2 h-4 w-4",
-											value?.value === c.value ? "opacity-100" : "opacity-0",
+											value?.value === c.value
+												? "opacity-100"
+												: "opacity-0",
 										)}
 									/>
 									{c.label}

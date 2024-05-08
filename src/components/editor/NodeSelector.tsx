@@ -43,21 +43,24 @@ const items: SelectorItem[] = [
 		icon: Heading1,
 		command: (editor) =>
 			editor?.chain().focus().toggleHeading({ level: 1 }).run(),
-		isActive: (editor) => editor?.isActive("heading", { level: 1 }) ?? false,
+		isActive: (editor) =>
+			editor?.isActive("heading", { level: 1 }) ?? false,
 	},
 	{
 		name: "Heading 2",
 		icon: Heading2,
 		command: (editor) =>
 			editor?.chain().focus().toggleHeading({ level: 2 }).run(),
-		isActive: (editor) => editor?.isActive("heading", { level: 2 }) ?? false,
+		isActive: (editor) =>
+			editor?.isActive("heading", { level: 2 }) ?? false,
 	},
 	{
 		name: "Heading 3",
 		icon: Heading3,
 		command: (editor) =>
 			editor?.chain().focus().toggleHeading({ level: 3 }).run(),
-		isActive: (editor) => editor?.isActive("heading", { level: 3 }) ?? false,
+		isActive: (editor) =>
+			editor?.isActive("heading", { level: 3 }) ?? false,
 	},
 	{
 		name: "To-do List",
@@ -115,7 +118,9 @@ export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
 				className="gap-2 rounded-none border-none hover:bg-accent focus:ring-0"
 			>
 				<Button variant="ghost" className="gap-2">
-					<span className="whitespace-nowrap text-sm">{activeItem.name}</span>
+					<span className="whitespace-nowrap text-sm">
+						{activeItem.name}
+					</span>
 					<ChevronDown className="h-4 w-4" />
 				</Button>
 			</PopoverTrigger>
@@ -135,7 +140,9 @@ export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
 							</div>
 							<span>{item.name}</span>
 						</div>
-						{activeItem.name === item.name && <Check className="h-4 w-4" />}
+						{activeItem.name === item.name && (
+							<Check className="h-4 w-4" />
+						)}
 					</EditorBubbleItem>
 				))}
 			</PopoverContent>

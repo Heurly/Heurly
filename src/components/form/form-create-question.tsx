@@ -44,7 +44,9 @@ export default function FormCreateQuestion({
 				question: "",
 				description: "",
 			});
-			router.push(`/revision/QandA/question/${resCreateQuestion.data.id}`);
+			router.push(
+				`/revision/QandA/question/${resCreateQuestion.data.id}`,
+			);
 		}
 	};
 

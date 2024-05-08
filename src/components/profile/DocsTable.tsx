@@ -24,7 +24,9 @@ const columns: ColumnDef<Docs>[] = [
 		header: ({ column }) => (
 			<DataTableSortableHeader
 				label="Titre"
-				action={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				action={() =>
+					column.toggleSorting(column.getIsSorted() === "asc")
+				}
 			/>
 		),
 	},
@@ -33,7 +35,9 @@ const columns: ColumnDef<Docs>[] = [
 		header: ({ column }) => (
 			<DataTableSortableHeader
 				label="Créé le"
-				action={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				action={() =>
+					column.toggleSorting(column.getIsSorted() === "asc")
+				}
 			/>
 		),
 		cell: ({ cell }) => (
@@ -45,7 +49,8 @@ const columns: ColumnDef<Docs>[] = [
 		accessorKey: "id",
 		cell: ({ row }) => {
 			// see: https://typescript-eslint.io/rules/restrict-template-expressions/
-			const id: string & { _kind?: "not_found" } = row.getValue("actions");
+			const id: string & { _kind?: "not_found" } =
+				row.getValue("actions");
 
 			return (
 				<DropdownMenu>
@@ -69,7 +74,8 @@ const columns: ColumnDef<Docs>[] = [
 									await deleteDoc(id);
 								}}
 								title={`Suppression de ${
-									row.getValue("title")?.toString() ?? "votre document"
+									row.getValue("title")?.toString() ??
+									"votre document"
 								}`}
 								text={`Êtes-vous sûr de vouloir supprimer le document "${
 									row.getValue("title")?.toString() ?? ""

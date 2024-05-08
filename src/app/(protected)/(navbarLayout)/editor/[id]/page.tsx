@@ -53,10 +53,11 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 		}
 
 		try {
-			const r: { success: boolean; message: string } = await updateNotesContent(
-				newNotes.id,
-				JSON.stringify(newNotes.content),
-			);
+			const r: { success: boolean; message: string } =
+				await updateNotesContent(
+					newNotes.id,
+					JSON.stringify(newNotes.content),
+				);
 
 			if (!r.success) {
 				throw new Error("Error occured while trying to update notes.");
@@ -78,7 +79,10 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 	useEffect(() => {
 		if (dbNotes?.updatedAt === undefined) return;
 
-		if (localNotes === undefined || dbNotes.updatedAt > localNotes?.updatedAt) {
+		if (
+			localNotes === undefined ||
+			dbNotes.updatedAt > localNotes?.updatedAt
+		) {
 			setLocalNotes(dbNotes);
 		}
 	}, [params.id, localNotes, dbNotes, setLocalNotes]);
@@ -92,7 +96,8 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 		<div className="size-full">
 			{localNotes !== undefined &&
 				session?.data?.user?.id !== undefined &&
-				(localNotes.userId === session.data.user.id || localNotes.public) && (
+				(localNotes.userId === session.data.user.id ||
+					localNotes.public) && (
 					<Card className="size-full rounded-xl p-2">
 						<div
 							className="flex size-full flex-col overflow-x-hidden overflow-y-scroll bg-white"
@@ -103,18 +108,26 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 							{shrink ? (
 								<div className="sticky top-0 z-40 mb-2 flex h-10 flex-row items-center gap-2 bg-white p-2 align-middle text-sm text-slate-400">
 									<p>{localNotes.title}</p>
-									{session.data.user.id === localNotes.userId ? (
+									{session.data.user.id ===
+									localNotes.userId ? (
 										<div>
 											{saveState === SaveState.Saved && (
 												<CircleCheck size={15} />
 											)}
-											{saveState === SaveState.Error && <CircleX size={15} />}
+											{saveState === SaveState.Error && (
+												<CircleX size={15} />
+											)}
 											{saveState === SaveState.Saving && (
-												<LoaderCircle size={15} className="animate-spin" />
+												<LoaderCircle
+													size={15}
+													className="animate-spin"
+												/>
 											)}
 										</div>
 									) : (
-										<UserProfile userId={localNotes.userId} />
+										<UserProfile
+											userId={localNotes.userId}
+										/>
 									)}
 								</div>
 							) : (
@@ -123,11 +136,15 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 										<Input
 											className="!border-none !text-xl font-bold md:!text-3xl"
 											type="text"
-											disabled={session.data?.user.id !== localNotes.userId}
+											disabled={
+												session.data?.user.id !==
+												localNotes.userId
+											}
 											value={localNotes?.title ?? ""}
 											placeholder="Nom du document"
 											onChange={(event) => {
-												if (localNotes === undefined) return;
+												if (localNotes === undefined)
+													return;
 												setLocalNotes({
 													...localNotes,
 													title: event.target.value,
@@ -137,17 +154,26 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 										/>
 									</div>
 									<div className="ml-auto flex items-center">
-										{session.data.user.id === localNotes.userId ? (
+										{session.data.user.id ===
+										localNotes.userId ? (
 											<div className="flex items-center gap-2">
 												<div className="flex items-center gap-1 rounded-xl bg-slate-200 p-2 text-sm text-slate-400">
-													{saveState === SaveState.Saved && (
-														<CircleCheck size={18} />
+													{saveState ===
+														SaveState.Saved && (
+														<CircleCheck
+															size={18}
+														/>
 													)}
-													{saveState === SaveState.Error && (
+													{saveState ===
+														SaveState.Error && (
 														<CircleX size={18} />
 													)}
-													{saveState === SaveState.Saving && (
-														<LoaderCircle size={18} className="animate-spin" />
+													{saveState ===
+														SaveState.Saving && (
+														<LoaderCircle
+															size={18}
+															className="animate-spin"
+														/>
 													)}
 													<p className="hidden align-middle md:visible">
 														{saveState}
@@ -156,11 +182,15 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 												<EllipsisVertical
 													size={25}
 													className="cursor-pointer"
-													onClick={() => setDrawerOpen(true)}
+													onClick={() =>
+														setDrawerOpen(true)
+													}
 												/>
 											</div>
 										) : (
-											<UserProfile userId={localNotes.userId} />
+											<UserProfile
+												userId={localNotes.userId}
+											/>
 										)}
 									</div>
 								</div>
@@ -179,9 +209,14 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 							<CardContent className="size-full">
 								<HeurlyEditor
 									className="size-full"
-									canEdit={session.data.user.id === localNotes.userId}
+									canEdit={
+										session.data.user.id ===
+										localNotes.userId
+									}
 									debouncedUpdates={updates}
-									initialContent={localNotes?.content as JSONContent}
+									initialContent={
+										localNotes?.content as JSONContent
+									}
 									setSaveState={setSaveState}
 								/>
 							</CardContent>

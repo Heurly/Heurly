@@ -40,7 +40,10 @@ export default function FormUrlTimetable({ className }: PropsFormUrlTimetable) {
 				await addProfileUnitByUrl(session.data.user.id, data.url);
 				router.refresh();
 			} catch (error) {
-				console.error("Erreur lors de l'ajout de l'URL du profil :", error);
+				console.error(
+					"Erreur lors de l'ajout de l'URL du profil :",
+					error,
+				);
 			}
 		}
 	};

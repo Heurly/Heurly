@@ -81,13 +81,16 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
 	return (
 		<div
 			className={className ?? ""}
-			onClick={() => setKatexPreview({ ...katexPreview, shouldPreview: false })}
+			onClick={() =>
+				setKatexPreview({ ...katexPreview, shouldPreview: false })
+			}
 		>
 			<EditorRoot>
 				<EditorContent
 					editorProps={{
 						handleDOMEvents: {
-							keydown: (_view, event) => handleCommandNavigation(event),
+							keydown: (_view, event) =>
+								handleCommandNavigation(event),
 						},
 					}}
 					editable={canEdit ?? false}
@@ -116,10 +119,19 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
 						}}
 						className="flex w-fit max-w-[90vw] overflow-hidden rounded border border-muted bg-background shadow-xl"
 					>
-						<NodeSelector open={openNode} onOpenChange={setOpenNode} />
-						<LinkSelector open={openLink} onOpenChange={setOpenLink} />
+						<NodeSelector
+							open={openNode}
+							onOpenChange={setOpenNode}
+						/>
+						<LinkSelector
+							open={openLink}
+							onOpenChange={setOpenLink}
+						/>
 						<TextButtons />
-						<ColorSelector open={openColor} onOpenChange={setOpenColor} />
+						<ColorSelector
+							open={openColor}
+							onOpenChange={setOpenColor}
+						/>
 					</EditorBubble>
 					<EditorCommand className="z-50 h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
 						<EditorCommandEmpty className="px-2 text-muted-foreground">
@@ -139,7 +151,9 @@ const HeurlyEditor: React.FunctionComponent<Props> = ({
 										{item.icon}
 									</div>
 									<div>
-										<p className="font-medium">{item.title}</p>
+										<p className="font-medium">
+											{item.title}
+										</p>
 										<p className="text-xs text-muted-foreground">
 											{item.description}
 										</p>

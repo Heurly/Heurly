@@ -21,14 +21,18 @@ const columns: ColumnDef<Notes>[] = [
 	{
 		accessorKey: "userId",
 		header: "Auteur",
-		cell: ({ cell }) => <UserProfile userId={cell.row.getValue("userId")} />,
+		cell: ({ cell }) => (
+			<UserProfile userId={cell.row.getValue("userId")} />
+		),
 	},
 	{
 		accessorKey: "title",
 		header: ({ column }) => (
 			<DataTableSortableHeader
 				label="Titre"
-				action={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				action={() =>
+					column.toggleSorting(column.getIsSorted() === "asc")
+				}
 			/>
 		),
 	},
@@ -37,7 +41,9 @@ const columns: ColumnDef<Notes>[] = [
 		header: ({ column }) => (
 			<DataTableSortableHeader
 				label="Modification"
-				action={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				action={() =>
+					column.toggleSorting(column.getIsSorted() === "asc")
+				}
 			/>
 		),
 		cell: ({ cell }) => (
@@ -49,7 +55,9 @@ const columns: ColumnDef<Notes>[] = [
 		header: ({ column }) => (
 			<DataTableSortableHeader
 				label="Cours"
-				action={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				action={() =>
+					column.toggleSorting(column.getIsSorted() === "asc")
+				}
 			/>
 		),
 	},

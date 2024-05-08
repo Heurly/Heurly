@@ -15,7 +15,10 @@ export default async function ListFeaturePage() {
 				</div>
 			</CardHeader>
 			<CardContent>
-				<DataTable data={features ?? []} columns={featureDetailsColumns} />
+				<DataTable
+					data={features ?? []}
+					columns={featureDetailsColumns}
+				/>
 			</CardContent>
 		</Card>
 	);

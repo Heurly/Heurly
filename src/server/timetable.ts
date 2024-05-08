@@ -27,7 +27,8 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
 		});
 
 		let found = dbRef.sort(
-			(a, b) => Number.parseInt(b.year ?? "0") - Number.parseInt(a.year ?? "0"),
+			(a, b) =>
+				Number.parseInt(b.year ?? "0") - Number.parseInt(a.year ?? "0"),
 		)[0];
 
 		if (found === undefined) {
@@ -102,8 +103,14 @@ export async function getTimetableData(
 			// if ESIEE Paris url
 			if (isESIEEUrl) {
 				url.searchParams.delete("nbWeeks");
-				url.searchParams.append("firstDate", format(dateFrom, "yyyy-MM-dd"));
-				url.searchParams.append("lastDate", format(dateTo, "yyyy-MM-dd"));
+				url.searchParams.append(
+					"firstDate",
+					format(dateFrom, "yyyy-MM-dd"),
+				);
+				url.searchParams.append(
+					"lastDate",
+					format(dateTo, "yyyy-MM-dd"),
+				);
 			}
 
 			const icalData = await fetch(url);
@@ -114,10 +121,14 @@ export async function getTimetableData(
 			) as unknown as CalendarData;
 
 			if (isESIEEUrl) {
-				await translateCoursesCodes(resCalendarJson.VCALENDAR[0].VEVENT ?? []);
+				await translateCoursesCodes(
+					resCalendarJson.VCALENDAR[0].VEVENT ?? [],
+				);
 			}
 
-			res.VCALENDAR[0].VEVENT.push(...resCalendarJson.VCALENDAR[0].VEVENT);
+			res.VCALENDAR[0].VEVENT.push(
+				...resCalendarJson.VCALENDAR[0].VEVENT,
+			);
 		}
 
 		return res;

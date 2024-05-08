@@ -100,7 +100,14 @@ export default async function NavBar() {
 			</Link>
 			<div className="flex w-full justify-between gap-10 px-5 md:w-[unset] md:flex-col">
 				{navbarElement.map(({ href, name, icon }) => {
-					return <NavBarItems key={ID()} name={name} icon={icon} href={href} />;
+					return (
+						<NavBarItems
+							key={ID()}
+							name={name}
+							icon={icon}
+							href={href}
+						/>
+					);
 				})}
 				<InstallPwaButton variant={"icon"} />
 			</div>

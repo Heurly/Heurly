@@ -33,12 +33,16 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
 		const checkUrl = schemaUrl.safeParse(url);
 		if (!checkUrl.success) throw new Error("invalid URL");
 		try {
-			const isDelete = await deleteProfileUnitUrl(session.data.user.id, url);
+			const isDelete = await deleteProfileUnitUrl(
+				session.data.user.id,
+				url,
+			);
 			if (!isDelete) throw new Error("Error while deleting the URL");
 			const newUrls = urls.filter((_, i) => i !== index);
 			setUrls(newUrls);
 		} catch (e) {
-			if (e instanceof Error) log({ type: TLog.error, text: `${e.message}` });
+			if (e instanceof Error)
+				log({ type: TLog.error, text: `${e.message}` });
 		}
 	};
 
@@ -64,7 +68,8 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
 			if (!isAdd) throw new Error("Error while adding the URL");
 			setUrls([...urls, safeUrlToAdd]);
 		} catch (e) {
-			if (e instanceof Error) log({ type: TLog.error, text: `${e.message}` });
+			if (e instanceof Error)
+				log({ type: TLog.error, text: `${e.message}` });
 		}
 	};
 
@@ -73,14 +78,20 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
 			<div className="flex h-28 flex-col gap-y-2 overflow-auto">
 				{urls.map((url: string, index) => (
 					<div className="flex gap-x-4" key={ID()}>
-						<InputCopy type="text" placeholder="votre URL" value={url} />
+						<InputCopy
+							type="text"
+							placeholder="votre URL"
+							value={url}
+						/>
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button
 										size={"icon"}
 										className="!rounded-md"
-										onClick={() => handleDeleteURL(url, index)}
+										onClick={() =>
+											handleDeleteURL(url, index)
+										}
 									>
 										<Trash2 />
 									</Button>

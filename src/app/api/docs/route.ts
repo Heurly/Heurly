@@ -110,7 +110,8 @@ async function handleFormUploadDocs(data: FormData) {
 		});
 		// upload the file to the cloud
 		try {
-			const resUploadOneFile = await bucket.uploadFile(file_with_new_name);
+			const resUploadOneFile =
+				await bucket.uploadFile(file_with_new_name);
 			if (!resUploadOneFile.success) {
 				return {
 					error: "Error uploading the file",

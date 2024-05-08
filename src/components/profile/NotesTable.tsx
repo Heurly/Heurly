@@ -25,7 +25,9 @@ const columns: ColumnDef<Notes>[] = [
 		header: ({ column }) => (
 			<DataTableSortableHeader
 				label="Titre"
-				action={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				action={() =>
+					column.toggleSorting(column.getIsSorted() === "asc")
+				}
 			/>
 		),
 	},
@@ -34,7 +36,9 @@ const columns: ColumnDef<Notes>[] = [
 		header: ({ column }) => (
 			<DataTableSortableHeader
 				label="Modification"
-				action={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				action={() =>
+					column.toggleSorting(column.getIsSorted() === "asc")
+				}
 			/>
 		),
 		cell: ({ cell }) => (
@@ -46,7 +50,9 @@ const columns: ColumnDef<Notes>[] = [
 		header: ({ column }) => (
 			<DataTableSortableHeader
 				label="Visibilité"
-				action={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				action={() =>
+					column.toggleSorting(column.getIsSorted() === "asc")
+				}
 			/>
 		),
 		cell: ({ cell }) => (
@@ -58,7 +64,8 @@ const columns: ColumnDef<Notes>[] = [
 		accessorKey: "id",
 		cell: ({ row }) => {
 			// see: https://typescript-eslint.io/rules/restrict-template-expressions/
-			const id: string & { _kind?: "not_found" } = row.getValue("actions");
+			const id: string & { _kind?: "not_found" } =
+				row.getValue("actions");
 
 			return (
 				<DropdownMenu>
@@ -76,11 +83,15 @@ const columns: ColumnDef<Notes>[] = [
 							</DropdownMenuItem>
 						</Link>
 						{row.getValue("public") ? (
-							<DropdownMenuItem onClick={() => setNoteVisibility(id, false)}>
+							<DropdownMenuItem
+								onClick={() => setNoteVisibility(id, false)}
+							>
 								Rendre Privée
 							</DropdownMenuItem>
 						) : (
-							<DropdownMenuItem onClick={() => setNoteVisibility(id, true)}>
+							<DropdownMenuItem
+								onClick={() => setNoteVisibility(id, true)}
+							>
 								Rendre Publique
 							</DropdownMenuItem>
 						)}
@@ -89,7 +100,8 @@ const columns: ColumnDef<Notes>[] = [
 							<ConfirmationDialog
 								onConfirm={() => deleteNotes(id)}
 								title={`Suppression de ${
-									row.getValue("title")?.toString() ?? "votre note"
+									row.getValue("title")?.toString() ??
+									"votre note"
 								}`}
 								text={`Êtes-vous sûr de vouloir supprimer la note "${
 									row.getValue("title")?.toString() ?? ""

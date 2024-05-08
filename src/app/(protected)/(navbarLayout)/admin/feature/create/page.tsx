@@ -48,13 +48,18 @@ export default function FeatureCreatePage() {
 						onChange={(e) => {
 							const value = e.target.value;
 							setNameValue(value);
-							const params = new URLSearchParams(searchParams.toString());
+							const params = new URLSearchParams(
+								searchParams.toString(),
+							);
 							params.set("name", value);
 							router.push(`${pathname}?${params.toString()}`);
 						}}
 					/>
 					<Label>Liens de la page de la feature</Label>
-					<Input type="text" placeholder="https://heurly.fr/nouvelle/feature" />
+					<Input
+						type="text"
+						placeholder="https://heurly.fr/nouvelle/feature"
+					/>
 					<Button type="submit" className="self-end">
 						Demander
 					</Button>

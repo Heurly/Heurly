@@ -20,10 +20,12 @@ export default function AlertTimetable({ isNewUser }: { isNewUser: boolean }) {
 		<AlertDialog open={isOpen}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Bonjour le nouveau late !</AlertDialogTitle>
+					<AlertDialogTitle>
+						Bonjour le nouveau late !
+					</AlertDialogTitle>
 					{/* <AlertDialogDescription> */}
-					Plus qu&apos;une étape pour être un vrai late, tu dois renseigner ton
-					URL de calendrier et c&apos;est parti !
+					Plus qu&apos;une étape pour être un vrai late, tu dois
+					renseigner ton URL de calendrier et c&apos;est parti !
 					{/* </AlertDialogDescription> */}
 				</AlertDialogHeader>
 				<FormUrlTimetable />

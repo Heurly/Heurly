@@ -17,7 +17,10 @@ export default function WrapCellInputSelectMultipleFeature({
 		await addRoleFeature(roleId, featureId);
 	};
 
-	const handleDelete = async (roleId: Role["id"], featureId: Feature["id"]) => {
+	const handleDelete = async (
+		roleId: Role["id"],
+		featureId: Feature["id"],
+	) => {
 		console.log(roleId, featureId);
 		await deleteRight(roleId, featureId);
 	};
@@ -29,7 +32,8 @@ export default function WrapCellInputSelectMultipleFeature({
 	useEffect(() => {
 		const fetchFeatures = async () => {
 			const resGetFeatures = await getFeatures();
-			if (resGetFeatures === null) throw new Error("Error fetching features");
+			if (resGetFeatures === null)
+				throw new Error("Error fetching features");
 			setFeatures(resGetFeatures);
 		};
 		void fetchFeatures();

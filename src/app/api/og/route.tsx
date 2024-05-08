@@ -59,11 +59,15 @@ async function Found({
 				<div tw="mt-16 flex text-6xl leading-normal text-gray-200">
 					{document.title}
 				</div>
-				<div tw="mt-5 flex text-3xl text-gray-300">{document.description}</div>
+				<div tw="mt-5 flex text-3xl text-gray-300">
+					{document.description}
+				</div>
 				<div tw="mt-5 flex items-center text-xl text-gray-300">
 					<div>{user.name}</div>
 					<div tw="-mt-2 ml-3">.</div>
-					<div tw="ml-3">{document.updatedAt.toLocaleDateString()}</div>
+					<div tw="ml-3">
+						{document.updatedAt.toLocaleDateString()}
+					</div>
 				</div>
 			</div>
 		</div>,

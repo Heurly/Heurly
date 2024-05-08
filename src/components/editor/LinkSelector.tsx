@@ -42,12 +42,18 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
 	return (
 		<Popover modal={true} open={open} onOpenChange={onOpenChange}>
 			<PopoverTrigger asChild>
-				<Button variant="ghost" className="gap-2 rounded-none border-none">
+				<Button
+					variant="ghost"
+					className="gap-2 rounded-none border-none"
+				>
 					<p className="text-base">↗</p>
 					<p
-						className={cn("underline decoration-stone-400 underline-offset-4", {
-							"text-blue-500": editor.isActive("link"),
-						})}
+						className={cn(
+							"underline decoration-stone-400 underline-offset-4",
+							{
+								"text-blue-500": editor.isActive("link"),
+							},
+						)}
 					>
 						Link
 					</p>
@@ -60,7 +66,8 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
 						e.preventDefault();
 						const input = target[0] as HTMLInputElement;
 						const url = getUrlFromString(input.value);
-						url && editor.chain().focus().setLink({ href: url }).run();
+						url &&
+							editor.chain().focus().setLink({ href: url }).run();
 					}}
 					className="flex  p-1 "
 				>
@@ -69,7 +76,9 @@ export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
 						type="text"
 						placeholder="Paste a link"
 						className="flex-1 bg-background p-1 text-sm outline-none"
-						defaultValue={(editor.getAttributes("link").href as string) ?? ""}
+						defaultValue={
+							(editor.getAttributes("link").href as string) ?? ""
+						}
 					/>
 					{editor.getAttributes("link").href ? (
 						<Button

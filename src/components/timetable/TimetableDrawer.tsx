@@ -88,7 +88,8 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 		// Then, when we use eventInfo.event._instance.range.start, we get 08/04/2024 08:00 to which a timezone is added, resulting in a wrong date. (ex. 08/04/2024 10:00)
 		const correctedCourseDate = new Date(
 			eventInfo.event._instance.range.start.getTime() +
-				eventInfo.event._instance.range.start.getTimezoneOffset() * 60000,
+				eventInfo.event._instance.range.start.getTimezoneOffset() *
+					60000,
 		);
 
 		void getCourseDateNotes({
@@ -148,7 +149,8 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 								<p className="text-xl font-bold">Horaire</p>
 								<p>
 									{`${
-										eventInfo.event._instance?.range?.start !== undefined
+										eventInfo.event._instance?.range
+											?.start !== undefined
 											? eventInfo.event._instance?.range?.start
 													?.toISOString()
 													.split("T")[1]
@@ -157,21 +159,23 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 											: ""
 									} - 
                                     ${
-																			eventInfo.event._instance?.range?.end !==
-																			undefined
-																				? eventInfo.event._instance?.range?.end
-																						?.toISOString()
-																						.split("T")[1]
-																						?.split(".")[0]
-																						?.slice(0, 5) ?? ""
-																				: ""
-																		}`}{" "}
+										eventInfo.event._instance?.range
+											?.end !== undefined
+											? eventInfo.event._instance?.range?.end
+													?.toISOString()
+													.split("T")[1]
+													?.split(".")[0]
+													?.slice(0, 5) ?? ""
+											: ""
+									}`}{" "}
 								</p>
 							</div>
 						</div>
 						<Separator className="my-5 border-b" />
 						<div className="flex w-full flex-col">
-							<p className="text-xl font-bold">Ils ont pris des notes : </p>
+							<p className="text-xl font-bold">
+								Ils ont pris des notes :{" "}
+							</p>
 							{notes?.length > 0 &&
 								notes.map((n) => (
 									<ItemsLink
@@ -180,14 +184,19 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 										link={`/editor/${n.id}`}
 									/>
 								))}
-							<Button onClick={createNotesAndRedirect} className="mt-4">
+							<Button
+								onClick={createNotesAndRedirect}
+								className="mt-4"
+							>
 								<Pencil className="mr-2" />
 								<p>Prendre des notes</p>
 							</Button>
 						</div>
 						<Separator className="my-5 border-b" />
 						<div className="flex w-full flex-col">
-							<p className="text-xl font-bold">Ils en discutent : </p>
+							<p className="text-xl font-bold">
+								Ils en discutent :{" "}
+							</p>
 							{questions?.length > 0 &&
 								questions.map((q) => (
 									<ItemsLink

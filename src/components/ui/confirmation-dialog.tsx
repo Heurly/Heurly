@@ -30,16 +30,24 @@ const ConfirmationDialog: React.FunctionComponent<Props> = ({
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger asChild>
-				{children !== undefined ? children : <Button>{buttonText}</Button>}
+				{children !== undefined ? (
+					children
+				) : (
+					<Button>{buttonText}</Button>
+				)}
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					{title !== undefined && <AlertDialogTitle>{title}</AlertDialogTitle>}
+					{title !== undefined && (
+						<AlertDialogTitle>{title}</AlertDialogTitle>
+					)}
 					<AlertDialogDescription>{text}</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>Annuler</AlertDialogCancel>
-					<AlertDialogAction onClick={onConfirm}>Continuer</AlertDialogAction>
+					<AlertDialogAction onClick={onConfirm}>
+						Continuer
+					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>

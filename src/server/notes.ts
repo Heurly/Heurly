@@ -91,7 +91,9 @@ export async function updateNotesContent(
 				userId: session.user.id,
 			},
 			data: {
-				content: (JSON.parse(content) as Prisma.JsonValue) ?? Prisma.JsonNull,
+				content:
+					(JSON.parse(content) as Prisma.JsonValue) ??
+					Prisma.JsonNull,
 				updatedAt: new Date(),
 			},
 		});
@@ -118,7 +120,8 @@ export async function getCourseDateNotes(
 	const isAllowedToSeeNotes = await isAllowedTo("show_note", session.user.id);
 
 	// verify if the user is allowed to see notes
-	if (!isAllowedToSeeNotes) throw new Error("You are not allowed to see notes");
+	if (!isAllowedToSeeNotes)
+		throw new Error("You are not allowed to see notes");
 
 	try {
 		notesGot = await db.notes.findMany({
@@ -129,7 +132,9 @@ export async function getCourseDateNotes(
 			},
 		});
 	} catch (e) {
-		throw new Error("An error occured while trying to get notes from the db.");
+		throw new Error(
+			"An error occured while trying to get notes from the db.",
+		);
 	}
 
 	return notesGot;
@@ -143,7 +148,8 @@ export async function getNotes(noteId: Notes["id"]): Promise<Notes | null> {
 	const isAllowedToSeeNotes = await isAllowedTo("show_note", session.user.id);
 
 	// verify if the user is allowed to see notes
-	if (!isAllowedToSeeNotes) throw new Error("You are not allowed to see notes");
+	if (!isAllowedToSeeNotes)
+		throw new Error("You are not allowed to see notes");
 
 	try {
 		if (session?.user?.id === undefined) return null;
@@ -176,7 +182,8 @@ export async function getNoteContent(
 	const isAllowedToSeeNotes = await isAllowedTo("show_note", session.user.id);
 
 	// verify if the user is allowed to see notes
-	if (!isAllowedToSeeNotes) throw new Error("You are not allowed to see notes");
+	if (!isAllowedToSeeNotes)
+		throw new Error("You are not allowed to see notes");
 
 	try {
 		notes = await db.notes.findUnique({
@@ -185,7 +192,9 @@ export async function getNoteContent(
 			},
 		});
 	} catch (e) {
-		throw new Error("An error occured while trying to get notes from the db.");
+		throw new Error(
+			"An error occured while trying to get notes from the db.",
+		);
 	}
 
 	return notes;
@@ -200,7 +209,8 @@ export async function getAllNotes(): Promise<Notes[] | null> {
 
 	const isAllowedToSeeNotes = await isAllowedTo("show_note", session.user.id);
 	// verify if the user is allowed to see notes
-	if (!isAllowedToSeeNotes) throw new Error("You are not allowed to see notes");
+	if (!isAllowedToSeeNotes)
+		throw new Error("You are not allowed to see notes");
 
 	try {
 		notes = await db.notes.findMany({
@@ -209,7 +219,9 @@ export async function getAllNotes(): Promise<Notes[] | null> {
 			},
 		});
 	} catch (e) {
-		throw new Error("An error occured while trying to get notes from the db.");
+		throw new Error(
+			"An error occured while trying to get notes from the db.",
+		);
 	}
 
 	return notes;
@@ -285,7 +297,8 @@ export async function getAllUserNotes(userId: User["id"]) {
 
 	const isAllowedToSeeNotes = await isAllowedTo("show_note", session.user.id);
 	// verify if the user is allowed to see notes
-	if (!isAllowedToSeeNotes) throw new Error("You are not allowed to see notes");
+	if (!isAllowedToSeeNotes)
+		throw new Error("You are not allowed to see notes");
 
 	let notesGot = null;
 	try {
@@ -295,7 +308,9 @@ export async function getAllUserNotes(userId: User["id"]) {
 			},
 		});
 	} catch (e) {
-		throw new Error("An error occured while trying to get notes from the db.");
+		throw new Error(
+			"An error occured while trying to get notes from the db.",
+		);
 	}
 
 	return notesGot;

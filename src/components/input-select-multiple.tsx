@@ -32,7 +32,9 @@ export default function InputSelectMultiple({
 	);
 
 	const handleBadgeClickAdd = (id: string) => {
-		const newOptions = notSelectedOptions?.find((option) => option.id === id);
+		const newOptions = notSelectedOptions?.find(
+			(option) => option.id === id,
+		);
 		if (!newOptions) return;
 		setActualOptions([...actualOptions, newOptions]);
 		setInputValue("");
@@ -108,13 +110,16 @@ export default function InputSelectMultiple({
 				{inputValue &&
 					!tabOptions.find(
 						({ name: optionName }) =>
-							optionName.trim().toLowerCase() == formattedInputValue,
+							optionName.trim().toLowerCase() ==
+							formattedInputValue,
 					) && (
 						<div
 							className="flex w-full cursor-pointer items-center justify-start px-2 py-1 hover:bg-secondary"
 							onClick={() => onCreateOption(inputValue)}
 						>
-							<p className="flex items-center justify-center text-sm">Créez</p>
+							<p className="flex items-center justify-center text-sm">
+								Créez
+							</p>
 							&nbsp;
 							<Badge>
 								<p className="max-w-28 overflow-hidden text-ellipsis">

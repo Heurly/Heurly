@@ -16,7 +16,9 @@ export default function ResponseCard({
 			<CardHeader>
 				<Avatar>
 					<AvatarImage src={user.image ?? ""} alt={user.name ?? ""} />
-					<AvatarFallback>{nameToInitials(user.name ?? "")}</AvatarFallback>
+					<AvatarFallback>
+						{nameToInitials(user.name ?? "")}
+					</AvatarFallback>
 				</Avatar>
 			</CardHeader>
 			<CardContent>

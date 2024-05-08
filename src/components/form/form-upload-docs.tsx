@@ -82,10 +82,14 @@ export default function FormUploadDocs({ userId }: { userId: User["id"] }) {
 	return (
 		<>
 			{!userId ? (
-				<p>Vous devez être connecté pour pouvoir uploader un document</p>
+				<p>
+					Vous devez être connecté pour pouvoir uploader un document
+				</p>
 			) : (
 				<Form {...form}>
-					<h2 className="text-2xl font-bold md:text-3xl">Upload un document</h2>
+					<h2 className="text-2xl font-bold md:text-3xl">
+						Upload un document
+					</h2>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
 						className="md:w-1/1 flex w-full flex-col gap-4 lg:w-1/2 xl:w-1/3"
@@ -96,7 +100,9 @@ export default function FormUploadDocs({ userId }: { userId: User["id"] }) {
 							render={() => {
 								return (
 									<FormItem>
-										<FormLabel className="text-xl font-bold">Titre</FormLabel>
+										<FormLabel className="text-xl font-bold">
+											Titre
+										</FormLabel>
 										<FormControl>
 											<Input type="text" {...titleRef} />
 										</FormControl>
@@ -139,7 +145,9 @@ export default function FormUploadDocs({ userId }: { userId: User["id"] }) {
 										</FormControl>
 										<FormMessage />
 										{wasUploaded && (
-											<FormMessage>File was uploaded</FormMessage>
+											<FormMessage>
+												File was uploaded
+											</FormMessage>
 										)}
 									</FormItem>
 								);

@@ -79,8 +79,9 @@ export default function DataTable<TData, TValue>({
 					<Input
 						placeholder="Filter..."
 						value={
-							(table.getColumn(searchAccessor)?.getFilterValue() as string) ??
-							""
+							(table
+								.getColumn(searchAccessor)
+								?.getFilterValue() as string) ?? ""
 						}
 						onChange={(event) =>
 							table
@@ -101,7 +102,8 @@ export default function DataTable<TData, TValue>({
 										{header.isPlaceholder
 											? null
 											: flexRender(
-													header.column.columnDef.header,
+													header.column.columnDef
+														.header,
 													header.getContext(),
 												)}
 									</TableHead>
@@ -119,14 +121,20 @@ export default function DataTable<TData, TValue>({
 							>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
-										{flexRender(cell.column.columnDef.cell, cell.getContext())}
+										{flexRender(
+											cell.column.columnDef.cell,
+											cell.getContext(),
+										)}
 									</TableCell>
 								))}
 							</TableRow>
 						))
 					) : (
 						<TableRow>
-							<TableCell colSpan={columns.length} className="h-24 text-center">
+							<TableCell
+								colSpan={columns.length}
+								className="h-24 text-center"
+							>
 								Aucun résultat.
 							</TableCell>
 						</TableRow>

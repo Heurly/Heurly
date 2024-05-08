@@ -18,7 +18,10 @@ export async function getDocs(): Promise<Docs[]> {
 	if (!session?.user?.id) throw new Error("User not found");
 
 	// verify if the user is allowed to fetch the docs
-	const isAllowedToFetchDocs = await isAllowedTo("show_docs", session.user.id);
+	const isAllowedToFetchDocs = await isAllowedTo(
+		"show_docs",
+		session.user.id,
+	);
 
 	if (!isAllowedToFetchDocs)
 		throw new Error("User is not allowed to fetch docs");
@@ -39,7 +42,10 @@ export async function getDocById(docId: Docs["id"]): Promise<Docs | null> {
 
 	if (!session?.user?.id) throw new Error("User not found");
 
-	const isAllowedToFetchDocs = await isAllowedTo("show_docs", session.user.id);
+	const isAllowedToFetchDocs = await isAllowedTo(
+		"show_docs",
+		session.user.id,
+	);
 
 	if (!isAllowedToFetchDocs)
 		throw new Error("User is not allowed to fetch docs");
@@ -190,7 +196,9 @@ export async function deleteDoc(docId: Docs["id"]) {
 		});
 
 		if (!resDBDoc)
-			throw new Error("Error: Could not delete doc. (doc not found in db)");
+			throw new Error(
+				"Error: Could not delete doc. (doc not found in db)",
+			);
 
 		// delete the doc in the cloud storage
 		const resDeleteFromBucket = await bucket.deleteFileByName(

@@ -19,10 +19,16 @@ export default function LoginPage() {
 					<div className="flex flex-col items-center">
 						<Logo className={cn("w-1/2", " md:11/12")} />
 						<p className="text-3xl font-black text-sky-300">
-							Heurly <span className="italic text-black">.fr</span>
+							Heurly{" "}
+							<span className="italic text-black">.fr</span>
 						</p>
 					</div>
-					<p className={cn("text-center font-bold leading-5 ", "md:hidden")}>
+					<p
+						className={cn(
+							"text-center font-bold leading-5 ",
+							"md:hidden",
+						)}
+					>
 						Pour les étudiants
 						<br /> Par les étudiants
 					</p>
@@ -61,7 +67,9 @@ export default function LoginPage() {
 					</div>
 					<Button
 						className={cn("bg-black", "text-white")}
-						onClick={() => signIn("google", { callbackUrl: "/timetable" })}
+						onClick={() =>
+							signIn("google", { callbackUrl: "/timetable" })
+						}
 					>
 						<GoogleIcon className="w-7" />
 						Se connecter

@@ -186,7 +186,8 @@ export async function updateProfileUnitUrl(
 
 		// Fetching and converting the iCal to verify the URL is valid and accessible
 		const resIcal = await fetch(newUrl);
-		if (!resIcal.ok) throw new Error("Failed to fetch ical from the new URL");
+		if (!resIcal.ok)
+			throw new Error("Failed to fetch ical from the new URL");
 
 		const rawIcal = await resIcal.text();
 		convert(rawIcal);
@@ -252,7 +253,10 @@ export async function getCurrentProfileUnitUrls(
 	}
 
 	// verify if the user can fetch the profile URLs
-	const isAllowedToFetchProfileUrls = await isAllowedTo("show_profile", userId);
+	const isAllowedToFetchProfileUrls = await isAllowedTo(
+		"show_profile",
+		userId,
+	);
 
 	if (!isAllowedToFetchProfileUrls) {
 		throw new Error("User is not allowed to fetch profile URLs");
@@ -314,7 +318,10 @@ export async function deleteProfileUnitUrl(
 	}
 
 	// verify if the user can delete the profile URL
-	const isAllowedToDeleteProfileUrl = await isAllowedTo("edit_profile", userId);
+	const isAllowedToDeleteProfileUrl = await isAllowedTo(
+		"edit_profile",
+		userId,
+	);
 
 	if (!isAllowedToDeleteProfileUrl) {
 		throw new Error("User is not allowed to delete profile URLs");

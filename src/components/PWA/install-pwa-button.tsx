@@ -92,7 +92,9 @@ export default function InstallPwaButton({
 				<TooltipProvider>
 					<Tooltip>
 						<TooltipTrigger>
-							<Button onClick={handleInstallClick}>Installer Heurly</Button>
+							<Button onClick={handleInstallClick}>
+								Installer Heurly
+							</Button>
 						</TooltipTrigger>
 						<TooltipContent>
 							<p>Installer heurly</p>

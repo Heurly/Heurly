@@ -41,7 +41,10 @@ const Vote = ({
 
 	return (
 		<div
-			className={cn("grid h-full max-h-24 gap-1 md:grid-cols-2", className)}
+			className={cn(
+				"grid h-full max-h-24 gap-1 md:grid-cols-2",
+				className,
+			)}
 			{...props}
 		>
 			<ChevronUpCircle
