@@ -18,6 +18,7 @@ import Link from "next/link";
 import InstallPwaButton from "../PWA/install-pwa-button";
 import LogOutButton from "../log-out-button";
 import isAllowedTo from "../utils/is-allowed-to";
+import ID from "@/utils/id";
 
 type PropsNavBarItems = {
 	name: React.ReactNode;
@@ -98,10 +99,8 @@ export default async function NavBar() {
 				<Logo className=" w-16" />
 			</Link>
 			<div className="flex w-full justify-between gap-10 px-5 md:w-[unset] md:flex-col">
-				{navbarElement.map(({ href, name, icon }, index) => {
-					return (
-						<NavBarItems key={index} name={name} icon={icon} href={href} />
-					);
+				{navbarElement.map(({ href, name, icon }) => {
+					return <NavBarItems key={ID()} name={name} icon={icon} href={href} />;
 				})}
 				<InstallPwaButton variant={"icon"} />
 			</div>

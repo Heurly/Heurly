@@ -6,6 +6,8 @@ function Logo({ ...props }) {
 			viewBox="0 0 64 71"
 			data-cy="logo"
 			{...props}
+			role="img"
+			aria-label="Heurly logo"
 		>
 			<g clipPath="url(#clip0_282_4902)">
 				<path

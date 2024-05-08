@@ -20,6 +20,7 @@ import {
 	DrawerHeader,
 } from "../ui/drawer";
 import { Separator } from "../ui/separator";
+import ID from "@/utils/id";
 
 const nbPxPhone = 768;
 
@@ -172,8 +173,12 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 						<div className="flex w-full flex-col">
 							<p className="text-xl font-bold">Ils ont pris des notes : </p>
 							{notes?.length > 0 &&
-								notes.map((n, i) => (
-									<ItemsLink key={i} title={n.title} link={`/editor/${n.id}`} />
+								notes.map((n) => (
+									<ItemsLink
+										key={ID()}
+										title={n.title}
+										link={`/editor/${n.id}`}
+									/>
 								))}
 							<Button onClick={createNotesAndRedirect} className="mt-4">
 								<Pencil className="mr-2" />
@@ -184,9 +189,9 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 						<div className="flex w-full flex-col">
 							<p className="text-xl font-bold">Ils en discutent : </p>
 							{questions?.length > 0 &&
-								questions.map((q, i) => (
+								questions.map((q) => (
 									<ItemsLink
-										key={i}
+										key={ID()}
 										title={q.question}
 										link={`/revision/QandA/question/${q.id}`}
 									/>

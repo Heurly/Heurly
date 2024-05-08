@@ -88,10 +88,9 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
 
 		const authorName =
 			author.name.length > 15
-				? author.name.split(" ")[0] +
-					" " +
-					author.name.split(" ")[1]?.charAt(0) +
-					"."
+				? `${author.name.split("·")[0]}·${author.name
+						.split("·")[1]
+						?.charAt(0)}.`
 				: author.name;
 
 		return (

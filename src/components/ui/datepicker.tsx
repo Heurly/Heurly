@@ -26,9 +26,10 @@ export function DatePicker({
 }: PropsDatePicker) {
 	// new Date in france timezone
 	const [date, setDate] = useState<Date>(dateInput);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: we can't set onChange as a dependency because it will create an infinite loop
 	useEffect(() => {
 		if (date !== dateInput) onChange(date);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [date]);
 
 	useEffect(() => {

@@ -99,12 +99,11 @@ export async function updateNotesContent(
 		log({ type: TLog.error, text: "Could not save editor content to db." });
 		message = `Could not save editor content to db: ${(e as string) ?? ""}`;
 		throw e;
-	} finally {
-		return {
-			success: r !== null,
-			message: message,
-		};
 	}
+	return {
+		success: r !== null,
+		message: message,
+	};
 }
 
 export async function getCourseDateNotes(

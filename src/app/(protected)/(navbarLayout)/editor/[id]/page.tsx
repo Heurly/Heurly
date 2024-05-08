@@ -74,6 +74,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 		}
 	}, 500);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (dbNotes?.updatedAt === undefined) return;
 
@@ -82,6 +83,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 		}
 	}, [params.id, localNotes, dbNotes, setLocalNotes]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		void getDbNotes(params.id);
 	}, [params.id]);

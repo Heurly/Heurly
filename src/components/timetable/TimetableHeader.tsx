@@ -74,7 +74,7 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
 					data-cy="todayBtn"
 				>
 					<FlagTriangleRight />
-					<a className="hidden md:block">Aujourd&apos;hui</a>
+					<p className="hidden md:block">Aujourd&apos;hui</p>
 				</Button>
 			)}
 			{loading && (

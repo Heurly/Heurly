@@ -47,7 +47,9 @@ export default function CellInputSelectMultiple({
 
 	const handleAdd = async (id: string) => {
 		onAdd(id);
-		setUserOptions([...userOptions, allOptions.find((el) => el.id === id)!]);
+		const optionAdd = allOptions.find((el) => el.id === id);
+		if (!optionAdd) return;
+		setUserOptions([...userOptions, optionAdd]);
 	};
 
 	return (

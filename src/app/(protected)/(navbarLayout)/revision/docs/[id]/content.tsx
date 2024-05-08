@@ -86,6 +86,7 @@ export function ContentDocs({ docId }: { docId: string }) {
 	const [doc, setDoc] = useState<Docs>();
 	const [pdfUrl, setPdfUrl] = useState<string>("");
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: setDocs is needed to fetch the doc
 	useEffect(() => {
 		const fetchDocs = async () => {
 			let fetchedDoc = null;

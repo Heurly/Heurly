@@ -60,6 +60,7 @@ const EditorKatexInput: React.FunctionComponent<Props> = ({
 		500,
 	);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: ref is needed to focus the textarea
 	useEffect(() => {
 		if (ref.current === null) return;
 

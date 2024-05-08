@@ -5,6 +5,8 @@ function GoogleIcon({ ...props }) {
 			viewBox="0 0 39 25"
 			data-cy="googleIcon"
 			{...props}
+			role="img"
+			aria-label="Google icon"
 		>
 			<g fill="none" strokeWidth="2">
 				<path
