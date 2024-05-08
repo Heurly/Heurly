@@ -3,11 +3,11 @@ import { env } from "@/env";
 import { TLog, log } from "@/logger/logger";
 import { trustFile } from "@/types/schema/file-upload";
 import {
-    DeleteObjectCommand,
-    GetObjectCommand,
-    PutObjectCommand,
-    type PutObjectCommandOutput,
-    S3Client,
+	DeleteObjectCommand,
+	GetObjectCommand,
+	PutObjectCommand,
+	type PutObjectCommandOutput,
+	S3Client,
 } from "@aws-sdk/client-s3";
 import type { Docs } from "@prisma/client";
 import { z } from "zod";
@@ -19,180 +19,180 @@ type BucketUploadOutputData = PutObjectCommandOutput;
  * @class Bucket
  */
 export class Bucket {
-    private client = new S3Client({
-        endpoint: env.BUCKET_ENDPOINT,
-        region: env.BUCKET_REGION,
-        credentials: {
-            accessKeyId: env.BUCKET_KEY_ID,
-            secretAccessKey: env.BUCKET_APP_KEY,
-        },
-    });
+	private client = new S3Client({
+		endpoint: env.BUCKET_ENDPOINT,
+		region: env.BUCKET_REGION,
+		credentials: {
+			accessKeyId: env.BUCKET_KEY_ID,
+			secretAccessKey: env.BUCKET_APP_KEY,
+		},
+	});
 
-    // prefix for all file names
-    public prefix = "heurly_";
-    public docFolder = "docs/";
-    public imageFolder = "images/";
+	// prefix for all file names
+	public prefix = "heurly_";
+	public docFolder = "docs/";
+	public imageFolder = "images/";
 
-    private static instance: Bucket;
+	private static instance: Bucket;
 
-    // zod schema for file type and size
-    fileSchema = trustFile;
+	// zod schema for file type and size
+	fileSchema = trustFile;
 
-    private constructor() {
-        // private constructor to ensure we only have one instance
-    }
+	private constructor() {
+		// private constructor to ensure we only have one instance
+	}
 
-    /**
-     * This function will check if the file type and size is safe
-     * @param file {File} the file to check
-     * @returns {boolean} true if the file is safe
-     */
-    private isFileTypeSafe(file: File): boolean {
-        return this.fileSchema.safeParse(file).success;
-    }
+	/**
+	 * This function will check if the file type and size is safe
+	 * @param file {File} the file to check
+	 * @returns {boolean} true if the file is safe
+	 */
+	private isFileTypeSafe(file: File): boolean {
+		return this.fileSchema.safeParse(file).success;
+	}
 
-    /**
-     * This function will upload a file to the cloud it will automatically check the file type and size
-     * @param file {File} the file to upload
-     * @param filename {string} the filename
-     * @returns {Promise<{success: boolean, data: BucketUploadOutputData}>
-     */
-    public async uploadFile(
-        file: File,
-    ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
-        log({ type: TLog.info, text: "Uploading file to the cloud" });
+	/**
+	 * This function will upload a file to the cloud it will automatically check the file type and size
+	 * @param file {File} the file to upload
+	 * @param filename {string} the filename
+	 * @returns {Promise<{success: boolean, data: BucketUploadOutputData}>
+	 */
+	public async uploadFile(
+		file: File,
+	): Promise<{ success: boolean; data: BucketUploadOutputData }> {
+		log({ type: TLog.info, text: "Uploading file to the cloud" });
 
-        const fileBuffer = Buffer.from(await file.arrayBuffer());
+		const fileBuffer = Buffer.from(await file.arrayBuffer());
 
-        // zod verification for file size and type
-        if (!this.isFileTypeSafe(file)) {
-            throw new Error("Invalid file type or size.");
-        }
+		// zod verification for file size and type
+		if (!this.isFileTypeSafe(file)) {
+			throw new Error("Invalid file type or size.");
+		}
 
-        try {
-            const response = await this.client.send(
-                new PutObjectCommand({
-                    Bucket: env.BUCKET_NAME,
-                    Key: file.name,
-                    Body: fileBuffer,
-                    ContentType: file.type,
-                }),
-            );
-            return {
-                success: true,
-                data: response,
-            };
-        } catch (error) {
-            throw new Error("Error: Could not upload file.");
-        }
-    }
+		try {
+			const response = await this.client.send(
+				new PutObjectCommand({
+					Bucket: env.BUCKET_NAME,
+					Key: file.name,
+					Body: fileBuffer,
+					ContentType: file.type,
+				}),
+			);
+			return {
+				success: true,
+				data: response,
+			};
+		} catch (error) {
+			throw new Error("Error: Could not upload file.");
+		}
+	}
 
-    /**
-     *
-     * @param fileName {string} the name of the file to delete
-     * @returns  {Promise<{success: boolean, data: BucketUploadOutputData}>}
-     */
-    public async deleteFileByName(
-        fileName: string,
-    ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
-        log({
-            type: TLog.info,
-            text: `Deleting file ${fileName} from the cloud`,
-        });
+	/**
+	 *
+	 * @param fileName {string} the name of the file to delete
+	 * @returns  {Promise<{success: boolean, data: BucketUploadOutputData}>}
+	 */
+	public async deleteFileByName(
+		fileName: string,
+	): Promise<{ success: boolean; data: BucketUploadOutputData }> {
+		log({
+			type: TLog.info,
+			text: `Deleting file ${fileName} from the cloud`,
+		});
 
-        // zod verification for file name
-        const fileNameSchema = z.string().startsWith(this.prefix);
+		// zod verification for file name
+		const fileNameSchema = z.string().startsWith(this.prefix);
 
-        // check if the file name is valid
-        if (!fileNameSchema.safeParse(fileName).success) {
-            throw new Error("Invalid file name.");
-        }
+		// check if the file name is valid
+		if (!fileNameSchema.safeParse(fileName).success) {
+			throw new Error("Invalid file name.");
+		}
 
-        try {
-            const response = await this.client.send(
-                new DeleteObjectCommand({
-                    Bucket: env.BUCKET_NAME,
-                    Key: fileName,
-                }),
-            );
-            return {
-                success: true,
-                data: response,
-            };
-        } catch (error) {
-            throw new Error("Error: Could not delete file.");
-        }
-    }
+		try {
+			const response = await this.client.send(
+				new DeleteObjectCommand({
+					Bucket: env.BUCKET_NAME,
+					Key: fileName,
+				}),
+			);
+			return {
+				success: true,
+				data: response,
+			};
+		} catch (error) {
+			throw new Error("Error: Could not delete file.");
+		}
+	}
 
-    // /**
-    //  *
-    //  * This function will delete a file from the cloud
-    //  * @param fileId {string} the id of the file to delete
-    //  * @returns {Promise<{success: boolean, data: BucketUploadOutputData}>}
-    //  */
-    // public async deleteFileById(
-    //     fileId: string,
-    // ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
-    //     log({ type: TLog.info, text: `Deleting file ${fileId} from the cloud` });
+	// /**
+	//  *
+	//  * This function will delete a file from the cloud
+	//  * @param fileId {string} the id of the file to delete
+	//  * @returns {Promise<{success: boolean, data: BucketUploadOutputData}>}
+	//  */
+	// public async deleteFileById(
+	//     fileId: string,
+	// ): Promise<{ success: boolean; data: BucketUploadOutputData }> {
+	//     log({ type: TLog.info, text: `Deleting file ${fileId} from the cloud` });
 
-    //     try {
-    //         const response = await this.client.send(
-    //             new DeleteObjectCommand({
-    //                 Bucket: env.BUCKET_NAME,
-    //                 Key: fileId,
-    //             }),
-    //         );
-    //         return {
-    //             success: true,
-    //             data: response,
-    //         };
-    //     } catch (error) {
-    //         log({ type: TLog.error, text: `${error}` })
-    //         throw new Error("Error: Could not delete file.");
-    //     }
-    // }
+	//     try {
+	//         const response = await this.client.send(
+	//             new DeleteObjectCommand({
+	//                 Bucket: env.BUCKET_NAME,
+	//                 Key: fileId,
+	//             }),
+	//         );
+	//         return {
+	//             success: true,
+	//             data: response,
+	//         };
+	//     } catch (error) {
+	//         log({ type: TLog.error, text: `${error}` })
+	//         throw new Error("Error: Could not delete file.");
+	//     }
+	// }
 
-    public async getFileUrlById(fileId: string): Promise<string> {
-        return `https://${env.BUCKET_NAME}.${env.BUCKET_ENDPOINT}/${fileId}`;
-    }
+	public async getFileUrlById(fileId: string): Promise<string> {
+		return `https://${env.BUCKET_NAME}.${env.BUCKET_ENDPOINT}/${fileId}`;
+	}
 
-    public async getFile(doc: Docs): Promise<string> {
-        const key = doc.filename;
-        const command = new GetObjectCommand({
-            Bucket: env.BUCKET_NAME,
-            Key: key,
-        });
-        try {
-            // const url = await getSignedUrl(this.client, command, { expiresIn: 3600 });
-            // console.log(url);
-            const response = await this.client.send(command);
-            if (response.Body) {
-                const buffer = Buffer.from(
-                    new Uint8Array(await response.Body.transformToByteArray()),
-                );
-                const json = JSON.stringify({
-                    blob: buffer.toString("base64"),
-                });
-                return json;
-            }
-            throw new Error("Response body is undefined.");
-        } catch (err) {
-            throw new Error("File not found.");
-        }
-    }
+	public async getFile(doc: Docs): Promise<string> {
+		const key = doc.filename;
+		const command = new GetObjectCommand({
+			Bucket: env.BUCKET_NAME,
+			Key: key,
+		});
+		try {
+			// const url = await getSignedUrl(this.client, command, { expiresIn: 3600 });
+			// console.log(url);
+			const response = await this.client.send(command);
+			if (response.Body) {
+				const buffer = Buffer.from(
+					new Uint8Array(await response.Body.transformToByteArray()),
+				);
+				const json = JSON.stringify({
+					blob: buffer.toString("base64"),
+				});
+				return json;
+			}
+			throw new Error("Response body is undefined.");
+		} catch (err) {
+			throw new Error("File not found.");
+		}
+	}
 
-    /**
-     * This function is a singleton that will return the instance of the bucket
-     * @returns {Bucket} the singleton instance of the bucket
-     */
-    public static getInstance(): Bucket {
-        // ensure we only have one instance
-        if (Bucket.instance == null) {
-            Bucket.instance = new Bucket();
-        }
+	/**
+	 * This function is a singleton that will return the instance of the bucket
+	 * @returns {Bucket} the singleton instance of the bucket
+	 */
+	public static getInstance(): Bucket {
+		// ensure we only have one instance
+		if (Bucket.instance == null) {
+			Bucket.instance = new Bucket();
+		}
 
-        return Bucket.instance;
-    }
+		return Bucket.instance;
+	}
 }
 
 // singleton instance

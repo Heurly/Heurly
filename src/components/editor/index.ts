@@ -9,10 +9,10 @@ import { NodeSelector } from "./NodeSelector";
 import { TextButtons } from "./TextButtons";
 
 export {
-    ColorSelector,
-    EditorCommand,
-    defaultExtensions,
-    LinkSelector,
-    NodeSelector,
-    TextButtons,
+	ColorSelector,
+	EditorCommand,
+	defaultExtensions,
+	LinkSelector,
+	NodeSelector,
+	TextButtons,
 };

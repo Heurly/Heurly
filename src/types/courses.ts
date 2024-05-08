@@ -1,4 +1,4 @@
 export type CourseDate = {
-    courseId: number;
-    courseDate: Date;
+	courseId: number;
+	courseDate: Date;
 };

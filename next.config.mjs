@@ -6,19 +6,19 @@ await import("./src/env.js");
 import withSerwistInit from "@serwist/next";
 
 const withSerwist = withSerwistInit({
-    cacheOnFrontEndNav: true,
-    swSrc: "src/sw.ts",
-    swDest: "public/sw.js",
-    reloadOnOnline: true,
-    disable: process.env.NODE_ENV === "development", // to disable pwa in development
+	cacheOnFrontEndNav: true,
+	swSrc: "src/sw.ts",
+	swDest: "public/sw.js",
+	reloadOnOnline: true,
+	disable: process.env.NODE_ENV === "development", // to disable pwa in development
 });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    swcMinify: true,
-    reactStrictMode: true,
-    output: "standalone",
-    // ... other next.js config options
+	swcMinify: true,
+	reactStrictMode: true,
+	output: "standalone",
+	// ... other next.js config options
 };
 
 export default withSerwist(nextConfig);

@@ -5,19 +5,19 @@ import type React from "react";
 import { useEffect } from "react";
 
 const NewNotes: React.FunctionComponent = () => {
-    const router = useRouter();
+	const router = useRouter();
 
-    useEffect(() => {
-        const createNewNotes = async () => {
-            const newNotes = await createNotes("Document sans nom");
-            if (newNotes == null) return;
-            void router.push(`/editor/${newNotes.id}`);
-        };
+	useEffect(() => {
+		const createNewNotes = async () => {
+			const newNotes = await createNotes("Document sans nom");
+			if (newNotes == null) return;
+			void router.push(`/editor/${newNotes.id}`);
+		};
 
-        void createNewNotes();
-    }, [router]);
+		void createNewNotes();
+	}, [router]);
 
-    return <></>;
+	return <></>;
 };
 
 export default NewNotes;

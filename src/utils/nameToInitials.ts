@@ -1,8 +1,8 @@
 export default function nameToInitials(name: string) {
-    if (!name) return;
+	if (!name) return;
 
-    return name
-        .split(" ")
-        .map((n) => n[0])
-        .join("");
+	return name
+		.split(" ")
+		.map((n) => n[0])
+		.join("");
 }

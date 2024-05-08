@@ -8,21 +8,21 @@ import { db } from "./db";
  * @returns {Promise<Docs[]>} A promise that resolves to an array of URLs
  */
 export async function getURLsByUser(
-    userId: User["id"],
+	userId: User["id"],
 ): Promise<UserTimetableURL[]> {
-    // zod verification for user id
-    const resCheckUserId = UserModel.shape.id.safeParse(userId);
+	// zod verification for user id
+	const resCheckUserId = UserModel.shape.id.safeParse(userId);
 
-    if (!resCheckUserId.success) throw new Error("Error: Invalid user id.");
+	if (!resCheckUserId.success) throw new Error("Error: Invalid user id.");
 
-    try {
-        const resDBUserURLs = await db.userTimetableURL.findMany({
-            where: {
-                userId: userId,
-            },
-        });
-        return resDBUserURLs;
-    } catch (e) {
-        throw new Error("Error: Could not get URLs by user.");
-    }
+	try {
+		const resDBUserURLs = await db.userTimetableURL.findMany({
+			where: {
+				userId: userId,
+			},
+		});
+		return resDBUserURLs;
+	} catch (e) {
+		throw new Error("Error: Could not get URLs by user.");
+	}
 }

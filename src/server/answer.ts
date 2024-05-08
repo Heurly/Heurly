@@ -2,51 +2,51 @@
 import { TLog, log } from "@/logger/logger";
 import { db } from "@/server/db";
 import {
-    type dataCreateAnswer,
-    formAnswerSchema,
+	type dataCreateAnswer,
+	formAnswerSchema,
 } from "@/types/schema/form-answer";
 import { revalidatePath } from "next/cache";
 import type * as z from "zod";
 
 export async function handleFormCreateAnswer(
-    data: z.infer<typeof dataCreateAnswer>,
+	data: z.infer<typeof dataCreateAnswer>,
 ) {
-    log({ type: TLog.info, text: "Handling form create answer" });
-    // Validate the data
-    const resParseRawData = formAnswerSchema.safeParse(data);
-    if (!resParseRawData.success) {
-        throw resParseRawData.error;
-    }
+	log({ type: TLog.info, text: "Handling form create answer" });
+	// Validate the data
+	const resParseRawData = formAnswerSchema.safeParse(data);
+	if (!resParseRawData.success) {
+		throw resParseRawData.error;
+	}
 
-    // verify the user exists
-    const user = await db.user.findUnique({
-        where: {
-            id: data.userId,
-        },
-    });
-    if (!user) {
-        throw new Error("L'utilisateur n'existe pas");
-    }
+	// verify the user exists
+	const user = await db.user.findUnique({
+		where: {
+			id: data.userId,
+		},
+	});
+	if (!user) {
+		throw new Error("L'utilisateur n'existe pas");
+	}
 
-    // verify the question exists
-    const question = await db.question.findUnique({
-        where: {
-            id: data.questionId,
-        },
-    });
-    if (!question) {
-        throw new Error("La question n'existe pas");
-    }
+	// verify the question exists
+	const question = await db.question.findUnique({
+		where: {
+			id: data.questionId,
+		},
+	});
+	if (!question) {
+		throw new Error("La question n'existe pas");
+	}
 
-    // Create the answer
-    const res = await db.answer.create({
-        data: {
-            answer: data.content,
-            userId: data.userId,
-            questionId: data.questionId,
-        },
-    });
-    // revalidate the data
-    revalidatePath(`/revision/QandA/question/${data.questionId}`);
-    return { success: true, data: res };
+	// Create the answer
+	const res = await db.answer.create({
+		data: {
+			answer: data.content,
+			userId: data.userId,
+			questionId: data.questionId,
+		},
+	});
+	// revalidate the data
+	revalidatePath(`/revision/QandA/question/${data.questionId}`);
+	return { success: true, data: res };
 }

@@ -5,21 +5,18 @@ import GoBackButton from "@/components/utils/go-back-button";
 import { getFeatures } from "@/server/feature";
 
 export default async function ListFeaturePage() {
-    const features = await getFeatures(30);
+	const features = await getFeatures(30);
 
-    return (
-        <Card>
-            <CardHeader>
-                <div className="flex items-center justify-start gap-x-5">
-                    <GoBackButton /> Admin - Liste des fonctionnalités
-                </div>
-            </CardHeader>
-            <CardContent>
-                <DataTable
-                    data={features ?? []}
-                    columns={featureDetailsColumns}
-                />
-            </CardContent>
-        </Card>
-    );
+	return (
+		<Card>
+			<CardHeader>
+				<div className="flex items-center justify-start gap-x-5">
+					<GoBackButton /> Admin - Liste des fonctionnalités
+				</div>
+			</CardHeader>
+			<CardContent>
+				<DataTable data={features ?? []} columns={featureDetailsColumns} />
+			</CardContent>
+		</Card>
+	);
 }
