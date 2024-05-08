@@ -64,7 +64,7 @@ async function asignDefaultRole(userId: User["id"]) {
         return false;
     }
 
-    // detedct if user already has default roles
+    // detect if user already has default roles
     const userRoles = await db.userRole.findMany({
         where: {
             userId: userId,
@@ -159,7 +159,6 @@ export const authOptions: NextAuthOptions = {
     },
     events: {
         createUser: async (message) => {
-            console.log("test", message);
             await asignDefaultRole(message.user.id);
         },
     },
