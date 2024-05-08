@@ -4,13 +4,13 @@ import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 
 export default function NavBarLayout({
-	children,
+    children,
 }: {
-	children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-	return (
-		<SessionProvider>
-			<div className="h-full w-full px-5">{children}</div>
-		</SessionProvider>
-	);
+    return (
+        <SessionProvider>
+            <div className="h-full w-full px-5">{children}</div>
+        </SessionProvider>
+    );
 }

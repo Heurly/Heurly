@@ -2,23 +2,23 @@
 import { getServerAuthSession } from "@/server/auth";
 
 export default async function LayoutAdmin({
-	children,
+    children,
 }: {
-	children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-	const session = await getServerAuthSession();
-	if (!session) {
-		return null;
-	}
+    const session = await getServerAuthSession();
+    if (!session) {
+        return null;
+    }
 
-	// const isAllowedToSeeAdmin = await isAllowedTo(
-	//     "show_admin",
-	//     session.user.id,
-	// );
+    // const isAllowedToSeeAdmin = await isAllowedTo(
+    //     "show_admin",
+    //     session.user.id,
+    // );
 
-	// if (!isAllowedToSeeAdmin.result) {
-	//     return null;
-	// }
+    // if (!isAllowedToSeeAdmin.result) {
+    //     return null;
+    // }
 
-	return <>{children}</>;
+    return <>{children}</>;
 }

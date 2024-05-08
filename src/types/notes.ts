@@ -1,5 +1,5 @@
 export enum SaveState {
-	Saving = "Sauvegarde...",
-	Saved = "Sauvegardé",
-	Error = "Erreur",
+    Saving = "Sauvegarde...",
+    Saved = "Sauvegardé",
+    Error = "Erreur",
 }

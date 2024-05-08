@@ -5,21 +5,21 @@ import GoBackButton from "@/components/utils/go-back-button";
 import { getUsersWithRole } from "@/server/user";
 
 export default async function AdminRightPage() {
-	const users = await getUsersWithRole();
-	if (!users) {
-		return null;
-	}
-	return (
-		<Card>
-			<CardHeader>
-				<div className="flex items-center justify-start gap-x-5">
-					<GoBackButton /> <h1>Admin - Rôle par utilisateur</h1>
-				</div>
-			</CardHeader>
+    const users = await getUsersWithRole();
+    if (!users) {
+        return null;
+    }
+    return (
+        <Card>
+            <CardHeader>
+                <div className="flex items-center justify-start gap-x-5">
+                    <GoBackButton /> <h1>Admin - Rôle par utilisateur</h1>
+                </div>
+            </CardHeader>
 
-			<CardContent>
-				<DataTable data={users} columns={rightColumns} />
-			</CardContent>
-		</Card>
-	);
+            <CardContent>
+                <DataTable data={users} columns={rightColumns} />
+            </CardContent>
+        </Card>
+    );
 }
