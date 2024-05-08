@@ -95,7 +95,7 @@ export default async function NavBar() {
     return (
         <nav className="fixed bottom-0 left-1/2 z-40 mb-4 flex w-11/12 -translate-x-1/2 flex-col items-center justify-between rounded-3xl bg-sky-200 px-3 py-4 md:relative md:left-[unset] md:top-[unset] md:h-full md:w-[unset] md:translate-x-0 md:py-10">
             <Link href="/" data-cy="logo" className="hidden md:block">
-                <Logo className=" w-16" />
+                <Logo />
             </Link>
             <div className="flex w-full justify-between gap-10 px-5 md:w-[unset] md:flex-col">
                 {navbarElement.map(({ href, name, icon }, index) => {
