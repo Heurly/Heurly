@@ -39,7 +39,7 @@ export async function addVoteToQuestion(
         });
         if (userVote) {
             // if the vote of the user is the same as the vote we want to add, we remove the vote
-            if ((userVote.vote as Vote) == vote) return;
+            if ((userVote.vote as Vote) === vote) return;
 
             const resUpdateVoteQuestion = await db.userVoteQuestion.update({
                 where: {
@@ -50,7 +50,7 @@ export async function addVoteToQuestion(
                 },
             });
             revalidatePath(`/revision/QandA/question/${questionId}`);
-            revalidatePath(`/revision/QandA`);
+            revalidatePath("/revision/QandA");
             return {
                 success: true,
                 data: resUpdateVoteQuestion,
@@ -98,7 +98,7 @@ export async function addVoteToAnswer(answerId: Answer["id"], vote: Vote) {
         });
         if (userVote) {
             // if the vote of the user is the same as the vote we want to add, we remove the vote
-            if ((userVote.vote as Vote) == vote) return;
+            if ((userVote.vote as Vote) === vote) return;
 
             const resUpdateVoteAnswer = await db.userVoteAnswer.update({
                 where: {

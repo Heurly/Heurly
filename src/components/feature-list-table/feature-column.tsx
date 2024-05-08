@@ -1,7 +1,7 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Feature } from "@prisma/client";
+import type { Feature } from "@prisma/client";
+import type { ColumnDef } from "@tanstack/react-table";
 
 export const featureDetailsColumns: ColumnDef<Feature>[] = [
     {

@@ -1,16 +1,16 @@
 import "server-only";
-import {
-    S3Client,
-    PutObjectCommand,
-    DeleteObjectCommand,
-    PutObjectCommandOutput,
-    GetObjectCommand,
-} from "@aws-sdk/client-s3";
 import { env } from "@/env";
-import { trustFile } from "@/types/schema/file-upload";
-import { z } from "zod";
 import { TLog, log } from "@/logger/logger";
-import { Docs } from "@prisma/client";
+import { trustFile } from "@/types/schema/file-upload";
+import {
+    DeleteObjectCommand,
+    GetObjectCommand,
+    PutObjectCommand,
+    type PutObjectCommandOutput,
+    S3Client,
+} from "@aws-sdk/client-s3";
+import type { Docs } from "@prisma/client";
+import { z } from "zod";
 
 type BucketUploadOutputData = PutObjectCommandOutput;
 
@@ -174,9 +174,8 @@ export class Bucket {
                     blob: buffer.toString("base64"),
                 });
                 return json;
-            } else {
-                throw new Error("Response body is undefined.");
             }
+            throw new Error("Response body is undefined.");
         } catch (err) {
             throw new Error("File not found.");
         }
@@ -188,11 +187,11 @@ export class Bucket {
      */
     public static getInstance(): Bucket {
         // ensure we only have one instance
-        if (this.instance == null) {
-            this.instance = new Bucket();
+        if (Bucket.instance == null) {
+            Bucket.instance = new Bucket();
         }
 
-        return this.instance;
+        return Bucket.instance;
     }
 }
 

@@ -1,9 +1,9 @@
 import * as z from "zod";
 
 export enum TLog {
-    info,
-    error,
-    warning,
+    info = 0,
+    error = 1,
+    warning = 2,
 }
 
 const logSchema = z.object({

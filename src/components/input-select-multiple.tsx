@@ -1,9 +1,9 @@
 "use client";
+import { cn } from "@/lib/utils";
+import ID from "@/utils/id";
+import { CircleX } from "lucide-react";
 import { useRef, useState } from "react";
 import { Badge } from "./ui/badge";
-import ID from "@/utils/id";
-import { cn } from "@/lib/utils";
-import { CircleX } from "lucide-react";
 
 export type TOption = {
     id: string;
@@ -33,7 +33,7 @@ export default function InputSelectMultiple({
 
     const handleBadgeClickAdd = (id: string) => {
         const newOptions = notSelectedOptions?.find(
-            (option) => option.id == id,
+            (option) => option.id === id,
         );
         if (!newOptions) return;
         setActualOptions([...actualOptions, newOptions]);

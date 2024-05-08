@@ -1,4 +1,4 @@
-import { ViewApi } from "@fullcalendar/core/index.js";
+import type { ViewApi } from "@fullcalendar/core/index.js";
 
 export enum TView {
     timeGridDay = "timeGridDay",

@@ -1,12 +1,12 @@
 import {
+    HorizontalRule,
+    Placeholder,
+    StarterKit,
+    TaskItem,
+    TaskList,
     TiptapImage,
     TiptapLink,
     UpdatedImage,
-    TaskList,
-    TaskItem,
-    HorizontalRule,
-    StarterKit,
-    Placeholder,
 } from "novel/extensions";
 
 import Mathematics from "@tiptap-pro/extension-mathematics";

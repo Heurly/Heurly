@@ -1,10 +1,15 @@
 "use client";
 
-import { Notes } from "@prisma/client";
-import DataTable, { DataTableSortableHeader } from "../ui/data-table";
-import { ColumnDef, InitialTableState } from "@tanstack/react-table";
+import { deleteNotes, setNoteVisibility } from "@/server/notes";
+import type { Notes } from "@prisma/client";
+import type { ColumnDef, InitialTableState } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 import NotesVisibility from "../docs/NotesVisibility";
+import { Button } from "../ui/button";
+import ConfirmationDialog from "../ui/confirmation-dialog";
+import DataTable, { DataTableSortableHeader } from "../ui/data-table";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,11 +18,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { MoreHorizontal } from "lucide-react";
-import Link from "next/link";
-import { deleteNotes, setNoteVisibility } from "@/server/notes";
-import ConfirmationDialog from "../ui/confirmation-dialog";
 
 const columns: ColumnDef<Notes>[] = [
     {
@@ -99,8 +99,13 @@ const columns: ColumnDef<Notes>[] = [
                         <DropdownMenuItem onClick={(e) => e.preventDefault()}>
                             <ConfirmationDialog
                                 onConfirm={() => deleteNotes(id)}
-                                title={`Suppression de ${row.getValue("title")?.toString() ?? "votre note"}`}
-                                text={`Êtes-vous sûr de vouloir supprimer la note "${row.getValue("title")?.toString() ?? ""}" ?`}
+                                title={`Suppression de ${
+                                    row.getValue("title")?.toString() ??
+                                    "votre note"
+                                }`}
+                                text={`Êtes-vous sûr de vouloir supprimer la note "${
+                                    row.getValue("title")?.toString() ?? ""
+                                }" ?`}
                             >
                                 <p>Supprimer</p>
                             </ConfirmationDialog>

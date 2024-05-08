@@ -1,8 +1,18 @@
 import { createNotes, getCourseDateNotes } from "@/server/notes";
-import { TEventClickArg } from "@/types/timetable";
-import { Notes, Question } from "@prisma/client";
+import { getCourseDataQuestions } from "@/server/question";
+import type { TEventClickArg } from "@/types/timetable";
+import type { Notes, Question } from "@prisma/client";
 import { format } from "date-fns";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+    MessageCircleQuestion,
+    Pencil,
+    SquareArrowOutUpRight,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import type React from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { Button } from "../ui/button";
 import {
     Drawer,
     DrawerContent,
@@ -10,15 +20,7 @@ import {
     DrawerHeader,
 } from "../ui/drawer";
 import { Separator } from "../ui/separator";
-import { Button } from "../ui/button";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import {
-    MessageCircleQuestion,
-    Pencil,
-    SquareArrowOutUpRight,
-} from "lucide-react";
-import { getCourseDataQuestions } from "@/server/question";
+import ID from "@/utils/id";
 
 const nbPxPhone = 768;
 
@@ -60,7 +62,10 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
             return;
 
         const notes = await createNotes(
-            `${eventInfo.event?._def?.title} - ${format(eventInfo.event._instance.range.start, "dd/MM/yyyy")}`,
+            `${eventInfo.event?._def?.title} - ${format(
+                eventInfo.event._instance.range.start,
+                "dd/MM/yyyy",
+            )}`,
             {
                 courseId: eventInfo.event._def.extendedProps.courseId,
                 courseDate: eventInfo.event._instance.range.start,
@@ -172,9 +177,9 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                                 Ils ont pris des notes :{" "}
                             </p>
                             {notes?.length > 0 &&
-                                notes.map((n, i) => (
+                                notes.map((n) => (
                                     <ItemsLink
-                                        key={i}
+                                        key={ID()}
                                         title={n.title}
                                         link={`/editor/${n.id}`}
                                     />
@@ -193,9 +198,9 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                                 Ils en discutent :{" "}
                             </p>
                             {questions?.length > 0 &&
-                                questions.map((q, i) => (
+                                questions.map((q) => (
                                     <ItemsLink
-                                        key={i}
+                                        key={ID()}
                                         title={q.question}
                                         link={`/revision/QandA/question/${q.id}`}
                                     />

@@ -3,9 +3,9 @@ import { getQuestions } from "@/server/question";
 import ID from "@/utils/id";
 import Link from "next/link";
 
+import isAllowedTo from "@/components/utils/is-allowed-to";
 import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";
-import isAllowedTo from "@/components/utils/is-allowed-to";
 
 export const metadata = {
     title: "Heuly - Questions",

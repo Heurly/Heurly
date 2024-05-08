@@ -1,5 +1,5 @@
 "use client";
-import { TEventInfo } from "@/types/timetable";
+import type { TEventInfo } from "@/types/timetable";
 
 export default function ReducedEventContent(eventInfo: TEventInfo) {
     return (

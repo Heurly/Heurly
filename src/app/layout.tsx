@@ -2,8 +2,8 @@ import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import cn from "classnames";
 const inter = Inter({ subsets: ["latin"] });
-import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/toaster";
+import type { Metadata, Viewport } from "next";
 
 const APP_NAME = "Heurly";
 const APP_DEFAULT_TITLE = "Heurly";

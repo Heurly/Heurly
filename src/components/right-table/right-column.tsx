@@ -1,9 +1,9 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import type { UserWithRole } from "@/server/user";
 import nameToInitials from "@/utils/nameToInitials";
-import { UserWithRole } from "@/server/user";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import WrapCellInputSelectMultipleRole from "../wrap-cell-input-select-multiple-role";
 
 export const rightColumns: ColumnDef<UserWithRole>[] = [

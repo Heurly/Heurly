@@ -1,5 +1,7 @@
 "use client";
 
+import Vote from "@/components/QandA/Vote";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -7,16 +9,14 @@ import {
     CardHeader,
 } from "@/components/ui/card";
 import DateFormatted from "@/components/ui/date-formatted";
-import Vote from "@/components/QandA/Vote";
-import cn from "classnames";
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import type { User } from "@prisma/client";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { addVoteToAnswer, addVoteToQuestion } from "@/server/vote";
-import { useRouter } from "next/navigation";
-import { Reply } from "lucide-react";
 import nameToInitials from "@/utils/nameToInitials";
+import type { User } from "@prisma/client";
+import cn from "classnames";
+import { Reply } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type PropsQuestionCard = {
     id: string;
@@ -88,10 +88,9 @@ const QandACard = React.forwardRef<HTMLDivElement, PropsQuestionCard>(
 
         const authorName =
             author.name.length > 15
-                ? author.name.split(" ")[0] +
-                  " " +
-                  author.name.split(" ")[1]?.charAt(0) +
-                  "."
+                ? `${author.name.split("·")[0]}·${author.name
+                      .split("·")[1]
+                      ?.charAt(0)}.`
                 : author.name;
 
         return (

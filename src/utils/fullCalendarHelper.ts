@@ -1,8 +1,8 @@
-import { DatesSetArg } from "@fullcalendar/core/index.js";
-import FullCalendar from "@fullcalendar/react";
+import type { DatesSetArg } from "@fullcalendar/core/index.js";
+import type FullCalendar from "@fullcalendar/react";
 import { format, startOfWeek } from "date-fns";
 import { fr } from "date-fns/locale";
-import { RefObject } from "react";
+import type { RefObject } from "react";
 
 export const goToNextPeriod = (calendarRef: RefObject<FullCalendar>): void => {
     if (!calendarRef.current) return;
@@ -82,6 +82,7 @@ export const updatePeriodDisplay = (arg: DatesSetArg) => {
             break;
         case "dayGridThreeDays":
             formatStr = "dd/MM/yyyy";
+            break;
         default:
         // Optionally handle other cases or leave as is for no action.
         // return; // Early return if the view type is not handled.

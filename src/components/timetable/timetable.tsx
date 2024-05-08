@@ -1,25 +1,29 @@
 "use client";
+import EventContent from "@/components/timetable/event-content";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import frLocale from "@fullcalendar/core/locales/fr";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import { useEffect, useRef, useState } from "react";
-import iCalendarPlugin from "@fullcalendar/icalendar";
+import useSwipe from "@/hooks/useSwipe";
+import {
+    type TEventClickArg,
+    type TEventTimetable,
+    TView,
+} from "@/types/timetable";
 import {
     goToNextPeriod,
     goToPreviousPeriod,
     updatePeriodDisplay,
 } from "@/utils/fullCalendarHelper";
-import { TEventClickArg, TEventTimetable, TView } from "@/types/timetable";
-import EventContent from "@/components/timetable/event-content";
-import type { User } from "@prisma/client";
-import { useDebouncedCallback } from "use-debounce";
-import { DatesSetArg } from "@fullcalendar/core/index.js";
-import TimetableDrawer from "./TimetableDrawer";
 import { reloadData } from "@/utils/timetable";
+import type { DatesSetArg } from "@fullcalendar/core/index.js";
+import frLocale from "@fullcalendar/core/locales/fr";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import iCalendarPlugin from "@fullcalendar/icalendar";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import type { User } from "@prisma/client";
+import { useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import TimetableDrawer from "./TimetableDrawer";
 import TimetableHeader from "./TimetableHeader";
-import useSwipe from "@/hooks/useSwipe";
 
 const nbPxPhone = 768;
 const startTime = "08:00:00";

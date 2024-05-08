@@ -5,7 +5,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Link from "next/link";
+import { getServerAuthSession } from "@/server/auth";
 import {
     Calendar,
     FileStack,
@@ -14,10 +14,11 @@ import {
     // Settings,
     User,
 } from "lucide-react";
+import Link from "next/link";
 import InstallPwaButton from "../PWA/install-pwa-button";
 import LogOutButton from "../log-out-button";
-import { getServerAuthSession } from "@/server/auth";
 import isAllowedTo from "../utils/is-allowed-to";
+import ID from "@/utils/id";
 
 type PropsNavBarItems = {
     name: React.ReactNode;
@@ -98,10 +99,10 @@ export default async function NavBar() {
                 <Logo />
             </Link>
             <div className="flex w-full justify-between gap-10 px-5 md:w-[unset] md:flex-col">
-                {navbarElement.map(({ href, name, icon }, index) => {
+                {navbarElement.map(({ href, name, icon }) => {
                     return (
                         <NavBarItems
-                            key={index}
+                            key={ID()}
                             name={name}
                             icon={icon}
                             href={href}

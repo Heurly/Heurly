@@ -1,7 +1,7 @@
+import { TLog, log } from "@/logger/logger";
 import { db } from "@/server/db";
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import LogCatch from "./log-catch";
-import { log, TLog } from "@/logger/logger";
 
 type TRightName =
     | "show_timetable"
@@ -41,7 +41,7 @@ export default async function isAllowedTo(
         text: `Checking if user ${userId} has the right ${rightName}`,
     });
     // Find the feature
-    let feature;
+    let feature = null;
     try {
         feature = await db.feature.findFirst({
             where: {

@@ -1,5 +1,5 @@
 // https://stackoverflow.com/questions/70612769/how-do-i-recognize-swipe-events-in-react
-import { TouchEvent, useState } from "react";
+import { type TouchEvent, useState } from "react";
 
 interface SwipeInput {
     onSwipedLeft: () => void;

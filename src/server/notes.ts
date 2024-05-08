@@ -1,12 +1,12 @@
 "use server";
 
-import { db } from "@/server/db";
-import { Notes, Prisma, User } from "@prisma/client";
-import { getServerAuthSession } from "./auth";
-import { CourseDate } from "@/types/courses";
-import { revalidatePath } from "next/cache";
-import { TLog, log } from "@/logger/logger";
 import isAllowedTo from "@/components/utils/is-allowed-to";
+import { TLog, log } from "@/logger/logger";
+import { db } from "@/server/db";
+import type { CourseDate } from "@/types/courses";
+import { type Notes, Prisma, type User } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { getServerAuthSession } from "./auth";
 
 export async function createNotes(title: string, courseDate?: CourseDate) {
     const session = await getServerAuthSession();
@@ -101,12 +101,11 @@ export async function updateNotesContent(
         log({ type: TLog.error, text: "Could not save editor content to db." });
         message = `Could not save editor content to db: ${(e as string) ?? ""}`;
         throw e;
-    } finally {
-        return {
-            success: r !== null,
-            message: message,
-        };
     }
+    return {
+        success: r !== null,
+        message: message,
+    };
 }
 
 export async function getCourseDateNotes(

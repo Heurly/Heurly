@@ -1,7 +1,7 @@
-import { ContentDocs } from "./content";
 import { env } from "@/env";
 import { getDocById } from "@/server/docs";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import { ContentDocs } from "./content";
 
 export async function generateMetadata({
     params,

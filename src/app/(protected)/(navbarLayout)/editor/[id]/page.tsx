@@ -1,11 +1,14 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { getNotes, updateNotesContent } from "@/server/notes";
-import { Notes } from "@prisma/client";
+import EditorDrawer from "@/components/editor/EditorDrawer";
 import HeurlyEditor from "@/components/editor/HeurlyEditor";
-import { EditorInstance, JSONContent } from "novel";
-import { useDebouncedCallback } from "use-debounce";
+import UserProfile from "@/components/profile/UserProfile";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { TLog, log } from "@/logger/logger";
+import { getNotes, updateNotesContent } from "@/server/notes";
+import { SaveState } from "@/types/notes";
+import type { Notes } from "@prisma/client";
 import {
     CircleCheck,
     CircleX,
@@ -13,12 +16,10 @@ import {
     LoaderCircle,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { Card, CardContent } from "@/components/ui/card";
-import UserProfile from "@/components/profile/UserProfile";
-import { TLog, log } from "@/logger/logger";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { SaveState } from "@/types/notes";
-import EditorDrawer from "@/components/editor/EditorDrawer";
+import type { EditorInstance, JSONContent } from "novel";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 interface Props {
     params: { id: string };
@@ -74,6 +75,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
         }
     }, 500);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         if (dbNotes?.updatedAt === undefined) return;
 
@@ -85,6 +87,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
         }
     }, [params.id, localNotes, dbNotes, setLocalNotes]);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         void getDbNotes(params.id);
     }, [params.id]);

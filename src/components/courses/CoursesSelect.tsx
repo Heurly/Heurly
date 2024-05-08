@@ -1,17 +1,18 @@
 "use client";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { Command, CommandEmpty, CommandItem } from "@/components/ui/command";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandItem } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
-import { Check, LoaderCircle, Search } from "lucide-react";
 import { getCoursesForSelect } from "@/server/courses";
+import { CommandList } from "cmdk";
+import { Check, LoaderCircle, Search } from "lucide-react";
+import type React from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { Input } from "../ui/input";
-import { CommandList } from "cmdk";
 import { Separator } from "../ui/separator";
 
 export type CourseOption = { value: number; label: string };

@@ -1,11 +1,11 @@
-import { trustFile, trustFileList } from "@/types/schema/file-upload";
-import { db } from "@/server/db";
-import type { User } from "next-auth";
-import { log, TLog } from "@/logger/logger";
-import * as pdfjs from "pdfjs-dist";
+import { TLog, log } from "@/logger/logger";
 import { bucket } from "@/server/bucket";
+import { db } from "@/server/db";
+import { trustFile, trustFileList } from "@/types/schema/file-upload";
+import type { Docs } from "@prisma/client";
+import type { User } from "next-auth";
+import * as pdfjs from "pdfjs-dist";
 import { UserModel } from "prisma/zod";
-import { Docs } from "@prisma/client";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -102,8 +102,9 @@ async function handleFormUploadDocs(data: FormData) {
         //         error: "This file is toxic",
         //     };
         // }
-        const filename =
-            bucket.prefix + bucket.docFolder + crypto.randomUUID() + `.pdf`;
+        const filename = `${
+            bucket.prefix + bucket.docFolder + crypto.randomUUID()
+        }.pdf`;
         const file_with_new_name = new File([file], filename, {
             type: file.type,
         });
@@ -153,8 +154,9 @@ async function handleFormUploadDocs(data: FormData) {
 
         // Handle multiple file uploads
         for (const file of fileEntry) {
-            const filename =
-                bucket.prefix + bucket.docFolder + crypto.randomUUID() + `.pdf`;
+            const filename = `${
+                bucket.prefix + bucket.docFolder + crypto.randomUUID()
+            }.pdf`;
             const file_with_new_name = new File([file], filename, {
                 type: file.type,
             });
@@ -169,11 +171,11 @@ async function handleFormUploadDocs(data: FormData) {
 
                 log({
                     type: TLog.info,
-                    text: `File uploaded with filename ${filename}`,
+                    text: `File uploaded with filename ${filename} `,
                 });
             } catch (e) {
                 return {
-                    error: `Error uploading the file ${file.name}`,
+                    error: `Error uploading the file ${file.name} `,
                 };
             }
 
@@ -193,7 +195,7 @@ async function handleFormUploadDocs(data: FormData) {
                 }
             } catch (e) {
                 return {
-                    error: `Error posting the file ${file.name}`,
+                    error: `Error posting the file ${file.name} `,
                 };
             }
         }

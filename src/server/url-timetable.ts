@@ -1,6 +1,6 @@
+import type { User, UserTimetableURL } from "@prisma/client";
 import { UserModel } from "prisma/zod";
 import { db } from "./db";
-import type { User, UserTimetableURL } from "@prisma/client";
 
 /**
  *  This function gets all the URLs

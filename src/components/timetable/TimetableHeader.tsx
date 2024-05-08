@@ -1,17 +1,17 @@
-import React from "react";
-import { TEventTimetable } from "@/types/timetable";
+import type { TEventTimetable } from "@/types/timetable";
+import { goToNextPeriod, goToPreviousPeriod } from "@/utils/fullCalendarHelper";
 import { handleDateChange } from "@/utils/timetable";
-import { RefObject } from "@fullcalendar/core/preact.js";
-import FullCalendar from "@fullcalendar/react";
-import { DatePicker } from "../ui/datepicker";
-import { Button } from "../ui/button";
+import type { RefObject } from "@fullcalendar/core/preact.js";
+import type FullCalendar from "@fullcalendar/react";
 import {
     ArrowLeft,
     ArrowRight,
     FlagTriangleRight,
     LoaderCircle,
 } from "lucide-react";
-import { goToNextPeriod, goToPreviousPeriod } from "@/utils/fullCalendarHelper";
+import type React from "react";
+import { Button } from "../ui/button";
+import { DatePicker } from "../ui/datepicker";
 
 interface Props {
     className?: string;
@@ -74,7 +74,7 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
                     data-cy="todayBtn"
                 >
                     <FlagTriangleRight />
-                    <a className="hidden md:block">Aujourd&apos;hui</a>
+                    <p className="hidden md:block">Aujourd&apos;hui</p>
                 </Button>
             )}
             {loading && (

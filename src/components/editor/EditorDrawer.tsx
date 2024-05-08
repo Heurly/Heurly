@@ -1,26 +1,27 @@
 "use client";
-import React, {
-    Dispatch,
-    SetStateAction,
+import { getCourse } from "@/server/courses";
+import type { CourseDate } from "@/types/courses";
+import type { Course, Notes } from "@prisma/client";
+import { CalendarSearch } from "lucide-react";
+import { useSession } from "next-auth/react";
+import type React from "react";
+import {
+    type Dispatch,
+    type SetStateAction,
     useCallback,
     useEffect,
     useState,
 } from "react";
-import { Drawer, DrawerContent, DrawerTitle } from "../ui/drawer";
-import { Button } from "../ui/button";
-import { Course, Notes } from "@prisma/client";
-import NotesVisibility from "../docs/NotesVisibility";
-import { Switch } from "../ui/switch";
-import { useSession } from "next-auth/react";
-import { getCourse } from "@/server/courses";
 import EventSelect from "../courses/EventSelect";
-import { CourseDate } from "@/types/courses";
+import NotesVisibility from "../docs/NotesVisibility";
+import { Button } from "../ui/button";
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
 } from "../ui/collapsible";
-import { CalendarSearch } from "lucide-react";
+import { Drawer, DrawerContent, DrawerTitle } from "../ui/drawer";
+import { Switch } from "../ui/switch";
 
 interface Props {
     notes: Notes;
@@ -42,8 +43,8 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
     const applyCourse = useCallback(
         async (courseDate: CourseDate) => {
             if (
-                courseDate?.courseId == undefined ||
-                courseDate.courseDate == undefined
+                courseDate?.courseId === undefined ||
+                courseDate.courseDate === undefined
             )
                 return;
             setNotes({
@@ -69,10 +70,11 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
 
     useEffect(() => {
         const getCourseData = async () => {
-            if (notes?.courseId == undefined) return;
+            if (!notes.courseId) return;
 
             const r = await getCourse(notes.courseId);
-            if (r != undefined) setCourse(r);
+            if (!r) return;
+            if (r !== undefined) setCourse(r);
         };
 
         void getCourseData();

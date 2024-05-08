@@ -1,9 +1,9 @@
 "use server";
-import { log, TLog } from "@/logger/logger";
+import { TLog, log } from "@/logger/logger";
 import type { Feature, Role, User } from "@prisma/client";
-import { db } from "./db";
 import { UserModel } from "prisma/zod";
 import { z } from "zod";
+import { db } from "./db";
 
 export async function getRoles() {
     let roles: Role[] = [];
@@ -189,7 +189,7 @@ export async function getRolesFeaturesByRole(
 
         if (roles.length === 0) throw new Error("No roles found");
 
-        roles.forEach((role) => {
+        for (const role of roles) {
             const features = role.Right.map((right) => right.feature);
             rolesWithFeatures.push({
                 id: role.id,
@@ -199,7 +199,7 @@ export async function getRolesFeaturesByRole(
                 updatedAt: role.updatedAt,
                 features: features,
             });
-        });
+        }
     } catch (e) {
         if (e instanceof Error) {
             log({

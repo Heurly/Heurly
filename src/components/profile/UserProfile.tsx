@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { getUserPublicInfo } from "@/server/user";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface Props {
     userId: string;

@@ -9,6 +9,8 @@ function Logo({ className = "size-16" }) {
             fill="none"
             viewBox="0 0 402 344"
             className={cn(className)}
+            role="img"
+            aria-label="Heurly logo"
         >
             <g clipPath="url(#clip0_925_2)">
                 <path

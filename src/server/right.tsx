@@ -1,9 +1,9 @@
 "use server";
-import { log, TLog } from "@/logger/logger";
-import { db } from "./db";
 import isAllowedTo from "@/components/utils/is-allowed-to";
+import { TLog, log } from "@/logger/logger";
+import type { Feature, Role } from "@prisma/client";
 import { getServerAuthSession } from "./auth";
-import { Feature, Role } from "@prisma/client";
+import { db } from "./db";
 
 export async function getRights(nbRole = 10) {
     const session = await getServerAuthSession();
@@ -102,12 +102,11 @@ export async function addRoleFeature(
             message: "Right applyed",
             success: true,
         };
-    } else {
-        return {
-            message: "An error occured",
-            success: false,
-        };
     }
+    return {
+        message: "An error occured",
+        success: false,
+    };
 }
 
 export async function deleteRight(

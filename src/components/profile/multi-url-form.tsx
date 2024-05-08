@@ -1,21 +1,21 @@
 "use client";
-import { useSession } from "next-auth/react";
-import { Input } from "../ui/input";
+import { TLog, log } from "@/logger/logger";
+import { addProfileUnitByUrl, deleteProfileUnitUrl } from "@/server/user";
+import { type TCustomURL, schemaUrl } from "@/types/schema/url";
 import ID from "@/utils/id";
-import { useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRef, useState } from "react";
+import type { FormEvent } from "react";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import InputCopy from "../ui/input-copy";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "../ui/tooltip";
-import InputCopy from "../ui/input-copy";
-import { log, TLog } from "@/logger/logger";
-import { addProfileUnitByUrl, deleteProfileUnitUrl } from "@/server/user";
-import { FormEvent } from "react";
-import { schemaUrl, TCustomURL } from "@/types/schema/url";
 
 type MultipleUrlFormProps = {
     initialUrls: string[];

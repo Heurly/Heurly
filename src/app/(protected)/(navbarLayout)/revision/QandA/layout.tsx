@@ -2,15 +2,16 @@ import { buttonVariants } from "@/components/ui/button";
 import { List, MailQuestion } from "lucide-react";
 import Link from "next/link";
 
-import cn from "classnames";
-import { getServerAuthSession } from "@/server/auth";
-import { redirect } from "next/navigation";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getServerAuthSession } from "@/server/auth";
+import cn from "classnames";
+import { redirect } from "next/navigation";
+import ID from "@/utils/id";
 
 export const metadata = {
     title: "Heuly - Questions",
@@ -77,9 +78,9 @@ export default async function QandALayout({
                 {children}
             </div>
             <div className="hidden h-full w-1/12 flex-col gap-y-5 md:flex">
-                {buttonsQandA.map((button, index) => (
+                {buttonsQandA.map((button) => (
                     <QandAButton
-                        key={index}
+                        key={ID()}
                         href={button.href}
                         icon={button.icon}
                         text={button.text}
