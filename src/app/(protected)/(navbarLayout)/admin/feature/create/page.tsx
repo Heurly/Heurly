@@ -52,14 +52,14 @@ export default function FeatureCreatePage() {
                                 searchParams.toString(),
                             );
                             params.set("name", value);
-                            router.push(pathname + "?" + params.toString());
+                            router.push(`${pathname}?${params.toString()}`);
                         }}
                     />
                     <Label>Liens de la page de la feature</Label>
                     <Input
                         type="text"
                         placeholder="https://heurly.fr/nouvelle/feature"
-                    ></Input>
+                    />
                     <Button type="submit" className="self-end">
                         Demander
                     </Button>

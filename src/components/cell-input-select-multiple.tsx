@@ -1,10 +1,10 @@
 "use client";
+import ID from "@/utils/id";
+import { CirclePlus } from "lucide-react";
+import { useEffect, useState } from "react";
 import InputSelectMultiple from "./input-select-multiple";
 import { Badge } from "./ui/badge";
-import ID from "@/utils/id";
-import { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { CirclePlus } from "lucide-react";
 
 type TcurrentOption = {
     id: string;
@@ -66,7 +66,7 @@ export default function CellInputSelectMultiple({
                     })}
                 </div>
 
-                {userOptions.length == 0 && (
+                {userOptions.length === 0 && (
                     <div className="flex items-center justify-center">
                         <p className="text-xs text-primary">Rajouter</p>{" "}
                         <CirclePlus className="ml-2 size-5 text-primary" />

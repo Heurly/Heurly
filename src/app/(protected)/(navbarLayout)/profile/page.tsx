@@ -1,15 +1,15 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { getServerAuthSession } from "@/server/auth";
-import { redirect } from "next/navigation";
+import DocsTable from "@/components/profile/DocsTable";
+import NotesTable from "@/components/profile/NotesTable";
+import MultipleUrlForm from "@/components/profile/multi-url-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import isAllowedTo from "@/components/utils/is-allowed-to";
+import { getServerAuthSession } from "@/server/auth";
 import { getDocsByUser } from "@/server/docs";
+import { getAllUserNotes } from "@/server/notes";
 import { getURLsByUser } from "@/server/url-timetable";
 import nameToInitials from "@/utils/nameToInitials";
-import MultipleUrlForm from "@/components/profile/multi-url-form";
-import isAllowedTo from "@/components/utils/is-allowed-to";
-import NotesTable from "@/components/profile/NotesTable";
-import { getAllUserNotes } from "@/server/notes";
-import DocsTable from "@/components/profile/DocsTable";
+import { redirect } from "next/navigation";
 
 export const metadata = {
     title: "Mon profil",
@@ -64,7 +64,7 @@ export default async function PageUserProfile() {
                         <>
                             <MultipleUrlForm
                                 initialUrls={userUrl.map((item) => item.url)}
-                            ></MultipleUrlForm>
+                            />
                         </>
                     ) : (
                         <p>

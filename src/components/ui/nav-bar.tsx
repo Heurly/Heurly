@@ -5,7 +5,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Link from "next/link";
+import { getServerAuthSession } from "@/server/auth";
 import {
     Calendar,
     FileStack,
@@ -14,9 +14,9 @@ import {
     // Settings,
     User,
 } from "lucide-react";
+import Link from "next/link";
 import InstallPwaButton from "../PWA/install-pwa-button";
 import LogOutButton from "../log-out-button";
-import { getServerAuthSession } from "@/server/auth";
 import isAllowedTo from "../utils/is-allowed-to";
 
 type PropsNavBarItems = {

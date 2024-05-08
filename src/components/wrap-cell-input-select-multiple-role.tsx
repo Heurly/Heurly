@@ -1,7 +1,7 @@
 import { addUserRole, deleteUserRole, getRoles } from "@/server/role";
-import CellInputSelectMultiple from "./cell-input-select-multiple";
+import type { Role } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { Role } from "@prisma/client";
+import CellInputSelectMultiple from "./cell-input-select-multiple";
 
 export default function WrapCellInputSelectMultipleRole({
     userId,

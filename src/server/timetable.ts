@@ -1,11 +1,11 @@
 "use server";
 
-import { lines2tree } from "icalts";
-import { format } from "date-fns";
+import { TLog, log } from "@/logger/logger";
 import { db } from "@/server/db";
-import { CalendarData, CourseEvent } from "@/types/timetable";
+import type { CalendarData, CourseEvent } from "@/types/timetable";
 import type { User } from "@prisma/client";
-import { log, TLog } from "@/logger/logger";
+import { format } from "date-fns";
+import { lines2tree } from "icalts";
 
 /**
  * This function translates the courses codes to their respective labels
@@ -27,7 +27,8 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
         });
 
         let found = dbRef.sort(
-            (a, b) => parseInt(b.year ?? "0") - parseInt(a.year ?? "0"),
+            (a, b) =>
+                Number.parseInt(b.year ?? "0") - Number.parseInt(a.year ?? "0"),
         )[0];
 
         if (found === undefined) {

@@ -1,10 +1,9 @@
 "use client";
-import React, { useState } from "react";
 import {
-    ColumnDef,
-    ColumnFiltersState,
-    InitialTableState,
-    SortingState,
+    type ColumnDef,
+    type ColumnFiltersState,
+    type InitialTableState,
+    type SortingState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
@@ -12,6 +11,10 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
+import React, { useState } from "react";
+import { Button } from "./button";
+import { Input } from "./input";
 import {
     Table,
     TableBody,
@@ -20,9 +23,6 @@ import {
     TableHeader,
     TableRow,
 } from "./table";
-import { Button } from "./button";
-import { Input } from "./input";
-import { ArrowUpDown } from "lucide-react";
 
 interface Props<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];

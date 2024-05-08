@@ -1,9 +1,9 @@
 "use client";
+import { Copy } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Button } from "./button";
 import { Input } from "./input";
-import { Copy } from "lucide-react";
 import {
     Tooltip,
     TooltipContent,

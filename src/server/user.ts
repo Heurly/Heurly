@@ -1,12 +1,12 @@
 "use server";
-import type { Role, User } from "@prisma/client";
-import { db } from "./db";
-import { convert } from "ical2json";
+import isAllowedTo from "@/components/utils/is-allowed-to";
 import { TLog, log } from "@/logger/logger";
 import { schemaUrl } from "@/types/schema/url";
-import { getServerAuthSession } from "./auth";
-import isAllowedTo from "@/components/utils/is-allowed-to";
+import type { Role, User } from "@prisma/client";
+import { convert } from "ical2json";
 import { UserModel } from "prisma/zod";
+import { getServerAuthSession } from "./auth";
+import { db } from "./db";
 
 export async function getUsers(nbUser = 10) {
     // verify if the user is allowed to fetch the users

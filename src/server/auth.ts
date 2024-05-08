@@ -1,14 +1,14 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import {
-    getServerSession,
-    type DefaultSession,
-    type NextAuthOptions,
-} from "next-auth";
-// import DiscordProvider from "next-auth/providers/discord";
-import GoogleProvider from "next-auth/providers/google";
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { User, Account } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import {
+    type DefaultSession,
+    type NextAuthOptions,
+    getServerSession,
+} from "next-auth";
+import type { Account, User } from "next-auth";
+// import DiscordProvider from "next-auth/providers/discord";
+import GoogleProvider from "next-auth/providers/google";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`

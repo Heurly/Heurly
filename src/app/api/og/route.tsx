@@ -3,7 +3,7 @@
 
 import { getDocById } from "@/server/docs";
 import { getUserPublicInfo } from "@/server/user";
-import { Docs } from "@prisma/client";
+import type { Docs } from "@prisma/client";
 import { ImageResponse } from "next/og";
 
 export async function GET(request: Request): Promise<ImageResponse> {
@@ -53,7 +53,7 @@ async function Found({
                             width="84"
                             height="84"
                             src={user.image}
-                            alt="user profile picture"
+                            alt="user profile"
                             tw="border-2 border-white rounded-full"
                         />
                     </div>

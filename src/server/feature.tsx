@@ -1,9 +1,9 @@
 "use server";
 
-import { log, TLog } from "@/logger/logger";
-import { db } from "./db";
-import { getServerAuthSession } from "./auth";
 import isAllowedTo from "@/components/utils/is-allowed-to";
+import { TLog, log } from "@/logger/logger";
+import { getServerAuthSession } from "./auth";
+import { db } from "./db";
 
 export async function getFeatures(nbFeatures = 10) {
     const session = await getServerAuthSession();

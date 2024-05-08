@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { Textarea } from "../ui/textarea";
-import { EditorContextValue, useCurrentEditor } from "@tiptap/react";
+import { type EditorContextValue, useCurrentEditor } from "@tiptap/react";
+import type React from "react";
+import { useEffect, useRef } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { Textarea } from "../ui/textarea";
 
 export interface ContentToPreview {
     from: number;
@@ -29,7 +30,7 @@ const EditorKatexInput: React.FunctionComponent<Props> = ({
     const ref = useRef<HTMLTextAreaElement>(null);
 
     const changeCallback = (s: string | undefined) => {
-        if (editor.editor === null || s == undefined || ref.current == null)
+        if (editor.editor === null || s === undefined || ref.current == null)
             return;
 
         editor.editor

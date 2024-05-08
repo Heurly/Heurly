@@ -1,6 +1,6 @@
 import { getTimetableData } from "@/server/timetable";
-import { TEventTimetable } from "@/types/timetable";
-import FullCalendar from "@fullcalendar/react";
+import type { TEventTimetable } from "@/types/timetable";
+import type FullCalendar from "@fullcalendar/react";
 import {
     addDays,
     endOfWeek,
@@ -9,7 +9,7 @@ import {
     startOfWeek,
     subDays,
 } from "date-fns";
-import { RefObject } from "react";
+import type { RefObject } from "react";
 
 const SMALL_EVENT_THRESHOLD = 1.5 * 60 * 60 * 1000;
 const DATE_KEY_FORMAT = "yyyy-MM-dd";
@@ -106,9 +106,10 @@ export const reloadData = async (
     }
 
     let newCalendarEvents: TEventTimetable[] = [];
-    Array.from(events?.values() ?? [])?.forEach((e) => {
+
+    for (const e of Array.from(events?.values() ?? [])) {
         newCalendarEvents = newCalendarEvents.concat(e);
-    });
+    }
 
     setEvents(completed ?? []);
     setCalendarEvents(newCalendarEvents);

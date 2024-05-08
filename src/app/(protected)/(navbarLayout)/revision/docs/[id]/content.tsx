@@ -1,17 +1,17 @@
 "use client";
-import { notFound } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { getDocById, getFile } from "@/server/docs";
-import type { Docs } from "@prisma/client";
-import { SessionProvider, useSession } from "next-auth/react";
 import NotesVisibility from "@/components/docs/NotesVisibility";
-import { Switch } from "@/components/ui/switch";
 import UserProfile from "@/components/profile/UserProfile";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { getDocById, getFile } from "@/server/docs";
+import type { Docs } from "@prisma/client";
 import { Download, ExternalLink } from "lucide-react";
+import { SessionProvider, useSession } from "next-auth/react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import React, { useEffect } from "react";
+import { useState } from "react";
 
 function DocsInfo({ doc, url }: { doc: Docs; url: string }) {
     const session = useSession();
@@ -47,7 +47,7 @@ function DocsInfo({ doc, url }: { doc: Docs; url: string }) {
                 <h2 className=" text-base font-bold text-gray-400">
                     Matières associés
                 </h2>
-                <div className="h-8 w-16 rounded-xl bg-sky-300"></div>
+                <div className="h-8 w-16 rounded-xl bg-sky-300" />
             </div>
             <div>
                 <div className="flex size-full flex-col gap-4">
@@ -129,7 +129,7 @@ export function ContentDocs({ docId }: { docId: string }) {
     return (
         <SessionProvider>
             <>
-                {doc && doc.public && doc.userId && pdfUrl !== "" && (
+                {doc?.public && doc.userId && pdfUrl !== "" && (
                     <div className="size-full gap-y-5">
                         <Card className="flex h-full flex-col gap-5 p-4 md:flex-row md:p-10">
                             <div className=" h-full md:w-1/2">
@@ -142,7 +142,7 @@ export function ContentDocs({ docId }: { docId: string }) {
                                     height="100%"
                                     width="100%"
                                     className="aspect-auto size-full flex-col"
-                                ></iframe>
+                                />
                             </div>
                         </Card>
                     </div>

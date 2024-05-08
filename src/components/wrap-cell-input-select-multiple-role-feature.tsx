@@ -1,8 +1,8 @@
-import CellInputSelectMultiple from "./cell-input-select-multiple";
-import { useEffect, useState } from "react";
-import { Feature, Role } from "@prisma/client";
 import { getFeatures } from "@/server/feature";
 import { addRoleFeature, deleteRight } from "@/server/right";
+import type { Feature, Role } from "@prisma/client";
+import { useEffect, useState } from "react";
+import CellInputSelectMultiple from "./cell-input-select-multiple";
 
 export default function WrapCellInputSelectMultipleFeature({
     roleId,

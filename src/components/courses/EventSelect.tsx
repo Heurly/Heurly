@@ -1,18 +1,19 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import FullCalendar from "@fullcalendar/react";
-import { TEventTimetable, TView } from "@/types/timetable";
-import { useDebouncedCallback } from "use-debounce";
-import { DatesSetArg } from "@fullcalendar/core/index.js";
+import type { CourseDate } from "@/types/courses";
+import { type TEventTimetable, TView } from "@/types/timetable";
 import { updatePeriodDisplay } from "@/utils/fullCalendarHelper";
+import { reloadData } from "@/utils/timetable";
+import type { DatesSetArg } from "@fullcalendar/core/index.js";
 import frLocale from "@fullcalendar/core/locales/fr";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import iCalendarPlugin from "@fullcalendar/icalendar";
-import { reloadData } from "@/utils/timetable";
-import TimetableHeader from "../timetable/TimetableHeader";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 import ReducedEventContent from "../timetable/ReducedEventContent";
-import { CourseDate } from "@/types/courses";
+import TimetableHeader from "../timetable/TimetableHeader";
 
 interface Props {
     className?: string;

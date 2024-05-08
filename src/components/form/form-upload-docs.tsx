@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
     Form,
     FormControl,
@@ -11,13 +10,14 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 // import {  handleFormUploadDocs } from "@/server/docs";
 import { formUploadDocsSchema } from "@/types/schema/file-upload";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { User } from "@prisma/client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 
 export default function FormUploadDocs({ userId }: { userId: User["id"] }) {
     const form = useForm<z.infer<typeof formUploadDocsSchema>>({
