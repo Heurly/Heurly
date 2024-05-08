@@ -14,7 +14,8 @@
 				"useSelfClosingElements": "off"
 			},
 			"suspicious": {
-				"noDoubleEquals": "off"
+				"noDoubleEquals": "off",
+				"noConsoleLog": "warn"
 			}
 		}
 	},
