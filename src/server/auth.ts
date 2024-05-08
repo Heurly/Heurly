@@ -34,6 +34,7 @@ async function asignDefaultRole(userId: User["id"]) {
     let userRoleId = null;
     let testerRoleId = null;
 
+    // get the id of default roles
     try {
         userRoleId = await db.role.findFirst({
             where: {
@@ -61,6 +62,32 @@ async function asignDefaultRole(userId: User["id"]) {
     }
     if (!testerRoleId) {
         return false;
+    }
+
+    // detedct if user already has default roles
+    const userRoles = await db.userRole.findMany({
+        where: {
+            userId: userId,
+        },
+    });
+
+    let hasUserRole = false;
+    let hasTesterRole = false;
+
+    for (const role of userRoles) {
+        switch (role.roleId) {
+            case userRoleId.id:
+                hasUserRole = true;
+                break;
+            case testerRoleId.id:
+                hasTesterRole = true;
+                break;
+        }
+    }
+
+    // if user already has default roles, return
+    if (hasUserRole && hasTesterRole) {
+        return true;
     }
 
     let resUserRole = null;
