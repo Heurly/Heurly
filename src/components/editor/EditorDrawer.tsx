@@ -70,9 +70,10 @@ const EditorDrawer: React.FunctionComponent<Props> = ({
 
 	useEffect(() => {
 		const getCourseData = async () => {
-			if (notes?.courseId === undefined) return;
+			if (!notes.courseId) return;
 
 			const r = await getCourse(notes.courseId);
+			if (!r) return;
 			if (r !== undefined) setCourse(r);
 		};
 
