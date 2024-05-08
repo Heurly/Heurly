@@ -9,6 +9,8 @@ import GoogleProvider from "next-auth/providers/google";
 import { env } from "@/env";
 import { db } from "@/server/db";
 import { User, Account } from "next-auth";
+import { log, TLog } from "@/logger/logger";
+import { UserModel } from "prisma/zod";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -31,6 +33,35 @@ declare module "next-auth" {
 }
 
 async function asignDefaultRole(userId: User["id"]) {
+    // verify if user id is valid
+    const resCheckUserId = UserModel.shape.id.safeParse(userId);
+    if (!resCheckUserId.success) {
+        log({
+            type: TLog.error,
+            text: "Invalid user id",
+        });
+        return false;
+    }
+    // verify if user exists
+    let user = null;
+    try {
+        user = await db.user.findUnique({
+            where: {
+                id: userId,
+            },
+        });
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "Error while fetching user",
+        });
+        return false;
+    }
+
+    if (!user) {
+        return false;
+    }
+
     let userRoleId = null;
     let testerRoleId = null;
 
@@ -42,7 +73,10 @@ async function asignDefaultRole(userId: User["id"]) {
             },
         });
     } catch (e) {
-        console.log(e);
+        log({
+            type: TLog.error,
+            text: "Error while fetching user role",
+        });
         return false;
     }
 
@@ -57,19 +91,32 @@ async function asignDefaultRole(userId: User["id"]) {
             },
         });
     } catch (e) {
-        console.log(e);
+        log({
+            type: TLog.error,
+            text: "Error while fetching tester role",
+        });
         return false;
     }
     if (!testerRoleId) {
         return false;
     }
 
+    let userRoles = null;
+
     // detect if user already has default roles
-    const userRoles = await db.userRole.findMany({
-        where: {
-            userId: userId,
-        },
-    });
+    try {
+        userRoles = await db.userRole.findMany({
+            where: {
+                userId: userId,
+            },
+        });
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "Error while fetching user roles",
+        });
+        return false;
+    }
 
     let hasUserRole = false;
     let hasTesterRole = false;
@@ -100,8 +147,12 @@ async function asignDefaultRole(userId: User["id"]) {
             },
         });
     } catch (e) {
-        console.log(e);
+        log({
+            type: TLog.error,
+            text: "Error while creating user role",
+        });
     }
+    if (!resUserRole) return false;
 
     let resTesterRole = null;
 
@@ -113,8 +164,12 @@ async function asignDefaultRole(userId: User["id"]) {
             },
         });
     } catch (e) {
-        console.log(e);
+        log({
+            type: TLog.error,
+            text: "Error while creating tester role",
+        });
     }
+    if (!resTesterRole) return false;
 }
 
 /**
