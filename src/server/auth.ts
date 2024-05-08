@@ -142,7 +142,6 @@ export const authOptions: NextAuthOptions = {
             user: User;
         }) {
             if (account && user) {
-                console.log("ziziz");
                 if (account.provider === "google" && user.email) {
                     const allowedEmail = await db.betaList.findFirst({
                         where: {
