@@ -10,7 +10,7 @@ export const trustFile = z
     })
     .refine(
         (file) => (file as File).size < MAX_FILE_SIZE,
-        `File size should be less than 5mb.`,
+        "File size should be less than 5mb.",
     )
     .refine(
         (file) => ACCEPTED_DOCS_TYPES.includes((file as File).type),
@@ -40,4 +40,6 @@ export const trustFileList = z.any().refine(
 
 export const formUploadDocsSchema = z.object({
     file: trustFileList,
+    title: z.string().min(3).max(20),
+    description: z.string().min(3).max(300),
 });

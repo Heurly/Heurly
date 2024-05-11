@@ -1,9 +1,9 @@
+import AlertTimetable from "@/components/alert-timetable";
 import Timetable from "@/components/timetable/timetable";
+import isAllowedTo from "@/components/utils/is-allowed-to";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 import { redirect } from "next/navigation";
-import isAllowedTo from "@/components/utils/is-allowed-to";
-import AlertTimetable from "@/components/alert-timetable";
 
 export default async function PageTimetable() {
     const session = await getServerAuthSession();

@@ -1,21 +1,22 @@
 import {
     Check,
+    CheckSquare,
     ChevronDown,
+    Code,
     Heading1,
     Heading2,
     Heading3,
-    TextQuote,
     ListOrdered,
-    TextIcon,
-    Code,
-    CheckSquare,
     type LucideIcon,
+    TextIcon,
+    TextQuote,
 } from "lucide-react";
 import { EditorBubbleItem, useEditor } from "novel";
 
-import { Popover } from "@radix-ui/react-popover";
-import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Popover } from "@radix-ui/react-popover";
+import ID from "@/utils/id";
 
 export type SelectorItem = {
     name: string;
@@ -29,82 +30,73 @@ const items: SelectorItem[] = [
         name: "Text",
         icon: TextIcon,
         command: (editor) =>
-            editor !== null &&
-            editor.chain().focus().toggleNode("paragraph", "paragraph").run(),
+            editor?.chain().focus().toggleNode("paragraph", "paragraph").run(),
         // I feel like there has to be a more efficient way to do this – feel free to PR if you know how!
         isActive: (editor) =>
-            editor !== null &&
-            editor.isActive("paragraph") &&
-            !editor.isActive("bulletList") &&
-            !editor.isActive("orderedList"),
+            (editor?.isActive("paragraph") &&
+                !editor.isActive("bulletList") &&
+                !editor.isActive("orderedList")) ??
+            false,
     },
     {
         name: "Heading 1",
         icon: Heading1,
         command: (editor) =>
-            editor !== null &&
-            editor.chain().focus().toggleHeading({ level: 1 }).run(),
+            editor?.chain().focus().toggleHeading({ level: 1 }).run(),
         isActive: (editor) =>
-            editor !== null && editor.isActive("heading", { level: 1 }),
+            editor?.isActive("heading", { level: 1 }) ?? false,
     },
     {
         name: "Heading 2",
         icon: Heading2,
         command: (editor) =>
-            editor !== null &&
-            editor.chain().focus().toggleHeading({ level: 2 }).run(),
+            editor?.chain().focus().toggleHeading({ level: 2 }).run(),
         isActive: (editor) =>
-            editor !== null && editor.isActive("heading", { level: 2 }),
+            editor?.isActive("heading", { level: 2 }) ?? false,
     },
     {
         name: "Heading 3",
         icon: Heading3,
         command: (editor) =>
-            editor !== null &&
-            editor.chain().focus().toggleHeading({ level: 3 }).run(),
+            editor?.chain().focus().toggleHeading({ level: 3 }).run(),
         isActive: (editor) =>
-            editor !== null && editor.isActive("heading", { level: 3 }),
+            editor?.isActive("heading", { level: 3 }) ?? false,
     },
     {
         name: "To-do List",
         icon: CheckSquare,
-        command: (editor) =>
-            editor !== null && editor.chain().focus().toggleTaskList().run(),
-        isActive: (editor) => editor !== null && editor.isActive("taskItem"),
+        command: (editor) => editor?.chain().focus().toggleTaskList().run(),
+        isActive: (editor) => editor?.isActive("taskItem") ?? false,
     },
     {
         name: "Bullet List",
         icon: ListOrdered,
-        command: (editor) =>
-            editor !== null && editor.chain().focus().toggleBulletList().run(),
-        isActive: (editor) => editor !== null && editor.isActive("bulletList"),
+        command: (editor) => editor?.chain().focus().toggleBulletList().run(),
+        isActive: (editor) => editor?.isActive("bulletList") ?? false,
     },
     {
         name: "Numbered List",
         icon: ListOrdered,
-        command: (editor) =>
-            editor !== null && editor.chain().focus().toggleOrderedList().run(),
-        isActive: (editor) => editor !== null && editor.isActive("orderedList"),
+        command: (editor) => editor?.chain().focus().toggleOrderedList().run(),
+        isActive: (editor) => editor?.isActive("orderedList") ?? false,
     },
     {
         name: "Quote",
         icon: TextQuote,
         command: (editor) =>
-            editor !== null &&
             editor
-                .chain()
+                ?.chain()
                 .focus()
                 .toggleNode("paragraph", "paragraph")
                 .toggleBlockquote()
                 .run(),
-        isActive: (editor) => editor !== null && editor.isActive("blockquote"),
+        isActive: (editor) => editor?.isActive("blockquote") ?? false,
     },
     {
         name: "Code",
         icon: Code,
-        command: (editor) =>
-            editor !== null && editor.chain().focus().toggleCodeBlock().run(),
-        isActive: (editor) => editor !== null && editor.isActive("codeBlock"),
+        command: (editor) => editor?.chain().focus().toggleCodeBlock().run(),
+        isActive: (editor) => editor?.isActive("codeBlock") ?? false,
     },
 ];
 interface NodeSelectorProps {
@@ -133,9 +125,9 @@ export const NodeSelector = ({ open, onOpenChange }: NodeSelectorProps) => {
                 </Button>
             </PopoverTrigger>
             <PopoverContent sideOffset={5} align="start" className="w-48 p-1">
-                {items.map((item, index) => (
+                {items.map((item) => (
                     <EditorBubbleItem
-                        key={index}
+                        key={ID()}
                         onSelect={(editor) => {
                             item.command(editor);
                             onOpenChange(false);

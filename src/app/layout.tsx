@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import cn from "classnames";
 const inter = Inter({ subsets: ["latin"] });
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata, Viewport } from "next";
 
 const APP_NAME = "Heurly";
@@ -58,6 +59,7 @@ export default function RootLayout({
         <html lang="fr">
             <body className={cn(inter.className, "bg-sky-100")}>
                 {children}
+                <Toaster />
             </body>
         </html>
     );

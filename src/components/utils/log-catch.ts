@@ -1,4 +1,4 @@
-import { log, TLog } from "@/logger/logger";
+import { TLog, log } from "@/logger/logger";
 
 export default function LogCatch(e: Error | string) {
     if (e instanceof Error) {

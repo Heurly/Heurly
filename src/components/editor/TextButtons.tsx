@@ -1,14 +1,15 @@
 import { cn } from "@/lib/utils";
-import { EditorBubbleItem, useEditor } from "novel";
 import {
     BoldIcon,
-    ItalicIcon,
-    UnderlineIcon,
-    StrikethroughIcon,
     CodeIcon,
+    ItalicIcon,
+    StrikethroughIcon,
+    UnderlineIcon,
 } from "lucide-react";
-import { SelectorItem } from "./NodeSelector";
+import { EditorBubbleItem, useEditor } from "novel";
 import { Button } from "../ui/button";
+import type { SelectorItem } from "./NodeSelector";
+import ID from "@/utils/id";
 
 export const TextButtons = () => {
     const { editor } = useEditor();
@@ -16,47 +17,41 @@ export const TextButtons = () => {
     const items: SelectorItem[] = [
         {
             name: "bold",
-            isActive: (editor) => editor !== null && editor.isActive("bold"),
-            command: (editor) =>
-                editor !== null && editor.chain().focus().toggleBold().run(),
+            isActive: (editor) => editor?.isActive("bold") ?? false,
+            command: (editor) => editor?.chain().focus().toggleBold().run(),
             icon: BoldIcon,
         },
         {
             name: "italic",
-            isActive: (editor) => editor !== null && editor.isActive("italic"),
-            command: (editor) =>
-                editor !== null && editor.chain().focus().toggleItalic().run(),
+            isActive: (editor) => editor?.isActive("italic") ?? false,
+            command: (editor) => editor?.chain().focus().toggleItalic().run(),
             icon: ItalicIcon,
         },
         {
             name: "underline",
-            isActive: (editor) =>
-                editor !== null && editor.isActive("underline"),
+            isActive: (editor) => editor?.isActive("underline") ?? false,
             command: (editor) =>
-                editor !== null &&
-                editor.chain().focus().toggleUnderline().run(),
+                editor?.chain().focus().toggleUnderline().run(),
             icon: UnderlineIcon,
         },
         {
             name: "strike",
-            isActive: (editor) => editor !== null && editor.isActive("strike"),
-            command: (editor) =>
-                editor !== null && editor.chain().focus().toggleStrike().run(),
+            isActive: (editor) => editor?.isActive("strike") ?? false,
+            command: (editor) => editor?.chain().focus().toggleStrike().run(),
             icon: StrikethroughIcon,
         },
         {
             name: "code",
-            isActive: (editor) => editor !== null && editor.isActive("code"),
-            command: (editor) =>
-                editor !== null && editor.chain().focus().toggleCode().run(),
+            isActive: (editor) => editor?.isActive("code") ?? false,
+            command: (editor) => editor?.chain().focus().toggleCode().run(),
             icon: CodeIcon,
         },
     ];
     return (
         <div className="flex">
-            {items.map((item, index) => (
+            {items.map((item) => (
                 <EditorBubbleItem
-                    key={index}
+                    key={ID()}
                     onSelect={(editor) => {
                         item.command(editor);
                     }}

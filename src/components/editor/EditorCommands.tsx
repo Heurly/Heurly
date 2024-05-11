@@ -40,7 +40,7 @@ export const suggestionItems = createSuggestionItems([
     {
         title: "Titre 1",
         description: "Un titre de grande section.",
-        searchTerms: ["title", "big", "large", "titre1"],
+        searchTerms: ["title", "big", "large", "titre1", "header1", "heading1"],
         icon: <Heading1 size={18} />,
         command: ({ editor, range }) => {
             editor
@@ -54,7 +54,7 @@ export const suggestionItems = createSuggestionItems([
     {
         title: "Titre 2",
         description: "Un titre de section moyenne.",
-        searchTerms: ["subtitle", "medium", "titre2"],
+        searchTerms: ["subtitle", "medium", "titre2", "header2", "heading2"],
         icon: <Heading2 size={18} />,
         command: ({ editor, range }) => {
             editor
@@ -68,7 +68,7 @@ export const suggestionItems = createSuggestionItems([
     {
         title: "Titre 3",
         description: "Un titre de petite section.",
-        searchTerms: ["subtitle", "small", "titre3"],
+        searchTerms: ["subtitle", "small", "titre3", "header3", "heading3"],
         icon: <Heading3 size={18} />,
         command: ({ editor, range }) => {
             editor
@@ -122,7 +122,7 @@ export const suggestionItems = createSuggestionItems([
     {
         title: "Maths",
         description: "Un extrait mathématique",
-        searchTerms: ["maths", "mathématiques", "katex"],
+        searchTerms: ["maths", "mathématiques", "katex", "equation"],
         icon: <Sigma size={18} />,
         command: ({ editor, range }) =>
             editor.chain().focus().deleteRange(range).insertContent("$$").run(),

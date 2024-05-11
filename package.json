@@ -10,15 +10,14 @@
         "db:seed": "tsx prisma/seed.ts",
         "dev": "next dev",
         "postinstall": "prisma generate",
-        "lint": "next lint",
+        "lint": "pnpx @biomejs/biome lint .",
         "start": "next start",
-        "format": "prettier --check --ignore-path .gitignore .",
-        "format:fix": "prettier --write --ignore-path .gitignore .",
+        "format:fix": "pnpx @biomejs/biome format --write .",
         "prepare": "husky"
     },
     "husky": {
         "hooks": {
-            "pre-commit": "npm run lint || (npm run format:fix && git add -A .)"
+            "pre-commit": "pnpm run lint && (pnpm run format:fix && git add -A .)"
         }
     },
     "dependencies": {
@@ -44,6 +43,7 @@
         "@radix-ui/react-separator": "^1.0.3",
         "@radix-ui/react-slot": "^1.0.2",
         "@radix-ui/react-switch": "^1.0.3",
+        "@radix-ui/react-toast": "^1.1.5",
         "@radix-ui/react-toggle": "^1.0.3",
         "@radix-ui/react-toggle-group": "^1.0.4",
         "@radix-ui/react-tooltip": "^1.0.7",
@@ -56,6 +56,8 @@
         "@tensorflow/tfjs": "^4.17.0",
         "@tiptap-pro/extension-mathematics": "^2.7.6",
         "@tiptap-pro/extension-unique-id": "^2.7.6",
+        "@tiptap/extension-typography": "^2.3.0",
+        "@tiptap/react": "^2.3.0",
         "class-variance-authority": "^0.7.0",
         "classnames": "^2.5.1",
         "clsx": "^2.1.0",
@@ -86,8 +88,8 @@
         "zod": "^3.22.4"
     },
     "devDependencies": {
+        "@biomejs/biome": "1.7.3",
         "@types/backblaze-b2": "^1.5.6",
-        "@types/eslint": "^8.44.7",
         "@types/node": "^18.17.0",
         "@types/react": "^18.2.37",
         "@types/react-copy-to-clipboard": "^5.0.7",
@@ -96,10 +98,7 @@
         "@typescript-eslint/eslint-plugin": "^6.11.0",
         "@typescript-eslint/parser": "^6.11.0",
         "autoprefixer": "^10.4.14",
-        "eslint": "^8.54.0",
-        "eslint-config-next": "^14.0.4",
         "postcss": "^8.4.31",
-        "prettier": "^3.1.0",
         "prettier-plugin-tailwindcss": "^0.5.7",
         "prisma": "^5.12.1",
         "tailwindcss": "^3.3.5",
@@ -109,5 +108,5 @@
     "ct3aMetadata": {
         "initVersion": "7.26.0"
     },
-    "packageManager": "pnpm@8.15.4"
+    "packageManager": "pnpm@9.0.0"
 }

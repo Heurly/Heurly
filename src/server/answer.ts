@@ -1,9 +1,12 @@
 "use server";
-import { dataCreateAnswer, formAnswerSchema } from "@/types/schema/form-answer";
-import * as z from "zod";
-import { db } from "@/server/db";
-import { revalidatePath } from "next/cache";
 import { TLog, log } from "@/logger/logger";
+import { db } from "@/server/db";
+import {
+    type dataCreateAnswer,
+    formAnswerSchema,
+} from "@/types/schema/form-answer";
+import { revalidatePath } from "next/cache";
+import type * as z from "zod";
 
 export async function handleFormCreateAnswer(
     data: z.infer<typeof dataCreateAnswer>,

@@ -1,14 +1,16 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import {
-    getServerSession,
     type DefaultSession,
     type NextAuthOptions,
+    getServerSession,
 } from "next-auth";
+import type { Account, User } from "next-auth";
 // import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { User, Account } from "next-auth";
+import { log, TLog } from "@/logger/logger";
+import { UserModel } from "prisma/zod";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -28,6 +30,146 @@ declare module "next-auth" {
     interface User {
         email_verified?: boolean;
     }
+}
+
+async function asignDefaultRole(userId: User["id"]) {
+    // verify if user id is valid
+    const resCheckUserId = UserModel.shape.id.safeParse(userId);
+    if (!resCheckUserId.success) {
+        log({
+            type: TLog.error,
+            text: "Invalid user id",
+        });
+        return false;
+    }
+    // verify if user exists
+    let user = null;
+    try {
+        user = await db.user.findUnique({
+            where: {
+                id: userId,
+            },
+        });
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "Error while fetching user",
+        });
+        return false;
+    }
+
+    if (!user) {
+        return false;
+    }
+
+    let userRoleId = null;
+    let testerRoleId = null;
+
+    // get the id of default roles
+    try {
+        userRoleId = await db.role.findFirst({
+            where: {
+                name: "user",
+            },
+        });
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "Error while fetching user role",
+        });
+        return false;
+    }
+
+    if (!userRoleId) {
+        return false;
+    }
+
+    try {
+        testerRoleId = await db.role.findFirst({
+            where: {
+                name: "tester",
+            },
+        });
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "Error while fetching tester role",
+        });
+        return false;
+    }
+    if (!testerRoleId) {
+        return false;
+    }
+
+    let userRoles = null;
+
+    // detect if user already has default roles
+    try {
+        userRoles = await db.userRole.findMany({
+            where: {
+                userId: userId,
+            },
+        });
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "Error while fetching user roles",
+        });
+        return false;
+    }
+
+    let hasUserRole = false;
+    let hasTesterRole = false;
+
+    for (const role of userRoles) {
+        switch (role.roleId) {
+            case userRoleId.id:
+                hasUserRole = true;
+                break;
+            case testerRoleId.id:
+                hasTesterRole = true;
+                break;
+        }
+    }
+
+    // if user already has default roles, return
+    if (hasUserRole && hasTesterRole) {
+        return true;
+    }
+
+    let resUserRole = null;
+
+    try {
+        resUserRole = await db.userRole.create({
+            data: {
+                roleId: userRoleId.id,
+                userId: userId,
+            },
+        });
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "Error while creating user role",
+        });
+    }
+    if (!resUserRole) return false;
+
+    let resTesterRole = null;
+
+    try {
+        resTesterRole = await db.userRole.create({
+            data: {
+                roleId: testerRoleId.id,
+                userId: userId,
+            },
+        });
+    } catch (e) {
+        log({
+            type: TLog.error,
+            text: "Error while creating tester role",
+        });
+    }
+    if (!resTesterRole) return false;
 }
 
 /**
@@ -61,11 +203,18 @@ export const authOptions: NextAuthOptions = {
                             email: user.email,
                         },
                     });
+
+                    await asignDefaultRole(user.id);
                     if (!allowedEmail) return false;
                     return true;
                 }
             }
             return false;
+        },
+    },
+    events: {
+        createUser: async (message) => {
+            await asignDefaultRole(message.user.id);
         },
     },
     adapter: PrismaAdapter(db),

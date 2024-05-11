@@ -1,11 +1,11 @@
 "use server";
-import type { Question, User } from "@prisma/client";
-import { db } from "@/server/db";
-import * as z from "zod";
-import { dataCreateQuestionSchema } from "@/types/schema/form-create-question";
 import { TLog, log } from "@/logger/logger";
+import { db } from "@/server/db";
+import type { CourseDate } from "@/types/courses";
+import { dataCreateQuestionSchema } from "@/types/schema/form-create-question";
+import type { Question, User } from "@prisma/client";
 import { QuestionModel, UserModel } from "prisma/zod";
-import { CourseDate } from "@/types/courses";
+import * as z from "zod";
 
 /**
  *
@@ -72,10 +72,10 @@ export async function getQuestions(nbQuestion = 10, userId?: User["id"]) {
         // insert the number of upvotes and downvotes for each question
         const resQuestions = questions.map((question) => {
             const upvotes = question.UserVoteQuestion.filter(
-                (vote) => vote.vote == 1,
+                (vote) => vote.vote === 1,
             ).length;
             const downvotes = question.UserVoteQuestion.filter(
-                (vote) => vote.vote == 0,
+                (vote) => vote.vote === 0,
             ).length;
             return { ...question, upvotes, downvotes };
         });
@@ -142,19 +142,19 @@ export async function getQuestionAndAnswers(
 
         // get the number of upvotes and downvotes
         const upvotes = questionAndAnswers.UserVoteQuestion.filter(
-            (vote) => vote.vote == 1,
+            (vote) => vote.vote === 1,
         ).length;
         const downvotes = questionAndAnswers.UserVoteQuestion.filter(
-            (vote) => vote.vote == 0,
+            (vote) => vote.vote === 0,
         ).length;
 
         // get the number of upvotes and downvotes for each answer
         const tabAnswers = questionAndAnswers.answer.map((answer) => {
             const upvotes = answer.UserVoteAnswer.filter(
-                (vote) => vote.vote == 1,
+                (vote) => vote.vote === 1,
             ).length;
             const downvotes = answer.UserVoteAnswer.filter(
-                (vote) => vote.vote == 0,
+                (vote) => vote.vote === 0,
             ).length;
             return { ...answer, upvotes, downvotes };
         });
@@ -191,7 +191,7 @@ export async function handleFormCreateQuestion(
         throw resParseRawData.error;
     }
 
-    let resCreateQuestion;
+    let resCreateQuestion = null;
 
     // Create the question
     try {

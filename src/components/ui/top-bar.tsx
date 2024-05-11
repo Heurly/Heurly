@@ -1,5 +1,5 @@
-import { Settings, User } from "lucide-react";
 import Logo from "@/components/icon/Logo";
+import { Settings, User } from "lucide-react";
 
 function TopBar({ className }: { className?: string }) {
     return (

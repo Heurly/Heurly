@@ -1,12 +1,17 @@
-import React from "react";
-import { TEventTimetable } from "@/types/timetable";
-import { handleDateChange } from "@/utils/timetable";
-import { RefObject } from "@fullcalendar/core/preact.js";
-import FullCalendar from "@fullcalendar/react";
-import { DatePicker } from "../ui/datepicker";
-import { Button } from "../ui/button";
-import { ArrowLeft, ArrowRight, LoaderCircle } from "lucide-react";
+import type { TEventTimetable } from "@/types/timetable";
 import { goToNextPeriod, goToPreviousPeriod } from "@/utils/fullCalendarHelper";
+import { handleDateChange } from "@/utils/timetable";
+import type { RefObject } from "@fullcalendar/core/preact.js";
+import type FullCalendar from "@fullcalendar/react";
+import {
+    ArrowLeft,
+    ArrowRight,
+    FlagTriangleRight,
+    LoaderCircle,
+} from "lucide-react";
+import type React from "react";
+import { Button } from "../ui/button";
+import { DatePicker } from "../ui/datepicker";
 
 interface Props {
     className?: string;
@@ -33,6 +38,9 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
     setLoading,
     expandHeader,
 }) => {
+    const date = calendarRef.current?.getApi().getDate();
+
+    if (!date) return null;
     return (
         <div className={className}>
             <DatePicker
@@ -47,15 +55,15 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
                         userId,
                     )
                 }
-                className="hidden md:flex"
+                dateInput={date}
             />
             {expandHeader && (
                 <Button
-                    className="hidden bg-sky-50 text-black md:block"
+                    className="bg-sky-50 text-black"
                     onClick={() =>
                         handleDateChange(
                             calendarRef,
-                            new Date(),
+                            new Date(new Date().setHours(12)),
                             events,
                             setEvents,
                             setCalendarEvents,
@@ -65,45 +73,31 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
                     }
                     data-cy="todayBtn"
                 >
-                    Aujourd&apos;hui
+                    <FlagTriangleRight />
+                    <p className="hidden md:block">Aujourd&apos;hui</p>
                 </Button>
             )}
-            {loading && <LoaderCircle className="ml-6 animate-spin" />}
+            {loading && (
+                <LoaderCircle className="ml-6 hidden animate-spin md:block" />
+            )}
+            {expandHeader && (
+                <p data-cy="periodDisplay" className="ml-auto hidden md:block">
+                    {/* {periodDisplay} */}
+                </p>
+            )}
             <Button
-                className="aspect-square rounded-full bg-sky-50 p-3 md:order-2"
+                className="-order-1 rounded-full bg-sky-50 md:order-[unset]"
                 onClick={() => goToPreviousPeriod(calendarRef)}
                 data-cy="previousPeriodBtn"
             >
-                <ArrowLeft className=" h-9 w-9 text-black" size={60} />
+                <ArrowLeft className="text-black" />
             </Button>
-            {expandHeader && (
-                <p
-                    data-cy="periodDisplay"
-                    className="hidden md:order-1 md:block"
-                >
-                    {periodDisplay}
-                </p>
-            )}
-            <DatePicker
-                onChange={(d: Date) =>
-                    handleDateChange(
-                        calendarRef,
-                        d,
-                        events,
-                        setEvents,
-                        setCalendarEvents,
-                        setLoading,
-                        userId,
-                    )
-                }
-                className="md:hidden"
-            />
             <Button
-                className="aspect-square rounded-full bg-sky-50 p-3 md:order-3"
+                className="rounded-full bg-sky-50"
                 onClick={() => goToNextPeriod(calendarRef)}
                 data-cy="nextPeriodBtn"
             >
-                <ArrowRight className="text-black" size={60} />
+                <ArrowRight className="text-black" />
             </Button>
         </div>
     );

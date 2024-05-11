@@ -1,19 +1,28 @@
 "use client";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import frLocale from "@fullcalendar/core/locales/fr";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import { useEffect, useRef, useState } from "react";
-import iCalendarPlugin from "@fullcalendar/icalendar";
-import { updatePeriodDisplay } from "@/utils/fullCalendarHelper";
-import { TEventClickArg, TEventTimetable, TView } from "@/types/timetable";
 import EventContent from "@/components/timetable/event-content";
-import type { User } from "@prisma/client";
-import { useDebouncedCallback } from "use-debounce";
-import { DatesSetArg } from "@fullcalendar/core/index.js";
-import TimetableDrawer from "./TimetableDrawer";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import useSwipe from "@/hooks/useSwipe";
+import {
+    type TEventClickArg,
+    type TEventTimetable,
+    TView,
+} from "@/types/timetable";
+import {
+    goToNextPeriod,
+    goToPreviousPeriod,
+    updatePeriodDisplay,
+} from "@/utils/fullCalendarHelper";
 import { reloadData } from "@/utils/timetable";
+import type { DatesSetArg } from "@fullcalendar/core/index.js";
+import frLocale from "@fullcalendar/core/locales/fr";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import iCalendarPlugin from "@fullcalendar/icalendar";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import type { User } from "@prisma/client";
+import { useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import TimetableDrawer from "./TimetableDrawer";
 import TimetableHeader from "./TimetableHeader";
 
 const nbPxPhone = 768;
@@ -22,6 +31,10 @@ const endTime = "20:00:00";
 
 export default function Timetable({ userId }: { userId: User["id"] }) {
     const calendarRef = useRef<FullCalendar>(null);
+    const swipeHandlers = useSwipe({
+        onSwipedLeft: () => goToNextPeriod(calendarRef),
+        onSwipedRight: () => goToPreviousPeriod(calendarRef),
+    });
     const [periodDisplay, setPeriodDisplay] = useState<string>("");
     const [events, setEvents] = useState<Map<string, TEventTimetable[]>>(
         new Map(),
@@ -70,7 +83,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
             <CardHeader className="h-1/6">
                 <TimetableHeader
                     periodDisplay={periodDisplay}
-                    className="flex flex-col-reverse items-center justify-center gap-5 md:flex-row"
+                    className="flex w-full items-center justify-between gap-2"
                     calendarRef={calendarRef}
                     events={events}
                     setEvents={setEvents}
@@ -88,7 +101,7 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     setOpen={setIsDrawerOpen}
                 />
             )}
-            <CardContent className="h-5/6 overflow-scroll">
+            <CardContent className="h-5/6 overflow-scroll" {...swipeHandlers}>
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}

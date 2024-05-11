@@ -1,9 +1,9 @@
 "use client";
+import cn from "classnames";
+import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { ChevronLeft } from "lucide-react";
 import { Button } from "../ui/button";
-import cn from "classnames";
 
 type PropsGoBackButton = {
     className?: string;
@@ -23,7 +23,7 @@ const GoBackButton = React.forwardRef<HTMLButtonElement, PropsGoBackButton>(
                 <ChevronLeft
                     size={30}
                     strokeWidth={1}
-                    className=" -translate-x-0.5"
+                    className="-translate-x-0.5"
                 />
             </Button>
         );

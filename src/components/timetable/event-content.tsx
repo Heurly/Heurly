@@ -1,5 +1,5 @@
 "use client";
-import { TEventInfo } from "@/types/timetable";
+import type { TEventInfo } from "@/types/timetable";
 
 export default function EventContent(eventInfo: TEventInfo) {
     return (
@@ -12,7 +12,9 @@ export default function EventContent(eventInfo: TEventInfo) {
                             ""}
                     </p>
                     <p className="max-h-1/2 w-full overflow-hidden text-ellipsis text-center align-top text-[0.6rem]/[0.6rem]">
-                        {`${eventInfo.event.extendedProps.type ?? ""} ${eventInfo.event.extendedProps.room ?? ""}`}
+                        {`${eventInfo.event.extendedProps.type ?? ""} ${
+                            eventInfo.event.extendedProps.room ?? ""
+                        }`}
                     </p>
                 </div>
             ) : (
@@ -23,7 +25,9 @@ export default function EventContent(eventInfo: TEventInfo) {
                             ""}
                     </p>
                     <p className="overflow-hidden text-ellipsis text-center text-[0.6rem]/[0.6rem]">
-                        {`${eventInfo.event.extendedProps.type ?? ""} ${eventInfo.event.extendedProps.room ?? ""}`}
+                        {`${eventInfo.event.extendedProps.type ?? ""} ${
+                            eventInfo.event.extendedProps.room ?? ""
+                        }`}
                     </p>
                 </div>
             )}

@@ -1,38 +1,70 @@
 "use server";
-import { Docs, User } from "@prisma/client";
-import { db } from "./db";
-import { DocsModel, UserModel } from "prisma/zod";
-import { bucket } from "./bucket";
+import isAllowedTo from "@/components/utils/is-allowed-to";
 import { TLog, log } from "@/logger/logger";
+import type { Docs, User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { DocsModel, UserModel } from "prisma/zod";
+import { getServerAuthSession } from "./auth";
+import { bucket } from "./bucket";
+import { db } from "./db";
 
 /**
  *
  * @returns {Promise<Docs[]>} A promise that resolves to an array of docs
  */
 export async function getDocs(): Promise<Docs[]> {
+    const session = await getServerAuthSession();
+
+    if (!session?.user?.id) throw new Error("User not found");
+
+    // verify if the user is allowed to fetch the docs
+    const isAllowedToFetchDocs = await isAllowedTo(
+        "show_docs",
+        session.user.id,
+    );
+
+    if (!isAllowedToFetchDocs)
+        throw new Error("User is not allowed to fetch docs");
+
+    let resDBDocs = null;
+
     try {
-        const resDBDocs = await db.docs.findMany();
-        return resDBDocs;
+        resDBDocs = await db.docs.findMany();
     } catch (e) {
         throw new Error("Error: Could not get docs.");
     }
+    return resDBDocs;
 }
 
-export async function getDocById(docId: string): Promise<Docs> {
+export async function getDocById(docId: Docs["id"]): Promise<Docs | null> {
+    // verify if the user is allowed to fetch the docs
+    const session = await getServerAuthSession();
+
+    if (!session?.user?.id) throw new Error("User not found");
+
+    const isAllowedToFetchDocs = await isAllowedTo(
+        "show_docs",
+        session.user.id,
+    );
+
+    if (!isAllowedToFetchDocs)
+        throw new Error("User is not allowed to fetch docs");
+
+    let resDBDoc = null;
+
     try {
-        const resDBDoc = await db.docs.findUnique({
+        resDBDoc = await db.docs.findUnique({
             where: {
                 id: docId,
             },
         });
-        return resDBDoc!;
     } catch (e) {
         throw new Error("Error: Could not get docs.");
     }
+    return resDBDoc;
 }
 
-export async function getFile(doc: Docs) {
+export async function getFile(doc: Docs): Promise<string> {
     return bucket.getFile(doc);
 }
 
@@ -47,8 +79,17 @@ export async function getDocsByUser(userId: User["id"]): Promise<Docs[]> {
 
     if (!resCheckUserId.success) throw new Error("Error: Invalid user id.");
 
+    // verify if the user is allowed to fetch the docs
+
+    const isAllowedToFetchDocs = await isAllowedTo("show_docs", userId);
+
+    if (!isAllowedToFetchDocs)
+        throw new Error("User is not allowed to fetch docs");
+
+    let resDBUserDocs = null;
+
     try {
-        const resDBUserDocs = await db.docs.findMany({
+        resDBUserDocs = await db.docs.findMany({
             where: {
                 userId: userId,
             },
@@ -76,9 +117,17 @@ export async function deleteUserDoc(docId: Docs["id"], userId: User["id"]) {
 
     if (!resCheckDocId.success) throw new Error("Error: Invalid doc id.");
 
+    // verify if the user is allowed to delete the doc
+    const isAllowedToDeleteDoc = await isAllowedTo("delete_docs", userId);
+
+    if (!isAllowedToDeleteDoc)
+        throw new Error("User is not allowed to delete docs");
+
+    let resDBDoc = null;
+
     try {
         // get the id of the doc
-        const resDBDoc = await db.docs.findUnique({
+        resDBDoc = await db.docs.findUnique({
             where: {
                 id: docId,
             },
@@ -88,7 +137,7 @@ export async function deleteUserDoc(docId: Docs["id"], userId: User["id"]) {
 
         // delete the doc in the cloud storage
         const resDeleteFromBucket = await bucket.deleteFileByName(
-            "heurly_" + resDBDoc.filename,
+            resDBDoc.filename,
         );
         if (!resDeleteFromBucket.success)
             throw new Error("Error: Could not delete doc. (bucket error)");
@@ -123,9 +172,24 @@ export async function deleteDoc(docId: Docs["id"]) {
 
     if (!resCheckDocId.success) throw new Error("Error: Invalid doc id.");
 
+    // verify if the user is allowed to delete the doc
+    const session = await getServerAuthSession();
+
+    if (!session?.user?.id) throw new Error("User not found");
+
+    const isAllowedToDeleteDoc = await isAllowedTo(
+        "delete_docs",
+        session.user.id,
+    );
+
+    if (!isAllowedToDeleteDoc)
+        throw new Error("User is not allowed to delete docs");
+
+    let resDBDoc = null;
+
     try {
         // get the id of the doc
-        const resDBDoc = await db.docs.findUnique({
+        resDBDoc = await db.docs.findUnique({
             where: {
                 id: docId,
             },
@@ -138,7 +202,7 @@ export async function deleteDoc(docId: Docs["id"]) {
 
         // delete the doc in the cloud storage
         const resDeleteFromBucket = await bucket.deleteFileByName(
-            "heurly_" + resDBDoc.filename,
+            resDBDoc.filename,
         );
         if (!resDeleteFromBucket.success)
             throw new Error("Error: Could not delete doc. (bucket error)");

@@ -1,15 +1,15 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { getServerAuthSession } from "@/server/auth";
-import { redirect } from "next/navigation";
+import DocsTable from "@/components/profile/DocsTable";
+import NotesTable from "@/components/profile/NotesTable";
+import MultipleUrlForm from "@/components/profile/multi-url-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import isAllowedTo from "@/components/utils/is-allowed-to";
+import { getServerAuthSession } from "@/server/auth";
 import { getDocsByUser } from "@/server/docs";
+import { getAllUserNotes } from "@/server/notes";
 import { getURLsByUser } from "@/server/url-timetable";
 import nameToInitials from "@/utils/nameToInitials";
-import MultipleUrlForm from "@/components/profile/multi-url-form";
-import isAllowedTo from "@/components/utils/is-allowed-to";
-import NotesTable from "@/components/profile/NotesTable";
-import { getAllUserNotes } from "@/server/notes";
-import DocsTable from "@/components/profile/DocsTable";
+import { redirect } from "next/navigation";
 
 export const metadata = {
     title: "Mon profil",
@@ -36,17 +36,17 @@ export default async function PageUserProfile() {
     const notes = await getAllUserNotes(session.user.id);
 
     return (
-        <div className="grid h-full grid-cols-1 gap-5 md:grid-cols-3 md:grid-rows-3">
+        <div className="flex grid-cols-1 flex-col gap-5 pb-24 md:grid md:h-full md:grid-cols-3 md:grid-rows-3 md:pb-0">
             <Card className="p-6 md:col-span-1 md:row-span-1">
-                <CardContent className="flex h-full w-full items-center justify-center gap-5">
-                    <Avatar className="h-16 w-16">
+                <CardContent className="flex h-full w-full flex-col items-center justify-center gap-5 md:flex-row">
+                    <Avatar className="size-11 md:size-16">
                         <AvatarImage
                             src={session.user.image ?? ""}
                             alt={name ?? "image de profil"}
                         />
                         <AvatarFallback>{nameToInitials(name)}</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col items-center justify-center md:items-start">
                         <h1 className="font-bold">{session?.user.name}</h1>
                         <p>{session?.user.email}</p>
                     </div>
@@ -64,7 +64,7 @@ export default async function PageUserProfile() {
                         <>
                             <MultipleUrlForm
                                 initialUrls={userUrl.map((item) => item.url)}
-                            ></MultipleUrlForm>
+                            />
                         </>
                     ) : (
                         <p>

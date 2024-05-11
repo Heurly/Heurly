@@ -1,8 +1,8 @@
 "use client";
-import React, { forwardRef } from "react";
+import cn from "classnames";
 import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
-import cn from "classnames";
+import React, { forwardRef } from "react";
 
 type PropsLogOutButton = {
     className?: string;

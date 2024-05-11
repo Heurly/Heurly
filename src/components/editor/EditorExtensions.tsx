@@ -1,15 +1,17 @@
 import {
+    HorizontalRule,
+    Placeholder,
+    StarterKit,
+    TaskItem,
+    TaskList,
     TiptapImage,
     TiptapLink,
     UpdatedImage,
-    TaskList,
-    TaskItem,
-    HorizontalRule,
-    StarterKit,
-    Placeholder,
 } from "novel/extensions";
 
 import Mathematics from "@tiptap-pro/extension-mathematics";
+
+import Typography from "@tiptap/extension-typography";
 
 import { cx } from "class-variance-authority";
 
@@ -32,6 +34,7 @@ const taskList = TaskList.configure({
         class: cx("not-prose pl-2"),
     },
 });
+
 const taskItem = TaskItem.configure({
     HTMLAttributes: {
         class: cx("flex items-start my-4"),
@@ -106,4 +109,5 @@ export const defaultExtensions = [
     taskItem,
     horizontalRule,
     mathematics,
+    Typography,
 ];

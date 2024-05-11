@@ -1,7 +1,8 @@
 "use client";
 import { createNotes } from "@/server/notes";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import type React from "react";
+import { useEffect } from "react";
 
 const NewNotes: React.FunctionComponent = () => {
     const router = useRouter();

@@ -1,10 +1,13 @@
 "use client";
 
-import { Docs } from "@prisma/client";
-import DataTable, { DataTableSortableHeader } from "../ui/data-table";
-import { ColumnDef, InitialTableState } from "@tanstack/react-table";
+import type { Docs } from "@prisma/client";
+import type { ColumnDef, InitialTableState } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 import UserProfile from "../profile/UserProfile";
+import { Button } from "../ui/button";
+import DataTable, { DataTableSortableHeader } from "../ui/data-table";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,9 +16,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { MoreHorizontal } from "lucide-react";
-import Link from "next/link";
 
 const columns: ColumnDef<Docs>[] = [
     {

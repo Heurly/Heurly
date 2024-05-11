@@ -1,8 +1,8 @@
 "use client";
 
+import cn from "classnames";
 import { ChevronDownCircle, ChevronUpCircle } from "lucide-react";
 import React from "react";
-import cn from "classnames";
 
 type clickEvent = React.MouseEvent<SVGSVGElement, MouseEvent>;
 

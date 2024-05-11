@@ -1,0 +1,47 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.6.4/schema.json",
+    "files": {
+        "maxSize": 5242880,
+        "ignore": ["node_modules", "dist", ".next", "prisma", "public"]
+    },
+    "linter": {
+        "rules": {
+            "a11y": {
+                "noAutofocus": "off",
+                "useKeyWithClickEvents": "warn"
+            },
+            "style": {
+                "useSelfClosingElements": "off"
+            },
+            "suspicious": {
+                "noDoubleEquals": "off",
+                "noConsoleLog": "warn"
+            }
+        }
+    },
+    "formatter": {
+        "enabled": true,
+        "formatWithErrors": false,
+        "ignore": [],
+        "attributePosition": "auto",
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 80
+    },
+    "json": {
+        "formatter": {
+            "trailingCommas": "none"
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "arrowParentheses": "always",
+            "bracketSameLine": false,
+            "bracketSpacing": true,
+            "jsxQuoteStyle": "double",
+            "quoteProperties": "asNeeded",
+            "semicolons": "always",
+            "trailingComma": "all"
+        }
+    }
+}
