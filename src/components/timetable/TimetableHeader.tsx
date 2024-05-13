@@ -59,6 +59,7 @@ const TimetableHeader: React.FunctionComponent<Props> = ({
             />
             {expandHeader && (
                 <Button
+                    disabled={date.getDate() === new Date().getDate()}
                     className="bg-sky-50 text-black"
                     onClick={() =>
                         handleDateChange(
