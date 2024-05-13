@@ -67,10 +67,9 @@ const EventCard = React.forwardRef<HTMLDivElement, PropsEventCard>(
 
         const authorName =
             author.name.length > 15
-                ? author.name.split(" ")[0] +
-                  " " +
-                  author.name.split(" ")[1]?.charAt(0) +
-                  "."
+                ? `${author.name.split(" ")[0]} ${author.name
+                      .split(" ")[1]
+                      ?.charAt(0)}.`
                 : author.name;
 
         return (

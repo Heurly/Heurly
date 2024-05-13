@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import type { User } from "@prisma/client";
-import { z } from "zod";
+import type { z } from "zod";
 import { handleFormCreateEvent } from "@/server/event";
 import { useState } from "react";
 

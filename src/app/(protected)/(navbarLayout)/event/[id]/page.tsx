@@ -28,10 +28,9 @@ export default async function EventPage({
     const session = await getServerAuthSession();
     if (!session) redirect("/login");
 
-    const eventsDb =
-        await getEvents();
-        // params.id,
-        // session.user.id,
+    const eventsDb = await getEvents();
+    // params.id,
+    // session.user.id,
     if (!eventsDb) redirect("/404");
 
     return (

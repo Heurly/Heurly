@@ -8,8 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model Docs {
   id          String   @id @default(cuid())
   title       String
@@ -18,7 +16,7 @@ model Docs {
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
-  public      Boolean   @default(true)
+  public      Boolean  @default(true)
   userId      String
   uploadedBy  User     @relation(fields: [userId], references: [id])
 }
@@ -29,10 +27,10 @@ model Course {
   schoolId    Int?
   code        String
   name        String     @default("")
-  professor   String?     @default("")
-  small_code  String?     @default("")
-  unit        String?     @default("")
-  year        String?     @default("")
+  professor   String?    @default("")
+  small_code  String?    @default("")
+  unit        String?    @default("")
+  year        String?    @default("")
   School      School?    @relation(fields: [schoolId], references: [id])
   Notes       Notes[]
   Question    Question[]
@@ -97,24 +95,25 @@ model UserVoteAnswer {
   user      User     @relation(fields: [userId], references: [id])
 }
 
-model Event{
-  id          String   @id @default(cuid())
-  userId      String
-  event       String
-  description String
-  urlImage    String
-  location    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  eventDate   DateTime
-  user        User  @relation(fields: [userId], references: [id])
-  EventUser   EventUser[]
+model Event {
+  id               String      @id @default(cuid())
+  userId           String
+  event            String
+  description      String
+  urlImage         String
+  location         String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @default(now())
+  nbUserInterested Int         @default(0)
+  eventDate        DateTime
+  user             User        @relation(fields: [userId], references: [id])
+  UserEvent        UserEvent[]
 }
 
-model EventUser {
+model UserEvent {
   id        Int      @id @default(autoincrement())
-  userId    String   
-  eventId   String   
+  userId    String
+  eventId   String
   vote      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -182,7 +181,7 @@ model User {
   UserVoteQuestion UserVoteQuestion[]
   UserRole         UserRole[]
   Event            Event[]
-  EventUser       EventUser[]
+  UserEvent        UserEvent[]
 }
 
 model UserRole {

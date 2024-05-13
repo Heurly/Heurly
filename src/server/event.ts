@@ -22,7 +22,7 @@ export async function handleFormCreateEvent(
         throw resParseRawData.error;
     }
 
-    let resCreateEvent;
+    let resCreateEvent = null;
 
     // Create the question
     try {
@@ -73,44 +73,17 @@ export async function getEventById(
  * @param userId the id of the user, if provided, the function will return the votes of the user
  *
  */
-export async function getEvents(nbEvents = 10, userId?: User["id"]) {
+export async function getEvents(nbEvents = 10) {
     log({ type: TLog.info, text: "Fetching events" });
 
-    const resCheckUserId = UserModel.shape.id.safeParse(userId);
-    if (!resCheckUserId.success) throw new Error("Invalid user id");
-
-    const resCheckNb = z.number().safeParse(nbEvents);
+    const resCheckNb = z.number().gt(0).safeParse(nbEvents);
     if (!resCheckNb.success) throw new Error("Invalid number of questions");
 
+    let events = null;
     try {
-        const events = await db.event.findMany({
-            take: nbEvents,
-            orderBy: {
-                createdAt: "desc",
-            },
-            include: {
-                user: true,
-                EventUser: {
-                    where: {
-                        userId: userId,
-                    },
-                },
-                _count: {
-                    select: { EventUser: true },
-                },
-            },
-        });
-
-        // insert the number of upvotes and downvotes for each question
-        const resEvents = events.map((event) => {
-            const nbParticipated = event.EventUser.filter(
-                (vote) => vote.vote == 1,
-            ).length;
-            return { ...events, nbParticipated };
-        });
-
-        return resEvents;
+        events = await db.event.findMany();
     } catch (e) {
-        throw new Error("An error occured while fetching the questions");
+        throw new Error("An error occured while fetching evnts");
     }
+    return events;
 }
