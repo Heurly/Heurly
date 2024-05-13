@@ -10,9 +10,9 @@
         "db:seed": "tsx prisma/seed.ts",
         "dev": "next dev",
         "postinstall": "prisma generate",
-        "lint": "pnpx @biomejs/biome lint .",
+        "lint": "pnpm biome lint .",
         "start": "next start",
-        "format:fix": "pnpx @biomejs/biome format --write .",
+        "format:fix": "pnpm biome format --write .",
         "prepare": "husky"
     },
     "husky": {
