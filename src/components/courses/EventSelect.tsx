@@ -58,7 +58,7 @@ const EventSelect: React.FunctionComponent<Props> = ({
             if (calendarRef.current) {
                 const calendarApi = calendarRef.current.getApi();
                 calendarApi.changeView(
-                    isMobile ? TView.timeGridDay : TView.dayGridThreeDays,
+                    isMobile ? TView.timeGridDay : TView.dayGridWeek,
                 );
             }
         };
@@ -87,7 +87,7 @@ const EventSelect: React.FunctionComponent<Props> = ({
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, iCalendarPlugin]}
-                    initialView={"dayGridThreeDays"}
+                    initialView={"dayGridWeek"}
                     views={{
                         dayGridThreeDays: {
                             type: "timeGridWeek",
