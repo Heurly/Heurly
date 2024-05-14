@@ -42,13 +42,7 @@ export default async function PageDocsList({ searchParams: { course } }: { searc
 
                 <div className="flex justify-start">
                     <CourseCard data={data} />
-                    <CourseCard data={data} />
-                </div>
-                <div id="ERP" className="hidden">
-                    <div className="flex justify-start">
-                        <CourseCard data={data2} />
-                        <CourseCard data={data2} />
-                    </div>
+
                 </div>
 
             </Card>
