@@ -201,17 +201,11 @@ export async function getCourseDateNotesUser(
     if (!isAllowedToSeeNotes)
         throw new Error("You are not allowed to see notes");
 
-    // date to utc (plus offset)
-    const courseDateUTC = new Date(
-        courseDate.courseDate.getTime() -
-            courseDate.courseDate.getTimezoneOffset() * 60000,
-    );
-
     try {
         notesGot = await db.notes.findMany({
             where: {
                 courseId: courseDate.courseId,
-                courseDate: courseDateUTC,
+                courseDate: courseDate.courseDate,
                 userId: session.user.id,
             },
         });
