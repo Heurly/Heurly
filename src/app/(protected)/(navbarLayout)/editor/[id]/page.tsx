@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { TLog, log } from "@/logger/logger";
-import { getNotes, updateNotesContent } from "@/server/notes";
+import { getNotes, updateNotesContent, updateNotesTitle } from "@/server/notes";
 import { SaveState } from "@/types/notes";
 import type { Notes } from "@prisma/client";
 import {
@@ -32,7 +32,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
     const [saveState, setSaveState] = useState<SaveState>(SaveState.Saved);
     const [dbNotes, setDbNotes] = useState<Notes | undefined>(undefined);
     const [localNotes, setLocalNotes] = useLocalStorage<Notes | undefined>(
-        "editor",
+        `editor-${params.id}`,
         undefined,
     );
 
@@ -50,6 +50,27 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
             const json = editor.getJSON();
             newNotes.content = json;
             newNotes.updatedAt = new Date();
+        }
+
+        if (dbNotes?.title !== newNotes.title) {
+            try {
+                const r: { success: boolean; message: string } =
+                    await updateNotesTitle(newNotes.id, newNotes.title);
+                if (!r.success) {
+                    throw new Error(
+                        "Error occured while trying to update notes title.",
+                    );
+                }
+                setLocalNotes(newNotes);
+                setDbNotes(newNotes);
+                setSaveState(SaveState.Saved);
+                log({ type: TLog.info, text: "Saved editor title to db." });
+            } catch (e) {
+                log({
+                    type: TLog.error,
+                    text: "Could not save editor title to db.",
+                });
+            }
         }
 
         try {

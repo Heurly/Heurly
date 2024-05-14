@@ -1,4 +1,8 @@
-import { createNotes, getCourseDateNotes } from "@/server/notes";
+import {
+    createNotes,
+    getCourseDateNotesUser,
+    getCourseDateNotesPublic,
+} from "@/server/notes";
 import { getCourseDataQuestions } from "@/server/question";
 import type { TEventClickArg } from "@/types/timetable";
 import type { Notes, Question } from "@prisma/client";
@@ -48,7 +52,8 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
     setOpen,
 }) => {
     const router = useRouter();
-    const [notes, setNotes] = useState<Notes[]>([]);
+    const [notesPublic, setNotesPublic] = useState<Notes[]>([]);
+    const [notesUser, setNotesUser] = useState<Notes[]>([]);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [isMobile, setIsMobile] = useState<boolean>(
         window.innerWidth < nbPxPhone,
@@ -91,11 +96,15 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                 eventInfo.event._instance.range.start.getTimezoneOffset() *
                     60000,
         );
-
-        void getCourseDateNotes({
+        void getCourseDateNotesPublic({
             courseId: eventInfo.event._def.extendedProps.courseId,
             courseDate: correctedCourseDate,
-        }).then((r) => setNotes(r ?? []));
+        }).then((r) => setNotesPublic(r ?? []));
+
+        void getCourseDateNotesUser({
+            courseId: eventInfo.event._def.extendedProps.courseId,
+            courseDate: correctedCourseDate,
+        }).then((r) => setNotesUser(r ?? []));
 
         void getCourseDataQuestions({
             courseId: eventInfo.event._def.extendedProps.courseId,
@@ -173,24 +182,41 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                         </div>
                         <Separator className="my-5 border-b" />
                         <div className="flex w-full flex-col">
-                            <p className="text-xl font-bold">
-                                Ils ont pris des notes :{" "}
-                            </p>
-                            {notes?.length > 0 &&
-                                notes.map((n) => (
+                            {notesUser?.length > 0 && (
+                                <p className="text-xl font-bold">Mes notes :</p>
+                            )}
+                            {notesUser?.length > 0 &&
+                                notesUser.map((n) => (
                                     <ItemsLink
                                         key={ID()}
                                         title={n.title}
                                         link={`/editor/${n.id}`}
                                     />
                                 ))}
-                            <Button
-                                onClick={createNotesAndRedirect}
-                                className="mt-4"
-                            >
-                                <Pencil className="mr-2" />
-                                <p>Prendre des notes</p>
-                            </Button>
+
+                            {notesPublic?.length > 0 && (
+                                <p className="text-xl font-bold">
+                                    Ils ont pris des notes :{" "}
+                                </p>
+                            )}
+
+                            {notesPublic?.length > 0 &&
+                                notesPublic.map((n) => (
+                                    <ItemsLink
+                                        key={ID()}
+                                        title={n.title}
+                                        link={`/editor/${n.id}`}
+                                    />
+                                ))}
+                            {notesUser?.length === 0 && (
+                                <Button
+                                    onClick={createNotesAndRedirect}
+                                    className="mt-4"
+                                >
+                                    <Pencil className="mr-2" />
+                                    <p>Prendre des notes</p>
+                                </Button>
+                            )}
                         </div>
                         <Separator className="my-5 border-b" />
                         <div className="flex w-full flex-col">

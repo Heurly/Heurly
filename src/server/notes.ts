@@ -108,7 +108,44 @@ export async function updateNotesContent(
     };
 }
 
-export async function getCourseDateNotes(
+export async function updateNotesTitle(
+    id: string,
+    title: string,
+): Promise<{ success: boolean; message: string }> {
+    const session = await getServerAuthSession();
+    if (session?.user?.id === undefined)
+        return {
+            success: false,
+            message: "You don't have the permission to access this data.",
+        };
+
+    let r = null;
+    let message = "";
+    try {
+        r = await db.notes.update({
+            where: {
+                id: id,
+                userId: session.user.id,
+            },
+            data: {
+                title: title,
+                updatedAt: new Date(),
+            },
+        });
+
+        revalidatePath("/");
+    } catch (e) {
+        log({ type: TLog.error, text: "Could not save editor title to db." });
+        message = `Could not save editor title to db: ${(e as string) ?? ""}`;
+        throw e;
+    }
+    return {
+        success: r !== null,
+        message: message,
+    };
+}
+
+export async function getCourseDateNotesPublic(
     courseDate: CourseDate,
 ): Promise<Notes[] | null> {
     let notesGot = null;
@@ -123,12 +160,59 @@ export async function getCourseDateNotes(
     if (!isAllowedToSeeNotes)
         throw new Error("You are not allowed to see notes");
 
+    // date to utc (plus offset)
+    const courseDateUTC = new Date(
+        courseDate.courseDate.getTime() -
+            courseDate.courseDate.getTimezoneOffset() * 60000,
+    );
+
     try {
         notesGot = await db.notes.findMany({
             where: {
                 courseId: courseDate.courseId,
-                courseDate: courseDate.courseDate,
+                courseDate: courseDateUTC,
                 public: true,
+                NOT: {
+                    userId: session.user.id,
+                },
+            },
+        });
+    } catch (e) {
+        throw new Error(
+            "An error occured while trying to get notes from the db.",
+        );
+    }
+
+    return notesGot;
+}
+
+export async function getCourseDateNotesUser(
+    courseDate: CourseDate,
+): Promise<Notes[] | null> {
+    let notesGot = null;
+
+    const session = await getServerAuthSession();
+
+    if (session?.user?.id === undefined) throw new Error("User not found");
+
+    const isAllowedToSeeNotes = await isAllowedTo("show_note", session.user.id);
+
+    // verify if the user is allowed to see notes
+    if (!isAllowedToSeeNotes)
+        throw new Error("You are not allowed to see notes");
+
+    // date to utc (plus offset)
+    const courseDateUTC = new Date(
+        courseDate.courseDate.getTime() -
+            courseDate.courseDate.getTimezoneOffset() * 60000,
+    );
+
+    try {
+        notesGot = await db.notes.findMany({
+            where: {
+                courseId: courseDate.courseId,
+                courseDate: courseDateUTC,
+                userId: session.user.id,
             },
         });
     } catch (e) {
