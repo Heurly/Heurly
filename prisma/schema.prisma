@@ -35,7 +35,6 @@ model Course {
   School      School?    @relation(fields: [schoolId], references: [id])
   Notes       Notes[]
   Question    Question[]
-  auto        Boolean     @default(false)
 }
 
 model School {
