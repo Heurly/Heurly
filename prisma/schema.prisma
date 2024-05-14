@@ -31,6 +31,7 @@ model Course {
   small_code  String?    @default("")
   unit        String?    @default("")
   year        String?    @default("")
+  auto        Boolean    @default(false)
   School      School?    @relation(fields: [schoolId], references: [id])
   Notes       Notes[]
   Question    Question[]
@@ -64,10 +65,10 @@ model Question {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @default(now())
   userId           String
-  course           Course?            @relation(fields: [courseId], references: [id])
   courseId         Int?
   courseDate       DateTime?
   answer           Answer[]
+  course           Course?            @relation(fields: [courseId], references: [id])
   user             User               @relation(fields: [userId], references: [id])
   UserVoteQuestion UserVoteQuestion[]
 }
@@ -92,32 +93,6 @@ model UserVoteAnswer {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   answer    Answer   @relation(fields: [answerId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-model Event {
-  id               String      @id @default(cuid())
-  userId           String
-  event            String
-  description      String
-  urlImage         String
-  location         String
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @default(now())
-  nbUserInterested Int         @default(0)
-  eventDate        DateTime
-  user             User        @relation(fields: [userId], references: [id])
-  UserEvent        UserEvent[]
-}
-
-model UserEvent {
-  id        Int      @id @default(autoincrement())
-  userId    String
-  eventId   String
-  vote      Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  event     Event    @relation(fields: [eventId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 }
 
@@ -172,24 +147,50 @@ model User {
   emailVerified    DateTime?
   image            String?
   accounts         Account[]
-  sessions         Session[]
-  UserTimetableURL UserTimetableURL[]
+  Answer           Answer[]
   Docs             Docs[]
   Question         Question[]
-  Answer           Answer[]
+  sessions         Session[]
+  UserRole         UserRole[]
+  UserTimetableURL UserTimetableURL[]
   UserVoteAnswer   UserVoteAnswer[]
   UserVoteQuestion UserVoteQuestion[]
-  UserRole         UserRole[]
   Event            Event[]
   UserEvent        UserEvent[]
+}
+
+model Event {
+  id               String      @id @default(cuid())
+  userId           String
+  event            String
+  description      String
+  urlImage         String
+  location         String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @default(now())
+  nbUserInterested Int         @default(0)
+  eventDate        DateTime
+  user             User        @relation(fields: [userId], references: [id])
+  UserEvent        UserEvent[]
+}
+
+model UserEvent {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  eventId   String
+  vote      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model UserRole {
   id     Int    @id @default(autoincrement())
   userId String
   roleId String
-  user   User   @relation(fields: [userId], references: [id])
   role   Role   @relation(fields: [roleId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Role {
@@ -206,10 +207,10 @@ model Right {
   id        String   @id @default(cuid())
   featureId String
   roleId    String
-  feature   Feature  @relation(fields: [featureId], references: [id])
-  role      Role     @relation(fields: [roleId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  feature   Feature  @relation(fields: [featureId], references: [id])
+  role      Role     @relation(fields: [roleId], references: [id])
 }
 
 model Feature {
@@ -244,7 +245,7 @@ model Notes {
   public     Boolean   @default(false)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @default(now())
-  course     Course?   @relation(fields: [courseId], references: [id])
   courseId   Int?
   courseDate DateTime?
+  course     Course?   @relation(fields: [courseId], references: [id])
 }
