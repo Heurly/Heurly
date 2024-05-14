@@ -1,6 +1,10 @@
 "use client";
 import { TLog, log } from "@/logger/logger";
-import { addProfileUnitByUrl, deleteProfileUnitUrl } from "@/server/user";
+import {
+    addProfileUnitByUrl,
+    deleteProfileUnitUrl,
+    updateProfileUnitUrl,
+} from "@/server/user";
 import { type TCustomURL, schemaUrl } from "@/types/schema/url";
 import ID from "@/utils/id";
 import { Plus, Trash2 } from "lucide-react";
@@ -16,6 +20,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "../ui/tooltip";
+import { useDebouncedCallback } from "use-debounce";
 
 type MultipleUrlFormProps = {
     initialUrls: string[];
@@ -25,6 +30,28 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
     const refInputUrl = useRef<HTMLInputElement>(null);
     const session = useSession();
 
+    const handleURLChange = useDebouncedCallback(
+        async (idx: number, url: string) => {
+            try {
+                const newUrls = urls;
+                const oldUrl = urls[idx];
+
+                if (oldUrl === undefined)
+                    throw new Error("Cannot find the URL to update");
+
+                newUrls[idx] = url;
+                const isUpdated = await updateProfileUnitUrl(url, oldUrl);
+                if (!isUpdated) throw new Error("Error while updating the URL");
+
+                setUrls(newUrls);
+            } catch (e) {
+                if (e instanceof Error)
+                    log({ type: TLog.error, text: `${e.message}` });
+            }
+        },
+        500,
+    );
+
     if (!session.data)
         return <p>Vous devez être connecté pour accéder à ce forumulaire</p>;
 
@@ -33,10 +60,7 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
         const checkUrl = schemaUrl.safeParse(url);
         if (!checkUrl.success) throw new Error("invalid URL");
         try {
-            const isDelete = await deleteProfileUnitUrl(
-                session.data.user.id,
-                url,
-            );
+            const isDelete = await deleteProfileUnitUrl(url);
             if (!isDelete) throw new Error("Error while deleting the URL");
             const newUrls = urls.filter((_, i) => i !== index);
             setUrls(newUrls);
@@ -61,10 +85,7 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
 
         try {
             // Add the URL to the database
-            const isAdd = await addProfileUnitByUrl(
-                session.data.user.id,
-                safeUrlToAdd,
-            );
+            const isAdd = await addProfileUnitByUrl(safeUrlToAdd);
             if (!isAdd) throw new Error("Error while adding the URL");
             setUrls([...urls, safeUrlToAdd]);
         } catch (e) {
@@ -74,14 +95,17 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
     };
 
     return (
-        <div className="flex flex-col gap-y-5">
-            <div className="flex h-28 flex-col gap-y-2 overflow-auto">
+        <div className="flex flex-col">
+            <div className="flex flex-col gap-y-6 overflow-auto">
                 {urls.map((url: string, index) => (
                     <div className="flex gap-x-4" key={ID()}>
                         <InputCopy
                             type="text"
                             placeholder="votre URL"
                             value={url}
+                            onBlur={(e) =>
+                                handleURLChange(index, e.currentTarget.value)
+                            }
                         />
                         <TooltipProvider>
                             <Tooltip>
@@ -104,7 +128,7 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
                     </div>
                 ))}
             </div>
-            <form className="flex gap-x-5" onSubmit={handleAddURL}>
+            <form className="flex mt-auto gap-x-5" onSubmit={handleAddURL}>
                 <Input
                     type="text"
                     placeholder="Une nouvelle URL ?"
