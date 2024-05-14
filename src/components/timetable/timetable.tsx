@@ -115,9 +115,8 @@ export default function Timetable({ userId }: { userId: User["id"] }) {
                     slotMinTime={startTime}
                     slotMaxTime={endTime}
                     height={"100%"}
-                    // contentHeight="1rem"
-                    // aspectRatio={1.5}
                     nowIndicator={true}
+                    slotEventOverlap={false}
                     eventClick={(eventClickArgs) => {
                         setDrawerInfos(eventClickArgs ?? undefined);
                         setIsDrawerOpen(true);
