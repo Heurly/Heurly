@@ -186,7 +186,7 @@ export async function getCourseDateNotesPublic(
     return notesGot;
 }
 
-export async function getCourseDateNotesMy(
+export async function getCourseDateNotesUser(
     courseDate: CourseDate,
 ): Promise<Notes[] | null> {
     let notesGot = null;

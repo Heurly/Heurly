@@ -1,6 +1,6 @@
 import {
     createNotes,
-    getCourseDateNotesMy,
+    getCourseDateNotesUser,
     getCourseDateNotesPublic,
 } from "@/server/notes";
 import { getCourseDataQuestions } from "@/server/question";
@@ -53,7 +53,7 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
 }) => {
     const router = useRouter();
     const [notesPublic, setNotesPublic] = useState<Notes[]>([]);
-    const [notesMy, setNotesMy] = useState<Notes[]>([]);
+    const [notesUser, setNotesUser] = useState<Notes[]>([]);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [isMobile, setIsMobile] = useState<boolean>(
         window.innerWidth < nbPxPhone,
@@ -101,10 +101,10 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
             courseDate: correctedCourseDate,
         }).then((r) => setNotesPublic(r ?? []));
 
-        void getCourseDateNotesMy({
+        void getCourseDateNotesUser({
             courseId: eventInfo.event._def.extendedProps.courseId,
             courseDate: correctedCourseDate,
-        }).then((r) => setNotesMy(r ?? []));
+        }).then((r) => setNotesUser(r ?? []));
 
         void getCourseDataQuestions({
             courseId: eventInfo.event._def.extendedProps.courseId,
@@ -182,11 +182,11 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                         </div>
                         <Separator className="my-5 border-b" />
                         <div className="flex w-full flex-col">
-                            {notesMy?.length > 0 && (
+                            {notesUser?.length > 0 && (
                                 <p className="text-xl font-bold">Mes notes :</p>
                             )}
-                            {notesMy?.length > 0 &&
-                                notesMy.map((n) => (
+                            {notesUser?.length > 0 &&
+                                notesUser.map((n) => (
                                     <ItemsLink
                                         key={ID()}
                                         title={n.title}
@@ -208,7 +208,7 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
                                         link={`/editor/${n.id}`}
                                     />
                                 ))}
-                            {notesMy?.length === 0 && (
+                            {notesUser?.length === 0 && (
                                 <Button
                                     onClick={createNotesAndRedirect}
                                     className="mt-4"
