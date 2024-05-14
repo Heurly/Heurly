@@ -49,6 +49,10 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
                 if (!isUpdated) throw new Error("Error while updating the URL");
 
                 setUrls(newUrls);
+                toast({
+                    title: "URL modifiée",
+                    description: "L'URL a été modifiée avec succès.",
+                });
             } catch (e) {
                 toast({
                     variant: "destructive",
