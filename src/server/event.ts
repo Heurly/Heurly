@@ -67,6 +67,7 @@ export async function getEventById(
         throw new Error("An error occured while fetching the question");
     }
 }
+
 /**
  *
  * @param nbEvents the number of questions to fetch
@@ -83,7 +84,7 @@ export async function getEvents(nbEvents = 10) {
     try {
         events = await db.event.findMany();
     } catch (e) {
-        throw new Error("An error occured while fetching evnts");
+        throw new Error("An error occured while fetching events");
     }
     return events;
 }
