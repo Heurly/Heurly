@@ -1,0 +1,1 @@
+DELETE FROM "Course" WHERE description like 'Cours généré automatiquement.';
