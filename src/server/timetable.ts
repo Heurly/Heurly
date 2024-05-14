@@ -35,9 +35,10 @@ async function translateCoursesCodes(courses: CourseEvent[]) {
             found = await db.course.create({
                 data: {
                     description: "Cours généré automatiquement.",
-                    name: course.SUMMARY,
+                    name: course.SUMMARY.split(":")[0],
                     code: course.SUMMARY,
                     small_code: course.SUMMARY.split(":")[0],
+                    auto: true,
                 },
             });
         }
