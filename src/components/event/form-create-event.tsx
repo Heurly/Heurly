@@ -20,6 +20,7 @@ import type { User } from "@prisma/client";
 import type { z } from "zod";
 import { handleFormCreateEvent } from "@/server/event";
 import { useState } from "react";
+import { DatePicker } from "../ui/datepicker";
 
 type FormCreateEventData = z.infer<typeof formCreateEventSchema>;
 
@@ -132,10 +133,15 @@ export default function FormCreateEvent({ userId }: PropsFormCreateEvent) {
                             control={form.control}
                             name="eventDate"
                             render={({ field }) => (
-                                <FormItem className="w-full">
+                                <FormItem className="w-full flex flex-col">
                                     <FormLabel>Date</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="date" />
+                                        <DatePicker
+                                            onChange={() => {
+                                                console.log("date changed");
+                                            }}
+                                            dateInput={new Date()}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

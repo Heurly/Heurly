@@ -12,9 +12,9 @@ export default async function CreateQuestionPage() {
     return (
         <Card className="mt-16 w-full md:mt-0">
             <CardHeader>
-                <div className="flex flex-row">
+                <div className="flex items-center justify-center gap-x-5">
                     <GoBackButton />
-                    <h1 className="w-full text-center text-2xl font-bold">
+                    <h1 className="w-full text-left text-xl font-bold">
                         Créer votre événement
                     </h1>
                 </div>
