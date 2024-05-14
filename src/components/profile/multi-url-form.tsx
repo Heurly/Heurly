@@ -21,6 +21,8 @@ import {
     TooltipTrigger,
 } from "../ui/tooltip";
 import { useDebouncedCallback } from "use-debounce";
+import { Separator } from "../ui/separator";
+import { useToast } from "../ui/use-toast";
 
 type MultipleUrlFormProps = {
     initialUrls: string[];
@@ -29,12 +31,15 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
     const [urls, setUrls] = useState<TCustomURL[]>(initialUrls);
     const refInputUrl = useRef<HTMLInputElement>(null);
     const session = useSession();
+    const { toast } = useToast();
 
     const handleURLChange = useDebouncedCallback(
         async (idx: number, url: string) => {
             try {
                 const newUrls = urls;
                 const oldUrl = urls[idx];
+
+                if (url === oldUrl) return;
 
                 if (oldUrl === undefined)
                     throw new Error("Cannot find the URL to update");
@@ -45,6 +50,12 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
 
                 setUrls(newUrls);
             } catch (e) {
+                toast({
+                    variant: "destructive",
+                    title: "URL non valide",
+                    description:
+                        "Votre nouvelle URL n'est pas valide. Les changements n'ont pas été sauvegardés.",
+                });
                 if (e instanceof Error)
                     log({ type: TLog.error, text: `${e.message}` });
             }
@@ -78,25 +89,35 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
 
         const urlToAdd = formData.get("url");
 
-        // Check if the URL is valid
-        const checkUrl = schemaUrl.safeParse(urlToAdd);
-        if (!checkUrl.success) throw new Error("invalid URL");
-        const safeUrlToAdd = urlToAdd as TCustomURL;
-
         try {
+            // Check if the URL is valid
+            const checkUrl = schemaUrl.safeParse(urlToAdd);
+            if (!checkUrl.success) throw new Error("invalid URL");
+            const safeUrlToAdd = urlToAdd as TCustomURL;
+
             // Add the URL to the database
             const isAdd = await addProfileUnitByUrl(safeUrlToAdd);
             if (!isAdd) throw new Error("Error while adding the URL");
             setUrls([...urls, safeUrlToAdd]);
+            toast({
+                title: "URL ajoutée",
+                description: "L'URL a été ajouté avec succès.",
+            });
         } catch (e) {
+            toast({
+                variant: "destructive",
+                title: "URL non valide",
+                description:
+                    "Veuillez entrer une URL vers un calendrier iCal valide.",
+            });
             if (e instanceof Error)
                 log({ type: TLog.error, text: `${e.message}` });
         }
     };
 
     return (
-        <div className="flex flex-col">
-            <div className="flex flex-col gap-y-6 overflow-auto">
+        <div className="flex flex-col h-full">
+            <div className="flex flex-col gap-y-2 overflow-auto mb-3">
                 {urls.map((url: string, index) => (
                     <div className="flex gap-x-4" key={ID()}>
                         <InputCopy
@@ -128,7 +149,8 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
                     </div>
                 ))}
             </div>
-            <form className="flex mt-auto gap-x-5" onSubmit={handleAddURL}>
+            <Separator className="md:mt-auto" />
+            <form className="flex gap-x-5 pt-4" onSubmit={handleAddURL}>
                 <Input
                     type="text"
                     placeholder="Une nouvelle URL ?"
