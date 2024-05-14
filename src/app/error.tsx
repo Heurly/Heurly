@@ -1,3 +1,4 @@
+"use client";
 import Logo from "@/components/icon/Logo";
 import { HeartCrack } from "lucide-react";
 

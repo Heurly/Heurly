@@ -1,3 +1,4 @@
+import Loading from "@/app/loading";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -15,7 +16,7 @@ import Image from "next/image";
 export default async function PageListEvent() {
     const events = await getEvents();
     return (
-        <div>
+        <div className="w-full mb-20">
             {events?.map(
                 ({
                     event,
@@ -28,46 +29,68 @@ export default async function PageListEvent() {
                     return (
                         <Card
                             key={ID()}
-                            className="flex p-5 items-center justify-center"
+                            className="flex flex-col md:flex-row md:px-5 items-center justify-center overflow-hidden"
                         >
                             <img
                                 src={urlImage}
                                 alt={`${event}`}
-                                width={200}
-                                height={200}
-                                className="rounded-lg aspect-square"
+                                width={150}
+                                height={150}
+                                className="md:rounded-lg md:aspect-square w-full md:w-40"
                             />
                             <div>
-                                <CardHeader>
+                                <CardHeader className="flex md:block items-center justify-center">
                                     <h3 className="text-xl font-bold">
                                         {event}
                                     </h3>
+                                    <div className="flex gap-x-3 md:hidden">
+                                        <div className="flex gap-x-1 items-center justify-center">
+                                            <PersonStanding />
+                                            <p>{nbUserInterested}</p>
+                                        </div>
+                                        <div className="flex gap-x-1 items-center justify-center">
+                                            <MapPin /> <p>{location}</p>
+                                        </div>
+                                        <div className="flex gap-x-1 items-center justify-center">
+                                            <CalendarDays />
+                                            <DateFormatted>
+                                                {eventDate}
+                                            </DateFormatted>
+                                        </div>
+                                    </div>
                                 </CardHeader>
-                                <CardContent>
-                                    <p className="text-ellipsis overflow-hidden">
+                                <CardContent className="flex md:block items-center justify-center">
+                                    <p className="w-11/12 ">
                                         <TextTruncated
                                             maxLength={200}
                                             text={description}
                                         />
                                     </p>
                                 </CardContent>
-                                <CardFooter className="flex gap-x-5 text-sm">
-                                    <div className="flex gap-x-1 items-center justify-center">
-                                        <PersonStanding />
-                                        <p>{nbUserInterested}</p>
+                                <CardFooter>
+                                    <div className="hidden md:flex gap-x-5 text-sm">
+                                        <div className="flex  gap-x-1 items-center justify-center">
+                                            <PersonStanding />
+                                            <p>{nbUserInterested}</p>
+                                        </div>
+                                        <div className="flex gap-x-1 items-center justify-center">
+                                            <MapPin /> <p>{location}</p>
+                                        </div>
+                                        <div className="flex gap-x-1 items-center justify-center">
+                                            <CalendarDays />
+                                            <DateFormatted>
+                                                {eventDate}
+                                            </DateFormatted>
+                                        </div>
                                     </div>
-                                    <div className="flex gap-x-1 items-center justify-center">
-                                        <MapPin /> <p>{location}</p>
-                                    </div>
-                                    <div className="flex gap-x-1 items-center justify-center">
-                                        <CalendarDays />
-                                        <DateFormatted>
-                                            {eventDate}
-                                        </DateFormatted>
-                                    </div>
+                                    <Button className="md:hidden block flex-1">
+                                        Intéressé
+                                    </Button>
                                 </CardFooter>
                             </div>
-                            <Button>Intéressé</Button>
+                            <Button className="hidden md:block">
+                                Intéressé
+                            </Button>
                         </Card>
                     );
                 },
