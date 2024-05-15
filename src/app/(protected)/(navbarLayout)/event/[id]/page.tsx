@@ -30,7 +30,7 @@ export default async function EventPage({
     const eventsDb = await getEvents();
     // params.id,
     // session.user.id,
-    if (!eventsDb) redirect("/404");
+    if (!eventsDb) notFound();
 
     return (
         <div className="flex h-full w-full flex-col items-center gap-y-5 overflow-auto">
