@@ -6,6 +6,8 @@ import { dataCreateEventSchema } from "@/types/schema/form-create-event";
 import { z } from "zod";
 import { UserModel } from "prisma/zod";
 import { EventModel } from "prisma/zod/event";
+import { getServerAuthSession } from "./auth";
+import isAllowedTo from "@/components/utils/is-allowed-to";
 
 /**
  *
@@ -76,6 +78,17 @@ export async function getEventById(
  */
 export async function getEvents(nbEvents = 10) {
     log({ type: TLog.info, text: "Fetching events" });
+
+    const session = await getServerAuthSession();
+    if (!session) throw new Error("User not authenticated");
+
+    // check if the user as the right to get events
+    const checkAllowedToGetEvents = await isAllowedTo(
+        "show_event",
+        session.user.id,
+    );
+    if (!checkAllowedToGetEvents)
+        throw new Error("User not allowed to get events");
 
     const resCheckNb = z.number().gt(0).safeParse(nbEvents);
     if (!resCheckNb.success) throw new Error("Invalid number of questions");
