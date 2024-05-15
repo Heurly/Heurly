@@ -36,7 +36,7 @@ export default async function PageUserProfile() {
     const notes = await getAllUserNotes(session.user.id);
 
     return (
-        <div className="flex grid-cols-1 flex-col gap-5 pb-24 md:grid md:h-full md:grid-cols-3 md:grid-rows-3 md:pb-0">
+        <div className="flex grid-cols-1 flex-col gap-5 pb-24 md:grid md:h-full md:grid-cols-3 md:grid-rows-4 md:pb-0">
             <Card className="p-6 md:col-span-1 md:row-span-1">
                 <CardContent className="flex h-full w-full flex-col items-center justify-center gap-5 md:flex-row">
                     <Avatar className="size-11 md:size-16">
@@ -53,13 +53,13 @@ export default async function PageUserProfile() {
                 </CardContent>
             </Card>
 
-            <Card className="overflow-y-auto md:col-span-2 md:col-start-2 md:row-span-1">
-                <CardHeader>
+            <Card className="h-80 pb-4 md:h-full md:row-start-2 md:row-span-3">
+                <CardHeader className="h-1/6">
                     <h2 className="text-xl font-bold">
                         Mes url d&apos;emplois du temps
                     </h2>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="overflow-y-scroll h-5/6 pt-6 md:pt-0">
                     {userUrl.length > 0 ? (
                         <>
                             <MultipleUrlForm
@@ -75,16 +75,7 @@ export default async function PageUserProfile() {
                     {/* <Separator /> */}
                 </CardContent>
             </Card>
-
-            <Card className="col-span-1 row-span-2">
-                <CardHeader className="text-xl font-bold">
-                    Mon Activité
-                </CardHeader>
-                <CardContent className="w-full">
-                    Aucune activité récente.
-                </CardContent>
-            </Card>
-            <Card className="col-span-1 row-span-2">
+            <Card className="col-span-2 row-span-2">
                 <CardHeader className="text-xl font-bold">
                     Mes Documents
                 </CardHeader>
@@ -92,7 +83,7 @@ export default async function PageUserProfile() {
                     <DocsTable data={userDocs ?? []} />
                 </CardContent>
             </Card>
-            <Card className="col-span-1 row-span-2">
+            <Card className="col-span-2 row-span-2">
                 <CardHeader className="text-xl font-bold">Mes Notes</CardHeader>
                 <CardContent className="w-full">
                     <NotesTable data={notes ?? []} />
