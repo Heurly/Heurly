@@ -66,6 +66,11 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
         )
             return;
 
+        const correctDate = new Date(
+            eventInfo.event._instance.range.start.getTime() +
+                eventInfo.event._instance.range.start.getTimezoneOffset() *
+                    60000,
+        );
         const notes = await createNotes(
             `${eventInfo.event?._def?.title} - ${format(
                 eventInfo.event._instance.range.start,
@@ -73,7 +78,7 @@ const TimetableDrawer: React.FunctionComponent<Props> = ({
             )}`,
             {
                 courseId: eventInfo.event._def.extendedProps.courseId,
-                courseDate: eventInfo.event._instance.range.start,
+                courseDate: correctDate,
             },
         );
         if (notes?.id === undefined) return;
