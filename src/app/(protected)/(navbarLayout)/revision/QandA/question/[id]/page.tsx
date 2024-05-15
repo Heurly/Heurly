@@ -3,7 +3,7 @@ import ResponseCard from "@/components/QandA/response-card";
 import { getServerAuthSession } from "@/server/auth";
 import { getQuestionAndAnswers, getQuestionById } from "@/server/question";
 import ID from "@/utils/id";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 type Props = {
     params: { id: string };
@@ -25,7 +25,7 @@ export default async function QuestionPage({
 }: {
     params: { id: string };
 }) {
-    if (!params.id) redirect("/404");
+    if (!params.id) notFound();
 
     const session = await getServerAuthSession();
     if (!session) redirect("/login");
@@ -34,7 +34,7 @@ export default async function QuestionPage({
         params.id,
         session.user.id,
     );
-    if (!questionAndAnswersDb) redirect("/404");
+    if (!questionAndAnswersDb) notFound();
 
     return (
         <div className="flex h-full w-full flex-col items-center gap-y-5 overflow-auto">

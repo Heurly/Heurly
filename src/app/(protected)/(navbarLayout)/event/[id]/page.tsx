@@ -1,7 +1,7 @@
 import EventCard from "@/components/event/event-card";
 import { getServerAuthSession } from "@/server/auth";
 import { getEventById, getEvents } from "@/server/event";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 type Props = {
     params: { id: string };
@@ -23,7 +23,7 @@ export default async function EventPage({
 }: {
     params: { id: string };
 }) {
-    if (!params.id) redirect("/404");
+    if (!params.id) notFound();
 
     const session = await getServerAuthSession();
     if (!session) redirect("/login");
@@ -31,7 +31,7 @@ export default async function EventPage({
     const eventsDb = await getEvents();
     // params.id,
     // session.user.id,
-    if (!eventsDb) redirect("/404");
+    if (!eventsDb) notFound();
 
     return (
         <div className="flex h-full w-full flex-col items-center gap-y-5 overflow-auto">
