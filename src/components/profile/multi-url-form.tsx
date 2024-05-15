@@ -103,6 +103,8 @@ export default function MultipleUrlForm({ initialUrls }: MultipleUrlFormProps) {
             const isAdd = await addProfileUnitByUrl(safeUrlToAdd);
             if (!isAdd) throw new Error("Error while adding the URL");
             setUrls([...urls, safeUrlToAdd]);
+            if (refInputUrl.current?.value !== undefined)
+                refInputUrl.current.value = "";
             toast({
                 title: "URL ajoutée",
                 description: "L'URL a été ajouté avec succès.",
