@@ -37,7 +37,7 @@ export default function FormUrlTimetable({ className }: PropsFormUrlTimetable) {
     const onSubmit = async (data: UrlFormValues) => {
         if (session.data) {
             try {
-                await addProfileUnitByUrl(session.data.user.id, data.url);
+                await addProfileUnitByUrl(data.url);
                 router.refresh();
             } catch (error) {
                 console.error(
