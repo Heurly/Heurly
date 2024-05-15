@@ -16,6 +16,7 @@ import {
     LoaderCircle,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { notFound } from "next/navigation";
 import type { EditorInstance, JSONContent } from "novel";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -31,6 +32,7 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
     const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
     const [saveState, setSaveState] = useState<SaveState>(SaveState.Saved);
     const [dbNotes, setDbNotes] = useState<Notes | undefined>(undefined);
+    const [notFoundError, setNotFoundError] = useState<boolean>(false);
     const [localNotes, setLocalNotes] = useLocalStorage<Notes | undefined>(
         `editor-${params.id}`,
         undefined,
@@ -38,9 +40,16 @@ const NotesEditor: React.FunctionComponent<Props> = ({ params }) => {
 
     const getDbNotes = async (id: string) => {
         const dbNotes = await getNotes(id);
-        if (dbNotes == null) return;
+        if (dbNotes == null) {
+            setNotFoundError(true);
+            return;
+        }
         setDbNotes(dbNotes);
     };
+
+    if (notFoundError) {
+        void notFound();
+    }
 
     const updates = useDebouncedCallback(async (editor?: EditorInstance) => {
         if (localNotes === undefined) return;
