@@ -1,9 +1,19 @@
 "use client";
 import type { TEventInfo } from "@/types/timetable";
+import { getColor } from "@/utils/color-by-course";
 
 export default function EventContent(eventInfo: TEventInfo) {
+    if (!eventInfo.event.extendedProps.name) return;
+
     return (
-        <div className="border-sky-100r flex h-full w-full cursor-pointer items-center justify-center rounded-xl border bg-sky-200 text-black hover:border-sky-400">
+        <div
+            className=" flex h-full w-full cursor-pointer items-center justify-center rounded-xl text-black"
+            style={{
+                backgroundColor: `${getColor(
+                    eventInfo.event.extendedProps.name,
+                )}`,
+            }}
+        >
             {eventInfo.event.extendedProps.small ? (
                 <div className="flex h-full w-full items-center justify-center text-nowrap p-1 ">
                     <p className="max-h-1/2 w-full overflow-hidden text-ellipsis text-center align-bottom text-[0.65rem]/[0.7rem] font-bold">
