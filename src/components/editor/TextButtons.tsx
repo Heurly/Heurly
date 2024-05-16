@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import ID from "@/utils/id";
 import {
     BoldIcon,
     CodeIcon,
@@ -9,7 +10,6 @@ import {
 import { EditorBubbleItem, useEditor } from "novel";
 import { Button } from "../ui/button";
 import type { SelectorItem } from "./NodeSelector";
-import ID from "@/utils/id";
 
 export const TextButtons = () => {
     const { editor } = useEditor();

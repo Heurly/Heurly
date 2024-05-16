@@ -9,9 +9,9 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getServerAuthSession } from "@/server/auth";
+import ID from "@/utils/id";
 import cn from "classnames";
 import { redirect } from "next/navigation";
-import ID from "@/utils/id";
 
 export const metadata = {
     title: "Heuly - Questions",
