@@ -19,7 +19,7 @@ const UserProfile: React.FunctionComponent<Props> = ({ userId }) => {
         const fetchUserPublicInfo = async () => {
             let u = null;
             try {
-                u = await getUserPublicInfo();
+                u = await getUserPublicInfo(userId);
             } catch (e) {
                 console.error(e);
             }
@@ -29,7 +29,7 @@ const UserProfile: React.FunctionComponent<Props> = ({ userId }) => {
             }
         };
         void fetchUserPublicInfo();
-    }, []);
+    }, [userId]);
 
     return (
         <div className="flex items-center gap-5">
