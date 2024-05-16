@@ -358,14 +358,13 @@ export async function deleteProfileUnitUrl(url: string): Promise<boolean> {
     }
 }
 
-export async function getUserPublicInfo() {
+export async function getUserPublicInfo(userId: string) {
     const session = await getServerAuthSession();
-    const userId = session?.user.id;
 
     // zo verification for user id
     const checkIdType = UserModel.shape.id.safeParse(userId);
 
-    if (userId === undefined || !checkIdType.success)
+    if (session?.user.id === undefined || !checkIdType.success)
         throw new Error("Invalid user ID");
 
     // verify if the user exists
