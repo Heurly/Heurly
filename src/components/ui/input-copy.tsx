@@ -14,13 +14,12 @@ import {
 const InputCopy = React.forwardRef<
     HTMLInputElement,
     React.InputHTMLAttributes<HTMLInputElement>
->(({ value, type = "text" }, ref) => {
+>(({ value, onBlur, type = "text" }, ref) => {
     const [copied, setCopied] = useState(false);
     const [inputValue, setInputValue] = useState<string>(value as string);
 
     useEffect(() => {
         if (copied) {
-            console.log("Copied:", copied);
             // Reset copied state after some time
             setTimeout(() => {
                 setCopied(false);
@@ -33,12 +32,14 @@ const InputCopy = React.forwardRef<
     };
 
     return (
-        <div className="relative w-full">
+        <div className="flex w-full">
             <Input
+                className="!rounded-r-none"
                 type={type}
                 ref={ref}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
+                onBlur={onBlur}
             />
 
             <TooltipProvider>
@@ -48,7 +49,7 @@ const InputCopy = React.forwardRef<
                             <Button
                                 size="icon"
                                 variant={"outline"}
-                                className=" absolute right-0 top-0 !rounded-md"
+                                className="!rounded-md !rounded-l-none"
                             >
                                 <Copy className="size-5" />
                             </Button>

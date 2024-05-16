@@ -88,20 +88,20 @@ export async function getUsersWithRole(
 
 /**
  * This function adds a profile unit by URL
- * @param userId The id of the user to add the profile unit to
  * @param url The URL of the profile unit
  * @returns {Promise<boolean>} A promise that resolves to a boolean
  */
-export async function addProfileUnitByUrl(
-    userId: User["id"],
-    url: string,
-): Promise<boolean> {
+export async function addProfileUnitByUrl(url: string): Promise<boolean> {
+    const session = await getServerAuthSession();
+    const userId = session?.user.id;
+
     log({ type: TLog.info, text: `Adding profile URL for ${userId}` });
 
     // zod verification for user id
     const checkIdType = UserModel.shape.id.safeParse(userId);
 
-    if (!checkIdType.success) throw new Error("Invalid user ID");
+    if (userId === undefined || !checkIdType.success)
+        throw new Error("Invalid user ID");
 
     // verify if the user exists
     const resUser = await db.user.findFirst({
@@ -161,14 +161,16 @@ export async function addProfileUnitByUrl(
 
 /**
  * Updates a profile unit URL for a specific user.
- * @param userId The ID of the user whose profile unit URL needs updating.
  * @param newUrl The new URL to update in the user's profile.
  * @returns A promise that resolves to a boolean indicating the operation's success.
  */
 export async function updateProfileUnitUrl(
-    userId: string, // Assuming user ID is a string; adjust according to your User model
     newUrl: string,
+    oldUrl: string,
 ): Promise<boolean> {
+    const session = await getServerAuthSession();
+    const userId = session?.user.id;
+
     log({ type: TLog.info, text: `Updating profile URL for user ${userId}` });
 
     try {
@@ -194,14 +196,14 @@ export async function updateProfileUnitUrl(
 
         // Check if the new URL is already associated with another timetable to prevent duplicates
         const urlExists = await db.userTimetableURL.findFirst({
-            where: { url: newUrl, NOT: { userId: userId } },
+            where: { url: newUrl, userId: userId },
         });
 
         if (urlExists) throw new Error("URL already used by another timetable");
 
         // Update the URL in the database
         const updateResult = await db.userTimetableURL.updateMany({
-            where: { userId: userId },
+            where: { userId: userId, url: oldUrl },
             data: { url: newUrl },
         });
 
@@ -225,9 +227,10 @@ export async function updateProfileUnitUrl(
  * @param userId The ID of the user whose profile unit URLs are being requested.
  * @returns A promise that resolves to an array of URL strings. The array is empty if no URLs are found.
  */
-export async function getCurrentProfileUnitUrls(
-    userId: string, // Adjust according to your User model's ID type
-): Promise<string[]> {
+export async function getCurrentProfileUnitUrls(): Promise<string[]> {
+    const session = await getServerAuthSession();
+    const userId = session?.user.id;
+
     log({
         type: TLog.info,
         text: `Fetching current profile URLs for user ${userId}`,
@@ -235,7 +238,7 @@ export async function getCurrentProfileUnitUrls(
 
     // zod verification for user id
     const checkIdType = UserModel.shape.id.safeParse(userId);
-    if (!checkIdType.success) {
+    if (userId === undefined || !checkIdType.success) {
         throw new Error("Invalid user ID");
     }
 
@@ -288,19 +291,18 @@ export async function getCurrentProfileUnitUrls(
 
 /**
  * Deletes a profile unit URL for a specific user.
- * @param userId The ID of the user whose profile unit URL needs deletion.
  * @param url The URL to delete from the user's profile.
  * @returns A promise that resolves to a boolean indicating the operation's success.
  */
-export async function deleteProfileUnitUrl(
-    userId: User["id"],
-    url: string,
-): Promise<boolean> {
+export async function deleteProfileUnitUrl(url: string): Promise<boolean> {
+    const session = await getServerAuthSession();
+    const userId = session?.user.id;
+
     log({ type: TLog.info, text: `Deleting profile URL for user ${userId}` });
 
     // zod verification for user id
     const checkIdType = UserModel.shape.id.safeParse(userId);
-    if (!checkIdType.success) {
+    if (userId === undefined || !checkIdType.success) {
         throw new Error("Invalid user ID");
     }
 
@@ -356,11 +358,15 @@ export async function deleteProfileUnitUrl(
     }
 }
 
-export async function getUserPublicInfo(userId: User["id"]) {
+export async function getUserPublicInfo() {
+    const session = await getServerAuthSession();
+    const userId = session?.user.id;
+
     // zo verification for user id
     const checkIdType = UserModel.shape.id.safeParse(userId);
 
-    if (!checkIdType.success) throw new Error("Invalid user ID");
+    if (userId === undefined || !checkIdType.success)
+        throw new Error("Invalid user ID");
 
     // verify if the user exists
     const userExists = await db.user.findFirst({

@@ -19,7 +19,7 @@ export async function GET(request: Request): Promise<ImageResponse> {
         return NotFound();
     }
 
-    const user = await getUserPublicInfo(document.userId);
+    const user = await getUserPublicInfo();
     if (!user) {
         return NotFound();
     }
