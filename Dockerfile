@@ -17,7 +17,7 @@ ENV TIPTAP_TOKEN=$TIPTAP_TOKEN
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml\* ./
 
 RUN yarn global add pnpm@9.0.0
-RUN pnpm config set "@tiptap-pro:registry" https://registry.tiptap.dev/ && pnpm config set "//registry.tiptap.dev/:_authToken" $TIPTAP_TOKEN && pnpm i
+RUN pnpm config set "@tiptap-pro:registry" https://registry.tiptap.dev/ && pnpm config set "//registry.tiptap.dev/:_authToken" $TIPTAP_TOKEN && pnpm config set "package-manager-strict" false && pnpm i
 
 ##### BUILDER
 

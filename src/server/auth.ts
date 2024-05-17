@@ -1,3 +1,6 @@
+import { env } from "@/env";
+import { TLog, log } from "@/logger/logger";
+import { db } from "@/server/db";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import {
     type DefaultSession,
@@ -7,9 +10,6 @@ import {
 import type { Account, User } from "next-auth";
 // import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
-import { env } from "@/env";
-import { db } from "@/server/db";
-import { log, TLog } from "@/logger/logger";
 import { UserModel } from "prisma/zod";
 
 /**
