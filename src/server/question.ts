@@ -58,11 +58,7 @@ export async function getQuestions(nbQuestion = 10, userId?: User["id"]) {
             },
             include: {
                 user: true,
-                UserVoteQuestion: {
-                    where: {
-                        userId: userId,
-                    },
-                },
+                UserVoteQuestion: true,
                 _count: {
                     select: { answer: true },
                 },
