@@ -1,37 +1,40 @@
 # Heurly
 
-## Description de projet
-Heurly a un application contient l'emploi du temps, prise de note, gestion des documents, gestions des évenements.
-Heurly facilite la vie d'étudiant. (Pour le moment, pour les étudiant esiee paris)
-Il existe aussi une page de gestion de rôle sur les utilisateurs, qui permet les admins de gérer facilement sur les droits de l'utilisateur.
+# Description du projet
+Heurly est une application comprenant un emploi du temps, une prise de notes, une gestion des documents, et une gestion des événements. Elle facilite la vie des étudiants. L'application inclut également une page de gestion de rôles pour les utilisateurs, permettant aux administrateurs de gérer facilement les droits des utilisateurs.
 
 ## Sécurité
-Dans cet archive, il n'y a pas les sources sensibles et les vulnerabilités.
+Cette archive ne contient ni ressources sensibles, ni vulnérabilités.
 
-## Le structure de Heurly
-Dans ce archive, vous allez trouver les dossier suivants:
-Les deux dossiers sont complile différentement, ils sont de deux bases de données différentes. 
-- Heurly AI: dans ce dossiers, vous trouverez tous les projets d'IA, qui fonctionne en locale, mais pas déployé sur le site Heurly.
-- Heurly main: vous trouvez ici tous les programmes qui fait fonctionner le Heurly que vous voyez sur le site.
-
+## Structure de Heurly
+Vous trouverez dans cette archive les dossiers suivants :
+- **Heurly AI** : Contient tous les projets d'IA, bien que ces fonctionnalités ne soient pas présentes sur le site Heurly.
+- **Heurly Main** : Contient toutes les ressources qui composent le site Heurly.
 
 ## Installation du projet
-*Cette partie ne pourrais pas réalisé sans le fichier .env et le fichier .npmrc.* 
-Il faut installer les logiciels suivants:
+**Note :** Cette partie ne peut pas être réalisée sans le fichier `.env` et le fichier `.npmrc`.
+Vous devez installer les logiciels suivants :
+- [Docker](https://docs.docker.com/engine/install/)
+- [Node.js](https://nodejs.org/en)
+- [PNPM](https://pnpm.io/installation) (recommandé : `npm i -g pnpm`)
+- [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
 
-- [docker](https://docs.docker.com/engine/install/)
-- [nodejs](https://nodejs.org/en)
-- [pnpm](https://pnpm.io/installation) (recommende `npm i -g pnpm`)
-- [wsl](https://learn.microsoft.com/en-us/windows/wsl/install)
-
-Puis 
-- Installer les bibliothèques avec `pnpm i` 
-- Ajouter .env and .env.development.local dans le racine du projet (changer le type de "end-of-line" à LF")
-- Si vous êtes sur Windows, utiliser wsl pour lancer `./start-database.sh` (changer le type de "end-of-line" à LF")
-- `pnpm db:push` (changer le type de "end-of-line" à LF")
-- `pnpm db:seed`
-- `pnpm dev`
-- 🤌🏽Maintenant le site est lancé sur  http://localhost:3000
+Ensuite procédez comme suit :
+- Installez les bibliothèques avec `pnpm i`.
+- Ajoutez `.env` et `.env.development.local` à la racine du projet (changez le type de "end-of-line" à LF).
+- Si vous êtes sur Windows, utilisez WSL pour exécuter `./start-database.sh` (changez le type de "end-of-line" à LF).
+- Exécutez `pnpm db:push` (changez le type de "end-of-line" à LF).
+- Exécutez `pnpm db:seed`.
+- Exécutez `pnpm dev`.
+- Le site est maintenant accessible à l'adresse [http://localhost:3000](http://localhost:3000).
 
 ## Licence
-Licence se trouve sur la racine de projet Heurly main et Heurly AI.
+La licence se trouve à la racine des projets Heurly Main et Heurly AI.
+
+
+## Authors
+- Adam Ait Hamid
+- Angelo Giornano
+- Raphaël Bouchez
+- Mathieu Andriamiraho
+- Qiaoqiao XIA
