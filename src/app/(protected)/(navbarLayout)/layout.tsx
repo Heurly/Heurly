@@ -1,7 +1,6 @@
 // import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import NavBar from "@/components/ui/nav-bar";
-import TopBar from "@/components/ui/top-bar";
 
 export default function NavBarLayout({
     children,
