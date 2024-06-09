@@ -6,37 +6,31 @@ Heurly facilite la vie d'étudiant. (Pour le moment, pour les étudiant esiee pa
 Il existe aussi une page de gestion de rôle sur les utilisateurs, qui permet les admins de gérer facilement sur les droits de l'utilisateur.
 
 ## Sécurité
-Dans cet archive, 
+Dans cet archive, il n'y a pas les sources sensibles et les vulnerabilité.
+
+## Le structure de Heurly
+Dans ce archive, vous allez trouver les dossier suivants:
+Les deux dossiers sont complile différentement, ils sont de deux bases de données différentes. 
+- Heurly AI: dans ce dossiers, vous trouverez tous les projets d'IA, qui fonctionne en locale, mais pas déployé sur le site Heurly.
+- Heurly main: vous trouvez ici tous les programmes qui fait fonctionner le Heurly que vous voyez sur le site.
 
 
-# Heurly version anglais
-
-## Installation
-
-**_Prerequisites_**
-
-To contribute to this project, you need to install a few items:
-
+## Installation du projet
+** Cette partie ne pourrais pas réalisé sans le fichier .env et le fichier .npmrc. **
+Il faut installer les logiciels suivants:
 - [docker](https://docs.docker.com/engine/install/)
 - [nodejs](https://nodejs.org/en)
 - [pnpm](https://pnpm.io/installation) (recommende `npm i -g pnpm`)
 - [wsl](https://learn.microsoft.com/en-us/windows/wsl/install)
 
-To install the project and contribute, you need to take a few steps:
-
-- git clone the `git@github.com:Heurly/Heurly.git` repo
-- install the `pnpm i` dependencies
-- add .env and .env.development.local to the project root (change the end-of-line sequence type to "LF")
-- if you're on Windows, use wsl to make `./start-database.sh` (change the end-of-line type to "LF")
-- `pnpm db:push` (change the end-of-line type to "LF")
+Puis 
+- Installer les bibliothèques avec `pnpm i` 
+- Ajouter .env and .env.development.local dans le racine du projet (changer le type de "end-of-line" à LF")
+- Si vous êtes sur Windows, utiliser wsl pour lancer `./start-database.sh` (changer le type de "end-of-line" à LF")
+- `pnpm db:push` (changer le type de "end-of-line" à LF")
 - `pnpm db:seed`
 - `pnpm dev`
-- 🤌🏽 Now the application is running on http://localhost:3000
-- you can checkout the dev beta name branch and create your branch from it
+- 🤌🏽Maintenant le site est lancé sur  http://localhost:3000
 
-## Deploy to preprod
-
-To deploy to production, you need to update the prod database schema.
-
-- Copy the contents of the .env.production.local prod file into .env and run the command `pnpm run db:push` (⚠️ be careful if prisma says "... delete data" make a copy of the data to migrate the data)
-- PR to `beta` to deploy your code on https://beta.heurly.fr (don't forget to add a reviewer)
+## Licence
+Licence se trouve sur la racine de projet Heurly main et Heurly AI.
