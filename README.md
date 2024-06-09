@@ -32,7 +32,7 @@ Ensuite procédez comme suit :
 La licence se trouve à la racine des projets Heurly Main et Heurly AI.
 
 
-## Authors
+## Auteurs
 - Adam Ait Hamid
 - Angelo Giornano
 - Raphaël Bouchez
