@@ -1,7 +1,7 @@
 # Heurly
 
 ## Description de projet
-Heurly a un application contiens l'emploi du temps, prise de note, gestion des documents, gestions des évenements.
+Heurly a un application contient l'emploi du temps, prise de note, gestion des documents, gestions des évenements.
 Heurly facilite la vie d'étudiant. (Pour le moment, pour les étudiant esiee paris)
 Il existe aussi une page de gestion de rôle sur les utilisateurs, qui permet les admins de gérer facilement sur les droits de l'utilisateur.
 
