@@ -11,6 +11,7 @@ Vous trouverez dans cette archive les dossiers suivants :
 - **Heurly AI** : Contient tous les projets d'IA, bien que ces fonctionnalités ne soient pas présentes sur le site Heurly.
 - **Heurly Scrapper** : Contient les scripts (_potentiellement_) utilisés pour l'entraînement de nos modèles d'Intelligence Artificielle.
 - **Heurly Main** : Contient toutes les ressources qui composent le site Heurly.
+- **Heurly OPS** : Contient les scripts du déploiment de l'application côté serveur (VPS).
 
 ## Installation du projet
 **Note :** Cette partie ne peut pas être réalisée sans le fichier `.env` et le fichier `.npmrc`.
