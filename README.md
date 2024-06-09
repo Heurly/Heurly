@@ -6,7 +6,7 @@ Heurly facilite la vie d'étudiant. (Pour le moment, pour les étudiant esiee pa
 Il existe aussi une page de gestion de rôle sur les utilisateurs, qui permet les admins de gérer facilement sur les droits de l'utilisateur.
 
 ## Sécurité
-Dans cet archive, il n'y a pas les sources sensibles et les vulnerabilité.
+Dans cet archive, il n'y a pas les sources sensibles et les vulnerabilités.
 
 ## Le structure de Heurly
 Dans ce archive, vous allez trouver les dossier suivants:
