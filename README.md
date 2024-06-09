@@ -16,7 +16,7 @@ Les deux dossiers sont complile différentement, ils sont de deux bases de donn�
 
 
 ## Installation du projet
-** Cette partie ne pourrais pas réalisé sans le fichier .env et le fichier .npmrc. **
+*Cette partie ne pourrais pas réalisé sans le fichier .env et le fichier .npmrc.* 
 Il faut installer les logiciels suivants:
 - [docker](https://docs.docker.com/engine/install/)
 - [nodejs](https://nodejs.org/en)
